@@ -1,0 +1,1510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<title>Drivehub — Accounting Module for RSP-partners</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#0a0a0f;--bg2:#0f1019;--bgc:#12131e;--bgh:#181a28;--tp:#ffffff;--ts:rgba(255,255,255,.73);--tm:rgba(255,255,255,.48);--ac:#00d4ff;--as:#0099cc;--ag:rgba(0,212,255,.12);--aw:#ff6b35;--bd:hsla(0,0%,100%,.06);--bh:rgba(0,212,255,.2);--ee:cubic-bezier(.16,1,.3,1);--f:'Outfit',-apple-system,BlinkMacSystemFont,sans-serif;--m:'JetBrains Mono','SF Mono',monospace;--nh:52px;--sw:180px}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{height:100%;scroll-behavior:smooth}
+body{font-family:var(--f);font-size:13px;background:var(--bg);color:var(--tp);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;overflow-x:hidden;height:100%;line-height:1.5}
+::selection{background:var(--ac);color:var(--bg)}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--as);border-radius:2px}
+*{-webkit-overflow-scrolling:touch}
+
+/* LOGIN */
+#ls{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:max(16px,env(safe-area-inset-top,0px)) 16px max(16px,env(safe-area-inset-bottom,0px))}
+#lc{position:absolute;inset:0;width:100%;height:100%}
+#ls::before{content:'';position:absolute;inset:0;z-index:1;background:radial-gradient(ellipse at 30% 40%,rgba(0,212,255,.05) 0,transparent 60%),radial-gradient(ellipse at 75% 20%,rgba(0,153,204,.04) 0,transparent 50%),linear-gradient(180deg,rgba(10,10,15,.2),rgba(10,10,15,.7))}
+.lcw{position:relative;z-index:2;width:100%;max-width:380px}
+.lbrand{text-align:center;margin-bottom:32px}
+.llogo{display:inline-flex;align-items:center;gap:10px;text-decoration:none;margin-bottom:6px}
+.li{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--ac),var(--as));display:flex;align-items:center;justify-content:center;font-family:var(--f);font-weight:800;font-size:14px;letter-spacing:-.02em;color:var(--bg);box-shadow:0 4px 24px rgba(0,212,255,.3),0 0 0 1px rgba(0,212,255,.15);flex-shrink:0}
+.lt{font-family:var(--f);font-weight:700;font-size:22px;letter-spacing:-.03em;color:var(--tp);line-height:1}
+.lt span{color:var(--ac)}
+.lis{width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,var(--ac),var(--as));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;letter-spacing:-.02em;color:var(--bg);flex-shrink:0;box-shadow:0 2px 12px rgba(0,212,255,.2)}
+.lts{font-family:var(--f);font-weight:700;font-size:16px;letter-spacing:-.03em;color:var(--tp);line-height:1}
+.lts span{color:var(--ac)}
+.ltag{font-family:var(--m);font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--tm);margin-top:6px}
+.lcard{background:rgba(18,19,30,.92);border:1px solid var(--bd);border-radius:20px;padding:32px;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:0 0 0 1px rgba(0,212,255,.04),0 32px 64px rgba(0,0,0,.6),0 0 80px rgba(0,212,255,.04)}
+.lcard h2{font-family:var(--f);font-weight:700;font-size:24px;letter-spacing:-.03em;color:var(--tp);margin-bottom:4px}
+.lcard>p{font-size:12px;color:var(--ts);margin-bottom:24px}
+.fg{margin-bottom:16px}
+.fg label{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--tm);margin-bottom:8px}
+.fg input{width:100%;background:var(--bg2);border:1px solid var(--bd);border-radius:10px;padding:12px 14px;font-family:var(--f);font-size:14px;color:var(--tp);outline:none;transition:border-color .2s,box-shadow .2s;-webkit-appearance:none;min-height:44px}
+.fg input:focus{border-color:var(--ac);box-shadow:0 0 0 3px var(--ag)}
+.fg input::placeholder{color:var(--tm)}
+.fr{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.fr label{margin-bottom:0}
+.fforg{font-size:11px;color:var(--ac);cursor:pointer;text-decoration:none;transition:opacity .2s}
+.fforg:hover{opacity:.7}
+.bsi{width:100%;min-height:48px;background:linear-gradient(135deg,var(--ac),var(--as));border:none;border-radius:10px;font-family:var(--f);font-weight:700;font-size:14px;letter-spacing:.01em;color:var(--bg);cursor:pointer;transition:all .25s var(--ee);box-shadow:0 4px 20px rgba(0,212,255,.25);margin-top:8px;-webkit-appearance:none}
+.bsi:hover{transform:translateY(-1px);box-shadow:0 8px 32px rgba(0,212,255,.35)}
+.bsi:active{transform:scale(.98)}
+.lfoot{display:flex;align-items:center;gap:8px;margin-top:20px;padding-top:16px;border-top:1px solid var(--bd)}
+.sdg{width:7px;height:7px;border-radius:50%;background:#22c55e;flex-shrink:0;box-shadow:0 0 6px rgba(34,197,94,.5)}
+.lfoot span{font-size:11px;color:var(--tm)}
+.lbot{text-align:center;margin-top:20px;font-family:var(--m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--tm)}
+.lbot a{color:var(--ac);text-decoration:none}
+
+/* APP */
+#app{display:none;flex-direction:column;min-height:100dvh}
+#app.v{display:flex}
+header{background:rgba(10,10,15,.92);border-bottom:1px solid var(--bd);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);height:var(--nh);padding:0 max(16px,env(safe-area-inset-left,0px)) 0 max(16px,env(safe-area-inset-left,0px));display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100}
+.nbrand{display:flex;align-items:center;gap:8px;margin-right:4px}
+#fpw{position:relative}
+.fb{display:flex;align-items:center;gap:8px;background:var(--bgc);border:1px solid var(--bd);border-radius:8px;padding:6px 10px;font-family:var(--f);font-size:11px;font-weight:600;color:var(--tp);cursor:pointer;transition:all .2s;min-height:32px}
+.fb:hover{border-color:var(--bh)}
+.fdot{width:6px;height:6px;border-radius:50%;background:var(--ac);flex-shrink:0;box-shadow:0 0 6px var(--ac)}
+.frsp{color:var(--tm);font-weight:400}
+.farr{color:var(--tm);font-size:9px}
+.fdd{display:none;position:absolute;top:calc(100% + 6px);left:0;background:var(--bgc);border:1px solid var(--bd);border-radius:14px;padding:8px 0;min-width:220px;z-index:200;box-shadow:0 24px 64px rgba(0,0,0,.6),0 0 0 1px rgba(0,212,255,.04)}
+.fdd.open{display:block}
+.fgl{padding:6px 14px 4px;font-family:var(--m);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--tm)}
+.fo{width:100%;text-align:left;display:flex;justify-content:space-between;align-items:center;padding:8px 14px;background:none;border:none;font-family:var(--f);font-size:13px;font-weight:500;color:var(--ts);cursor:pointer;transition:all .15s;min-height:36px}
+.fo:hover{background:var(--bgh);color:var(--tp)}
+.fo.ac{color:var(--ac);font-weight:600}
+.for_{font-family:var(--m);font-size:10px;color:var(--tm)}
+.pb{background:var(--bgc);border:1px solid var(--bd);border-radius:8px;padding:6px 10px;font-family:var(--m);font-size:10px;letter-spacing:.5px;color:var(--ts);cursor:pointer;transition:all .2s;white-space:nowrap;min-height:32px}
+.pb:hover{border-color:var(--bh);color:var(--tp)}
+.ab2{display:flex;align-items:center;gap:6px;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700;color:#f87171;animation:ap 2.5s ease-in-out infinite}
+@keyframes ap{0%,100%{opacity:1}50%{opacity:.65}}
+.abd{width:5px;height:5px;border-radius:50%;background:#f87171}
+.nr{margin-left:auto;display:flex;align-items:center;gap:10px}
+.av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--ac),var(--as));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:var(--bg);cursor:pointer;box-shadow:0 0 0 2px rgba(0,212,255,.2)}
+.nso{background:none;border:none;font-family:var(--f);font-size:11px;color:var(--tm);cursor:pointer;transition:color .2s;padding:4px}
+.nso:hover{color:var(--tp)}
+.abody{display:flex;flex:1;overflow:hidden;height:calc(100dvh - var(--nh))}
+aside{width:var(--sw);background:var(--bg2);border-right:1px solid var(--bd);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;padding:12px 0;padding-bottom:max(12px,env(safe-area-inset-bottom,0px))}
+.nb{width:100%;text-align:left;display:flex;align-items:center;gap:8px;padding:9px 12px 9px 14px;background:none;border:none;font-family:var(--f);font-size:12px;font-weight:500;color:var(--tm);cursor:pointer;transition:all .15s;min-height:38px;position:relative}
+.nb:hover{color:var(--ts);background:rgba(255,255,255,.03)}
+.nb.ac{color:var(--ac);font-weight:600;background:rgba(0,212,255,.07)}
+.nb.ac::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--ac);border-radius:0 2px 2px 0}
+.ni{width:16px;text-align:center;font-size:13px;flex-shrink:0}
+.nbg{margin-left:auto;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;padding:0 5px}
+.nbr{background:rgba(239,68,68,.2);color:#f87171;border:1px solid rgba(239,68,68,.3)}
+.nba{background:rgba(245,158,11,.2);color:#fbbf24;border:1px solid rgba(245,158,11,.3)}
+.si{margin-top:auto;padding:14px;border-top:1px solid var(--bd);font-family:var(--m);font-size:10px;line-height:1.7;color:var(--tm)}
+.si strong{color:var(--ts);font-weight:500}
+main{flex:1;overflow-y:auto;background:var(--bg);padding-bottom:max(16px,env(safe-area-inset-bottom,0px))}
+.pg{padding:20px 24px;animation:fu .25s var(--ee)}
+@keyframes fu{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.ph{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap}
+.pt{font-weight:700;font-size:16px;letter-spacing:-.02em;color:var(--tp)}
+.ps{font-family:var(--m);font-size:10px;letter-spacing:.5px;color:var(--tm);margin-top:3px}
+.pa{display:flex;gap:8px;flex-wrap:wrap}
+.bo{display:inline-flex;align-items:center;gap:6px;background:transparent;border:1px solid var(--bd);border-radius:8px;padding:7px 14px;font-family:var(--f);font-size:12px;font-weight:500;color:var(--ts);cursor:pointer;transition:all .2s;min-height:34px;white-space:nowrap}
+.bo:hover{border-color:var(--bh);color:var(--tp)}
+.bp{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--ac),var(--as));border:none;border-radius:8px;padding:7px 14px;font-family:var(--f);font-size:12px;font-weight:600;color:var(--bg);cursor:pointer;transition:all .2s var(--ee);min-height:34px;white-space:nowrap;box-shadow:0 2px 12px rgba(0,212,255,.2)}
+.bp:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,212,255,.3)}
+.abn{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.2);border-radius:12px;padding:12px 16px;margin-bottom:20px;display:flex;align-items:flex-start;gap:10px}
+.abic{color:#f87171;font-size:14px;flex-shrink:0;margin-top:1px}
+.abt{font-weight:700;font-size:12px;color:#f87171;margin-bottom:2px}
+.abb{font-size:11px;color:rgba(248,113,113,.8);line-height:1.5}
+.abcl{margin-left:auto;background:none;border:none;color:rgba(248,113,113,.5);cursor:pointer;font-size:14px;padding:2px 6px;flex-shrink:0;transition:color .2s}
+.abcl:hover{color:#f87171}
+.kg{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.kc{background:var(--bgc);border:1px solid var(--bd);border-radius:14px;padding:16px;transition:border-color .2s;position:relative;overflow:hidden}
+.kc::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--ac),transparent);opacity:0;transition:opacity .3s}
+.kc:hover{border-color:var(--bh)}
+.kc:hover::before{opacity:1}
+.kl{font-size:11px;color:var(--tm);margin-bottom:8px;font-weight:500}
+.kv{font-size:26px;font-weight:700;letter-spacing:-.03em;color:var(--tp);line-height:1;margin-bottom:8px}
+.kf{display:flex;justify-content:space-between;align-items:center}
+.ks{font-size:10px;color:var(--tm)}
+.ch{padding:2px 8px;border-radius:20px;font-family:var(--m);font-size:9px;font-weight:600;letter-spacing:1px;text-transform:uppercase;border:1px solid}
+.cg{background:rgba(34,197,94,.1);color:#4ade80;border-color:rgba(34,197,94,.25)}
+.ca{background:rgba(245,158,11,.1);color:#fbbf24;border-color:rgba(245,158,11,.25)}
+.cr{background:rgba(239,68,68,.1);color:#f87171;border-color:rgba(239,68,68,.25)}
+.cm{background:rgba(255,255,255,.05);color:var(--tm);border-color:var(--bd)}
+.cc{background:rgba(0,212,255,.1);color:var(--ac);border-color:rgba(0,212,255,.25)}
+.tc{background:var(--bgc);border:1px solid var(--bd);border-radius:14px;overflow:hidden}
+.th2{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--bd);flex-wrap:wrap;gap:10px}
+.tt{font-weight:700;font-size:13px;color:var(--tp)}
+.tsu{font-family:var(--m);font-size:10px;color:var(--tm);margin-top:2px}
+.fr2{display:flex;gap:6px;flex-wrap:wrap}
+.ftb{padding:5px 12px;border-radius:20px;font-family:var(--m);font-size:10px;font-weight:600;letter-spacing:.5px;background:transparent;border:1px solid var(--bd);color:var(--tm);cursor:pointer;transition:all .15s;min-height:28px}
+.ftb:hover{border-color:var(--bh);color:var(--ts)}
+.fta{background:var(--ac);border-color:var(--ac);color:var(--bg)}
+.ftg{background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.3);color:#4ade80}
+.fam{background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.3);color:#fbbf24}
+.frd{background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.3);color:#f87171}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead tr{background:var(--bg2)}
+th{padding:10px 14px;text-align:left;font-family:var(--m);font-size:9px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--tm);border-bottom:1px solid var(--bd);white-space:nowrap;user-select:none}
+th.sr{cursor:pointer;transition:color .15s}
+th.sr:hover{color:var(--ac)}
+th.tr{text-align:right}
+tbody tr{border-bottom:1px solid rgba(255,255,255,.03);transition:background .15s}
+tbody tr:hover{background:var(--bgh)}
+tbody tr.rr{background:rgba(239,68,68,.04)}
+tbody tr.rr:hover{background:rgba(239,68,68,.08)}
+td{padding:10px 14px;color:var(--ts);white-space:nowrap;vertical-align:middle}
+td.tr{text-align:right}
+td.mo{font-family:var(--m)}
+td.bo{color:var(--tp);font-weight:600}
+tfoot tr{background:var(--bg2);border-top:2px solid rgba(0,212,255,.15)}
+tfoot td{font-weight:700;font-size:12px;color:var(--tp);padding:10px 14px}
+.tfb{display:flex;justify-content:space-between;align-items:center;padding:10px 18px;border-top:1px solid var(--bd)}
+.tfb span{font-family:var(--m);font-size:10px;color:var(--tm)}
+.la{background:none;border:none;cursor:pointer;font-family:var(--f);font-size:11px;color:var(--ac);transition:opacity .2s}
+.la:hover{opacity:.7}
+.sw{display:flex;align-items:center;gap:7px}
+.sd{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.sg{background:#4ade80;box-shadow:0 0 6px rgba(74,222,128,.5)}
+.sa{background:#fbbf24;box-shadow:0 0 6px rgba(251,191,36,.5)}
+.srd{background:#f87171;box-shadow:0 0 6px rgba(248,113,113,.5)}
+.eg{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.ec{background:var(--bgc);border:1px solid var(--bd);border-radius:14px;padding:16px;text-align:center}
+.ev{font-size:28px;font-weight:700;letter-spacing:-.03em;margin-bottom:4px}
+.el{font-family:var(--m);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--tm)}
+.plb{background:var(--bgc);border:1px solid var(--bd);border-radius:14px;padding:56px 32px;text-align:center;color:var(--tm)}
+.pli{font-size:40px;margin-bottom:16px;opacity:.4}
+.plt{font-weight:600;font-size:14px;color:var(--ts);margin-bottom:8px}
+.pls{font-family:var(--m);font-size:10px;letter-spacing:.5px}
+.bg2{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.ct{background:var(--bgc);border:1px solid var(--bd);border-radius:14px;overflow:hidden}
+.sg2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.sc2{background:var(--bgc);border:1px solid var(--bd);border-radius:14px;padding:20px}
+.sc2 h3{font-weight:700;font-size:13px;margin-bottom:16px;color:var(--tp)}
+.sr2{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--bd);font-size:12px}
+.sr2:last-child{border-bottom:none}
+.sk{color:var(--tm);font-family:var(--m);font-size:10px;letter-spacing:.5px}
+.sv{color:var(--tp);font-weight:600}
+.rr2{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:12px}
+.rz{font-family:var(--m);font-size:10px;color:var(--ts)}
+.rp{font-family:var(--m);font-size:10px;color:#fbbf24}
+.rg{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.rc{background:var(--bgc);border:1px solid var(--bd);border-radius:14px;padding:20px;transition:all .3s var(--ee);cursor:pointer}
+.rc:hover{border-color:var(--bh);transform:translateY(-2px)}
+.rico{font-size:28px;margin-bottom:12px}
+.rtl{font-weight:700;font-size:13px;color:var(--tp);margin-bottom:8px}
+.rde{font-size:12px;color:var(--tm);line-height:1.6;margin-bottom:16px}
+.mo2{display:none;position:fixed;inset:0;z-index:500;background:rgba(10,10,15,.8);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:16px}
+.mo2.open{display:flex}
+.mb{background:var(--bgc);border:1px solid var(--bd);border-radius:20px;padding:24px;width:100%;max-width:380px;box-shadow:0 32px 80px rgba(0,0,0,.7);animation:fu .25s var(--ee)}
+.mt{font-weight:700;font-size:14px;color:var(--tp);margin-bottom:6px}
+.ms{font-size:11px;color:var(--tm);margin-bottom:20px}
+.mr{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.mf label{display:block;font-family:var(--m);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--tm);margin-bottom:6px}
+.mf input[type=date]{width:100%;background:var(--bg2);border:1px solid var(--bd);border-radius:8px;padding:8px 10px;font-family:var(--f);font-size:12px;color:var(--tp);outline:none;transition:border-color .2s;min-height:36px;-webkit-appearance:none;color-scheme:dark}
+.mf input[type=date]:focus{border-color:var(--ac)}
+.mp{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap}
+.prb{flex:1;min-width:70px;padding:6px 10px;background:var(--bg2);border:1px solid var(--bd);border-radius:8px;font-family:var(--m);font-size:10px;color:var(--tm);cursor:pointer;transition:all .15s;text-align:center}
+.prb:hover{border-color:var(--bh);color:var(--tp)}
+.mac{display:flex;gap:8px}
+.mac .bo,.mac .bp{flex:1;justify-content:center}
+#cp{display:none;position:absolute;top:calc(100% + 6px);right:0;background:var(--bgc);border:1px solid var(--bd);border-radius:14px;padding:14px;min-width:200px;z-index:300;box-shadow:0 24px 64px rgba(0,0,0,.5)}
+#cp.open{display:block;animation:fu .2s var(--ee)}
+#cp h4{font-family:var(--m);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--tm);margin-bottom:12px}
+.ccr{display:flex;align-items:center;gap:8px;padding:5px 0;cursor:pointer;font-size:12px;color:var(--ts);user-select:none}
+.ccr input[type=checkbox]{accent-color:var(--ac);width:14px;height:14px}
+.thw{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:inherit}
+.rh{position:absolute;right:0;top:0;bottom:0;width:6px;cursor:col-resize;background:transparent;transition:background .15s;z-index:2}
+.rh:hover,.rh.dr{background:rgba(0,212,255,.3)}
+.an{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.2);border-radius:12px;padding:14px 18px;margin-bottom:20px}
+.ant{font-weight:700;font-size:12px;color:#fbbf24;margin-bottom:3px}
+.anb{font-size:11px;color:rgba(251,191,36,.7)}
+.hidden{display:none!important}
+@media(max-width:1100px){.kg{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:900px){.eg{grid-template-columns:repeat(2,1fr)}.sg2{grid-template-columns:1fr}.rg{grid-template-columns:1fr}.bg2{grid-template-columns:1fr}}
+@media(max-width:768px){aside{width:44px}.nb span:not(.ni){display:none}.nb{padding:9px;justify-content:center}.nb.ac::before{display:none}.pg{padding:14px 12px}.kg{grid-template-columns:1fr 1fr;gap:8px}.kv{font-size:22px}}
+/* EXPORT MODAL */
+.exm{display:none;position:fixed;inset:0;z-index:600;background:rgba(10,10,15,.85);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);align-items:center;justify-content:center;padding:16px}
+.exm.open{display:flex}
+.exb{background:var(--bgc);border:1px solid var(--bd);border-radius:20px;padding:28px;width:100%;max-width:520px;box-shadow:0 40px 100px rgba(0,0,0,.8);animation:fu .25s var(--ee)}
+.exb h3{font-weight:700;font-size:15px;color:var(--tp);margin-bottom:4px;letter-spacing:-.02em}
+.exb>p{font-size:11px;color:var(--tm);margin-bottom:20px;font-family:var(--m);letter-spacing:.3px}
+.ex-presets{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}
+.ex-pre{padding:5px 12px;border-radius:8px;border:1px solid var(--bd);background:var(--bg2);font-family:var(--m);font-size:10px;color:var(--tm);cursor:pointer;transition:all .15s}
+.ex-pre:hover{border-color:var(--bh);color:var(--tp)}
+.ex-pre.sel{background:rgba(0,212,255,.12);border-color:rgba(0,212,255,.4);color:var(--ac)}
+.ex-sec{margin-bottom:16px}
+.ex-sec-t{font-family:var(--m);font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--tm);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--bd)}
+.ex-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.ex-cb{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;cursor:pointer;font-size:12px;color:var(--ts);user-select:none;transition:background .1s}
+.ex-cb:hover{background:var(--bgh)}
+.ex-cb input[type=checkbox]{accent-color:var(--ac);width:14px;height:14px;flex-shrink:0}
+.ex-cb span{line-height:1.3}
+.ex-fmt{display:flex;gap:8px;margin-bottom:20px}
+.ex-fopt{flex:1;padding:10px;border:1px solid var(--bd);border-radius:10px;background:var(--bg2);text-align:center;cursor:pointer;transition:all .15s}
+.ex-fopt:hover{border-color:var(--bh)}
+.ex-fopt.sel{border-color:rgba(0,212,255,.5);background:rgba(0,212,255,.08)}
+.ex-fopt .ico{font-size:20px;margin-bottom:4px}
+.ex-fopt .flab{font-weight:600;font-size:11px;color:var(--tp)}
+.ex-fopt .fsub{font-family:var(--m);font-size:9px;color:var(--tm);margin-top:2px}
+.ex-actions{display:flex;gap:8px;margin-top:4px}
+.ex-actions .bo,.ex-actions .bp{flex:1;justify-content:center}
+
+/* ── KPI Info Buttons ── */
+.ki-wrap{position:relative;display:inline-flex;align-items:center;gap:0}
+.ki-btn{display:inline-flex;align-items:center;justify-content:center;width:13px;height:13px;border-radius:50%;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:#f87171;font-size:7.5px;font-weight:700;cursor:pointer;margin-left:4px;vertical-align:middle;font-family:var(--m);transition:all .18s;flex-shrink:0;line-height:1;padding:0;font-style:normal}
+.ki-btn:hover{background:rgba(239,68,68,.22);border-color:rgba(239,68,68,.55);box-shadow:0 0 8px rgba(239,68,68,.2)}
+.ki-tip{display:none;position:absolute;z-index:500;top:50%;left:calc(100% + 10px);transform:translateY(-50%);background:rgba(12,13,22,.97);border:1px solid rgba(239,68,68,.25);border-radius:12px;padding:12px 14px;width:230px;font-size:11px;line-height:1.55;color:rgba(255,255,255,.82);box-shadow:0 12px 40px rgba(0,0,0,.65),0 0 0 1px rgba(239,68,68,.06);pointer-events:none;font-family:var(--f);white-space:normal}
+.ki-tip::before{content:'';position:absolute;top:50%;right:100%;transform:translateY(-50%);border:5px solid transparent;border-right-color:rgba(239,68,68,.25)}
+.ki-tip strong{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:700;color:#f87171;margin-bottom:6px;letter-spacing:.01em}
+.ki-tip strong::before{content:'▲';font-size:7px;opacity:.7}
+.ki-tip .ki-desc{font-size:11px;color:rgba(255,255,255,.78);line-height:1.5;margin-bottom:6px}
+.ki-tip .ki-note{font-style:normal;font-family:var(--m);font-size:9px;letter-spacing:.5px;color:rgba(239,68,68,.6);padding-top:6px;border-top:1px solid rgba(239,68,68,.12);display:block}
+.ki-wrap:hover .ki-tip{display:block}
+/* Keep .kl text style unchanged when ki-wrap is child */
+.kl{font-size:11px;color:var(--tm);margin-bottom:8px;font-weight:500;display:flex;align-items:center}
+
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="ls">
+  <canvas id="lc"></canvas>
+  <div class="lcw">
+    <div class="lbrand">
+      <a class="llogo" href="#">
+        <div class="li">DH</div>
+        <div class="lt">Drive<span>Hub</span></div>
+      </a>
+      <p class="ltag">Accounting module for DSP-partners</p>
+    </div>
+    <div class="lcard">
+      <h2>Sign in</h2>
+      <p>Access to your dashboard</p>
+      <div class="fg">
+        <label>Email address</label>
+        <input id="em" type="email" value="accountant@woodhub.info" placeholder="you@example.com"/>
+      </div>
+      <div class="fg">
+        <div class="fr"><label>Password</label><a class="fforg" href="#">Forgot password?</a></div>
+        <input type="password" value="password" placeholder="••••••••"/>
+      </div>
+      <button class="bsi" onclick="doLogin()">Sign in to Drivehub</button>
+      <div class="lfoot"><div class="sdg"></div><span>Secured by Supabase Auth · TLS 1.3</span></div>
+    </div>
+    <p class="lbot">Powered by <a href="https://onroute.express">Drivehub&nbsp;Inc.&nbsp;for&nbsp;OnRoute.express</a> &nbsp;·&nbsp; DSP-Partner of Drivehub Inc.</p>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <header>
+    <div class="nbrand"><div class="lis">DH</div><div class="lts">Drive<span>Hub</span></div></div>
+    <div id="fpw">
+      <button class="fb" onclick="toggleFac()">
+        <div class="fdot"></div><span id="facLabel">Pittsburgh</span>
+        <span class="frsp" id="facRSP">RSP 1480</span><span class="farr">▾</span>
+      </button>
+      <div class="fdd" id="fdd">
+        <div class="fgl">Upstate</div>
+        <button class="fo ac" onclick="selectFac(event,'Pittsburgh','1480')">Pittsburgh<span class="for_">1480</span></button>
+        <button class="fo" onclick="selectFac(event,'Cleveland','1796')">Cleveland<span class="for_">1796</span></button>
+        <button class="fo" onclick="selectFac(event,'Meadville','608')">Meadville<span class="for_">608</span></button>
+        <div class="fgl" style="margin-top:4px">Midwest</div>
+        <button class="fo" onclick="selectFac(event,'Chicago','418')">Chicago<span class="for_">418</span></button>
+        <button class="fo" onclick="selectFac(event,'North Chicago','892')">North Chicago<span class="for_">892</span></button>
+        <button class="fo" onclick="selectFac(event,'Gary','742')">Gary<span class="for_">742</span></button>
+        <button class="fo" onclick="selectFac(event,'Madison','437')">Madison<span class="for_">437</span></button>
+        <button class="fo" onclick="selectFac(event,'Milwaukee','504')">Milwaukee<span class="for_">504</span></button>
+        <button class="fo" onclick="selectFac(event,'Toledo','764')">Toledo<span class="for_">764</span></button>
+        <button class="fo" onclick="selectFac(event,'Detroit','3220')">Detroit<span class="for_">3220</span></button>
+        <div class="fgl" style="margin-top:4px">Southeast</div>
+        <button class="fo" onclick="selectFac(event,'Atlanta','5581')">Atlanta<span class="for_">5581</span></button>
+      </div>
+    </div>
+    <button class="pb" onclick="openPeriod()" id="pb">&#128197; Feb 2 &#8211; Mar 2, 2026</button>
+    <div class="nr">
+      <div class="ab2" onclick="setNav('alerts')" style="cursor:pointer" title="View alert details"><div class="abd"></div>1 Alert</div>
+      <div class="av" title="Account settings" id="av-btn" onclick="setNav('account')" style="cursor:pointer">A</div>
+      <button class="nso" onclick="doLogout()">Sign out</button>
+    </div>
+  </header>
+  <div class="abody">
+    <aside>
+      <nav>
+        <button class="nb" id="n-alerts" style="display:none" onclick="setNav('alerts')"></button>
+        <button class="nb ac" id="n-dashboard" onclick="setNav('dashboard')"><span class="ni">&#8862;</span><span>Dashboard</span></button>
+        <button class="nb" id="n-exceptions" onclick="setNav('exceptions')"><span class="ni">&#9888;</span><span>Exceptions</span></button>
+        <button class="nb" id="n-billing" onclick="setNav('billing')"><span class="ni">$</span><span>Billing</span></button>
+        <button class="nb" id="n-claims" onclick="setNav('claims')"><span class="ni">&#128737;</span><span>Claims</span><span class="nbg nbr">16</span></button>
+        <button class="nb" id="n-disputes" onclick="setNav('disputes')"><span class="ni">&#9878;</span><span>Disputes</span><span class="nbg nba">36</span></button>
+        <button class="nb" id="n-analytics" onclick="setNav('analytics')"><span class="ni">&#128200;</span><span>Analytics</span></button>
+        <button class="nb" id="n-reports" onclick="setNav('reports')"><span class="ni">&#128228;</span><span>Reports</span></button>
+        <button class="nb" id="n-settings" onclick="setNav('settings')"><span class="ni">&#9881;</span><span>Settings</span></button>
+      </nav>
+      <div class="si">RSP <strong id="sideRSP">1480</strong><br/><strong id="sideFac">Pittsburgh</strong><br/>CHYZHYK, Y.</div>
+    </aside>
+    <main>
+
+      <!-- DASHBOARD -->
+      <div id="p-dashboard" class="pg">
+        <div class="ph">
+          <div><div class="pt">Dashboard &#8212; <span id="dfn">Facility "Pittsburgh" (code — 1480)</span></div><div class="ps" id="dps">Feb 2&#8211;Mar 2 2026 &middot; 16 SPs &middot; 9 Territories &middot; RSP 1480</div></div>
+          <div class="pa"><button class="bo" onclick="openExport()">&#8593; Export XLS</button><button class="bp">+ Import FasTrack</button></div>
+        </div>
+        <div class="abn" id="abn" style="cursor:pointer" onclick="openAlertCtx(event)" title="Click for details">
+          <div class="abic">&#9888;</div>
+          <div><div class="abt">Action Required &#8212; SP 1480 / Territory 9 (ZIP 15280&#8211;99)</div><div class="abb">84 SP Lates &middot; 303 Incomplete D1 &middot; 300 Incomplete D2 &middot; Customer OTP 0.3% &#8212; accounts for 78% of all D1 failures this period.</div></div>
+          <button class="abcl" onclick="event.stopPropagation();this.closest('.abn').style.display='none'">&#10005;</button>
+        </div>
+        <!-- Alert context popup -->
+        <div id="alert-ctx" style="display:none;position:fixed;z-index:600;background:rgba(12,13,22,.97);border:1px solid rgba(239,68,68,.3);border-radius:16px;padding:20px;width:340px;box-shadow:0 20px 60px rgba(0,0,0,.7),0 0 0 1px rgba(239,68,68,.08);font-family:var(--f)">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+            <div style="width:28px;height:28px;border-radius:50%;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.35);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">⚠</div>
+            <div>
+              <div style="font-weight:700;font-size:13px;color:#ffffff">SP 1480 — Territory 9</div>
+              <div style="font-size:10px;color:rgba(239,68,68,.75);font-family:var(--m);letter-spacing:.5px;margin-top:1px">ACTION REQUIRED · ZIP 15280–99</div>
+            </div>
+            <button onclick="closeAlertCtx()" style="margin-left:auto;background:none;border:none;color:rgba(255,255,255,.3);cursor:pointer;font-size:14px;padding:0 4px">✕</button>
+          </div>
+          <div style="border-top:1px solid rgba(255,255,255,.06);padding-top:14px;display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:flex-start;gap:10px">
+              <span style="font-size:9px;font-family:var(--m);letter-spacing:1px;color:rgba(239,68,68,.7);padding-top:2px;min-width:60px">CAUSE</span>
+              <span style="font-size:12px;color:rgba(255,255,255,.82);line-height:1.5">SP 1480 accounts for <strong style="color:#f87171">78% of all D1 failures</strong> this period. Customer OTP of 0.3% is critically below the 90% threshold.</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px">
+              <span style="font-size:9px;font-family:var(--m);letter-spacing:1px;color:rgba(251,191,36,.7);padding-top:2px;min-width:60px">METRICS</span>
+              <div style="font-size:11px;color:rgba(255,255,255,.65);line-height:1.8">
+                84 SP Lates &nbsp;·&nbsp; 303 Incomplete D1<br/>
+                300 Incomplete D2 &nbsp;·&nbsp; OTP 0.3%
+              </div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px">
+              <span style="font-size:9px;font-family:var(--m);letter-spacing:1px;color:rgba(167,139,250,.7);padding-top:2px;min-width:60px">SOLUTION</span>
+              <span style="font-size:12px;color:rgba(255,255,255,.82);line-height:1.5">Review the SP Performance table and Exception Register. Consider issuing a corrective action notice to SP 1480.</span>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:16px;border-top:1px solid rgba(255,255,255,.06);padding-top:14px">
+            <button onclick="setNav('exceptions');closeAlertCtx()" style="flex:1;padding:8px;border-radius:8px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.25);color:#f87171;font-family:var(--f);font-size:11px;font-weight:600;cursor:pointer">→ Exception Register</button>
+            <button onclick="setNav('dashboard');closeAlertCtx();document.getElementById('f-red').click()" style="flex:1;padding:8px;border-radius:8px;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.3);color:#ede9fe;font-family:var(--f);font-size:11px;font-weight:600;cursor:pointer">→ Filter: Alert SPs</button>
+          </div>
+        </div>
+        <div class="kg">
+          <div class="kc"><div class="kl"><span class="ki-wrap">Total Volume<button class="ki-btn" aria-label="Info">i</button><div class="ki-tip"><strong>Total Volume</strong><span class="ki-desc">Total packages inducted into the DSP network this period.</span><span class="ki-note">Source: FasTrack · Sheet "Induction"</span></div></span></div><div class="kv">27,062</div><div class="kf"><span class="ks">packages inducted</span></div></div>
+          <div class="kc"><div class="kl"><span class="ki-wrap">Delivery Stops<button class="ki-btn" aria-label="Info">i</button><div class="ki-tip"><strong>Delivery Stops</strong><span class="ki-desc">Physical delivery attempts by DSP drivers. One stop may serve multiple packages.</span><span class="ki-note">Source: FasTrack · Sheet "Stops"</span></div></span></div><div class="kv">25,203</div><div class="kf"><span class="ks">physical attempts</span></div></div>
+          <div class="kc"><div class="kl"><span class="ki-wrap">LOS Rate<button class="ki-btn" aria-label="Info">i</button><div class="ki-tip"><strong>LOS Rate</strong><span class="ki-desc">Level of Service — % packages delivered within the contracted window.</span><span class="ki-note">Target: ≥ 98.0% · Penalty threshold: &lt;97%</span></div></span></div><div class="kv" style="color:var(--ac)">98.5%</div><div class="kf"><span class="ki-wrap" style="display:inline-flex;align-items:center"><span class="ks">level of service</span><button class="ki-btn" aria-label="Info">i</button><div class="ki-tip"><strong>Level of Service</strong><span class="ki-desc">PASS = LOS above 98% threshold. Below 98% triggers a performance notice from OnTrac.<span class="ki-note">Threshold per RSP/OnTrac SLA</span></div></span><span class="ch cg">PASS</span></div></div>
+          <div class="kc"><div class="kl"><span class="ki-wrap">Customer OTP<button class="ki-btn" aria-label="Info">i</button><div class="ki-tip"><strong>Customer OTP</strong><span class="ki-desc">On-Time Performance from the customer's perspective, all attempts included.</span><span class="ki-note">Target: ≥ 90.0% · WATCH zone: 85–90%</span></div></span></div><div class="kv" style="color:#fbbf24">88.3%</div><div class="kf"><span class="ki-wrap" style="display:inline-flex;align-items:center"><span class="ks">on-time delivery</span><button class="ki-btn" aria-label="Info">i</button><div class="ki-tip"><strong>On-Time Delivery</strong><span class="ki-desc">WATCH = OTP between 85–90%. Sustained below 85% triggers financial penalties.<span class="ki-note">Penalty threshold: &lt;85% two consecutive periods</span></div></span><span class="ch ca">WATCH</span></div></div>
+          <div class="kc"><div class="kl"><span class="ki-wrap">Billable Volume<button class="ki-btn" aria-label="Info">i</button><div class="ki-tip"><strong>Billable Volume</strong><span class="ki-desc">Packages eligible for SP billing after removing excused exceptions.</span><span class="ki-note">Excludes: Bad Weather · Before Cutoff</span></div></span></div><div class="kv">27,017</div><div class="kf"><span class="ks">after exceptions</span></div></div>
+          <div class="kc"><div class="kl"><span class="ki-wrap">Lost (SP)<button class="ki-btn" aria-label="Info">i</button><div class="ki-tip"><strong>Lost (SP)</strong><span class="ki-desc">Packages confirmed lost while in SP custody. Each triggers an insurance claim.</span><span class="ki-note">Action: File claim via OnTrac portal</span></div></span></div><div class="kv" style="color:#f87171">16</div><div class="kf"><span class="ks">SP-custody losses</span><span class="ch cr">CLAIM</span></div></div>
+          <div class="kc"><div class="kl"><span class="ki-wrap">Bad Weather<button class="ki-btn" aria-label="Info">i</button><div class="ki-tip"><strong>Bad Weather</strong><span class="ki-desc">Force-majeure holds — packages undelivered due to weather events. Not billable to SP.</span><span class="ki-note">Excused per OnTrac SLA § 4.2</span></div></span></div><div class="kv">284</div><div class="kf"><span class="ks">force-majeure holds</span><span class="ch cm">EXCUSED</span></div></div>
+          <div class="kc"><div class="kl"><span class="ki-wrap">Incomplete D1+D2<button class="ki-btn" aria-label="Info">i</button><div class="ki-tip"><strong>Incomplete D1+D2</strong><span class="ki-desc">Packages failing both first (D1) and second (D2) delivery attempt.</span><span class="ki-note">High count = SP performance issue · Review required</span></div></span></div><div class="kv" style="color:#fbbf24">742</div><div class="kf"><span class="ks">failed / escalated</span><span class="ch ca">REVIEW</span></div></div>
+        </div>
+        <div class="tc">
+          <div class="th2">
+            <div><div class="tt">SP Performance Table</div><div class="tsu">16 Sub DSP-partners &middot; Click headers to sort</div></div>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <div class="fr2">
+                <button class="ftb fta" onclick="filterSP('all')" id="f-all">All</button>
+                <button class="ftb" onclick="filterSP('green')" id="f-green">&#10003; OK</button>
+                <button class="ftb" onclick="filterSP('amber')" id="f-amber">&#9888; Watch</button>
+                <button class="ftb" onclick="filterSP('red')" id="f-red">&#10005; Alert</button>
+              </div>
+              <div style="position:relative">
+                <button class="bo" style="font-size:11px;padding:5px 10px" onclick="toggleColPanel()">&#8862; Columns</button>
+                <div id="cp"><h4>Show / Hide Columns</h4><div id="ccl"></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="tw"><table id="spt"><thead><tr id="sph"></tr></thead><tbody id="spb"></tbody>
+            <tfoot><tr>
+              <td colspan="3" class="mo" style="font-size:11px;color:var(--tm)">RSP TOTAL &middot; 16 SPs</td>
+              <td class="tr bo">27,062</td>
+              <td class="tr" style="color:var(--ac);font-weight:700">98.5%</td>
+              <td class="tr" style="color:#fbbf24;font-weight:700">88.3%</td>
+              <td class="tr" style="color:#fbbf24;font-weight:700">381</td>
+              <td class="tr" style="color:#fbbf24;font-weight:700">361</td>
+              <td class="tr" style="color:#f87171;font-weight:700">16</td>
+              <td class="tr" style="color:#f87171;font-weight:700">84</td>
+            </tr></tfoot>
+          </table></div>
+          <div class="tfb"><span id="tc2">Showing 16 of 16 SPs</span><button class="la" onclick="openExport()">Export table &#8594;</button></div>
+        </div>
+      </div>
+
+
+      <!-- ALERTS -->
+      <div id="p-alerts" class="pg hidden">
+        <div class="ph">
+          <div>
+            <div class="pt">⚠ Active Alert — SP 1480 / Territory 9</div>
+            <div class="ps">Detected Feb 2–Mar 2 2026 · ZIP 15280–99 · Priority: Critical</div>
+          </div>
+          <button class="bo" onclick="setNav('dashboard')" style="flex-shrink:0">← Back to Dashboard</button>
+        </div>
+
+        <!-- Alert summary card -->
+        <div style="background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.25);border-radius:16px;padding:20px 24px;margin-bottom:20px">
+          <div style="display:flex;align-items:flex-start;gap:14px">
+            <div style="width:36px;height:36px;border-radius:50%;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.35);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">⚠</div>
+            <div style="flex:1">
+              <div style="font-weight:700;font-size:15px;color:#f87171;margin-bottom:4px">Action Required — SP 1480</div>
+              <div style="font-size:12px;color:rgba(248,113,113,.75);line-height:1.6">
+                SP 1480 (ZIP 15280–99) accounts for <strong style="color:#f87171">78% of all D1 failures</strong> this period and shows a Customer OTP of 0.3% — critically below the 90% threshold. This combination triggers an automatic performance alert under OnTrac SLA § 7.1.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metrics grid -->
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px">
+          <div style="background:var(--bgc);border:1px solid rgba(239,68,68,.2);border-radius:14px;padding:16px;text-align:center">
+            <div style="font-size:26px;font-weight:700;color:#f87171;letter-spacing:-.03em;margin-bottom:4px">0.3%</div>
+            <div style="font-size:10px;font-family:var(--m);letter-spacing:1px;color:rgba(239,68,68,.6);text-transform:uppercase">Customer OTP</div>
+          </div>
+          <div style="background:var(--bgc);border:1px solid rgba(239,68,68,.2);border-radius:14px;padding:16px;text-align:center">
+            <div style="font-size:26px;font-weight:700;color:#f87171;letter-spacing:-.03em;margin-bottom:4px">303</div>
+            <div style="font-size:10px;font-family:var(--m);letter-spacing:1px;color:rgba(239,68,68,.6);text-transform:uppercase">Incomplete D1</div>
+          </div>
+          <div style="background:var(--bgc);border:1px solid rgba(239,68,68,.2);border-radius:14px;padding:16px;text-align:center">
+            <div style="font-size:26px;font-weight:700;color:#f87171;letter-spacing:-.03em;margin-bottom:4px">300</div>
+            <div style="font-size:10px;font-family:var(--m);letter-spacing:1px;color:rgba(239,68,68,.6);text-transform:uppercase">Incomplete D2</div>
+          </div>
+          <div style="background:var(--bgc);border:1px solid rgba(239,68,68,.2);border-radius:14px;padding:16px;text-align:center">
+            <div style="font-size:26px;font-weight:700;color:#f87171;letter-spacing:-.03em;margin-bottom:4px">84</div>
+            <div style="font-size:10px;font-family:var(--m);letter-spacing:1px;color:rgba(239,68,68,.6);text-transform:uppercase">SP Lates</div>
+          </div>
+        </div>
+
+        <!-- Cause & solution -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
+          <div style="background:var(--bgc);border:1px solid var(--bd);border-radius:14px;padding:20px">
+            <div style="font-size:9px;font-family:var(--m);letter-spacing:2px;text-transform:uppercase;color:rgba(239,68,68,.6);margin-bottom:10px">Root Cause</div>
+            <ul style="list-style:none;display:flex;flex-direction:column;gap:8px">
+              <li style="display:flex;gap:8px;font-size:12px;color:rgba(255,255,255,.78)"><span style="color:#f87171;flex-shrink:0">▸</span>SP 1480 missed 303 out of ~3,966 D1 delivery attempts in territory ZIP 15280–99.</li>
+              <li style="display:flex;gap:8px;font-size:12px;color:rgba(255,255,255,.78)"><span style="color:#f87171;flex-shrink:0">▸</span>84 SP Lates recorded — driver punctuality is likely the primary factor.</li>
+              <li style="display:flex;gap:8px;font-size:12px;color:rgba(255,255,255,.78)"><span style="color:#f87171;flex-shrink:0">▸</span>LOS for this SP is 71.2% — well below the 98% SLA threshold.</li>
+            </ul>
+          </div>
+          <div style="background:var(--bgc);border:1px solid var(--bd);border-radius:14px;padding:20px">
+            <div style="font-size:9px;font-family:var(--m);letter-spacing:2px;text-transform:uppercase;color:rgba(167,139,250,.7);margin-bottom:10px">Recommended Actions</div>
+            <ul style="list-style:none;display:flex;flex-direction:column;gap:8px">
+              <li style="display:flex;gap:8px;font-size:12px;color:rgba(255,255,255,.78)"><span style="color:#a78bfa;flex-shrink:0">1.</span>Issue a Corrective Action Notice (CAN) to SP 1480 citing SLA § 7.1.</li>
+              <li style="display:flex;gap:8px;font-size:12px;color:rgba(255,255,255,.78)"><span style="color:#a78bfa;flex-shrink:0">2.</span>Review D1/D2 exception records for this territory in the Exception Register.</li>
+              <li style="display:flex;gap:8px;font-size:12px;color:rgba(255,255,255,.78)"><span style="color:#a78bfa;flex-shrink:0">3.</span>Consider temporary volume redistribution to neighboring SPs if not resolved within 5 business days.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- SLA reference & action buttons -->
+        <div style="background:var(--bgc);border:1px solid var(--bd);border-radius:14px;padding:16px 20px;margin-bottom:20px;font-size:11px;color:var(--tm);line-height:1.7">
+          <strong style="color:var(--ts);display:block;margin-bottom:4px">📋 SLA Reference</strong>
+          OnTrac RSP SLA § 7.1 — Performance Trigger: Any SP recording Customer OTP below 5% for a full 28-day period triggers mandatory review. RSP must document and submit a corrective action plan within 10 business days.
+        </div>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="bp" onclick="setNav('exceptions')">→ Exception Register</button>
+          <button class="bo" onclick="setNav('dashboard');setTimeout(()=>document.getElementById('f-red').click(),100)">→ Filter Alert SPs in Dashboard</button>
+          <button class="bo" style="color:#f87171;border-color:rgba(239,68,68,.25)">⬇ Export Alert Report</button>
+        </div>
+      </div>
+
+
+      <!-- ACCOUNT -->
+      <div id="p-account" class="pg hidden">
+        <div class="ph">
+          <div><div class="pt">My Account</div><div class="ps">Profile, preferences &amp; integrations</div></div>
+        </div>
+
+        <!-- Avatar upload -->
+        <div style="display:flex;align-items:flex-start;gap:24px;margin-bottom:24px;flex-wrap:wrap">
+          <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:12px">
+            <div id="av-preview" style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--ac),var(--as));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:28px;color:var(--bg);box-shadow:0 0 0 3px rgba(0,212,255,.2);overflow:hidden">
+              <span id="av-letter">A</span>
+              <img id="av-img" style="display:none;width:100%;height:100%;object-fit:cover" alt="Profile"/>
+            </div>
+            <label style="cursor:pointer;padding:6px 14px;border-radius:8px;border:1px solid var(--bd);background:var(--bg2);font-size:11px;color:var(--ts);font-family:var(--f);transition:all .2s" onmouseover="this.style.borderColor='rgba(167,139,250,.4)'" onmouseout="this.style.borderColor='var(--bd)'">
+              Upload photo
+              <input type="file" accept="image/*" style="display:none" onchange="loadAvatar(this)"/>
+            </label>
+          </div>
+
+          <!-- Profile fields -->
+          <div style="flex:1;min-width:260px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div class="fg"><label style="font-size:11px;color:var(--tm);font-family:var(--m);letter-spacing:.5px">FIRST NAME</label><input type="text" value="Yevhen" style="margin-top:6px"/></div>
+            <div class="fg"><label style="font-size:11px;color:var(--tm);font-family:var(--m);letter-spacing:.5px">LAST NAME</label><input type="text" value="Chyzhyk" style="margin-top:6px"/></div>
+            <div class="fg"><label style="font-size:11px;color:var(--tm);font-family:var(--m);letter-spacing:.5px">DATE OF BIRTH (DD.MM.YYYY)</label><input type="text" placeholder="dd.mm.yyyy" value="" style="margin-top:6px;font-family:var(--m)" maxlength="10" oninput="fmtDOB(this)"/></div>
+            <div class="fg"><label style="font-size:11px;color:var(--tm);font-family:var(--m);letter-spacing:.5px">GENDER</label>
+              <select style="margin-top:6px;width:100%;background:var(--bg2);border:1px solid var(--bd);border-radius:10px;padding:12px 14px;font-family:var(--f);font-size:14px;color:var(--tp);outline:none;min-height:44px;-webkit-appearance:none">
+                <option>Male</option><option>Female</option><option>Prefer not to say</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Settings sections -->
+        <div style="display:flex;flex-direction:column;gap:16px">
+
+          <!-- File path / Drive -->
+          <div style="background:var(--bgc);border:1px solid var(--bd);border-radius:14px;padding:20px">
+            <div style="font-weight:700;font-size:13px;color:#ffffff;margin-bottom:4px">📁 Reporting Files Source</div>
+            <div style="font-size:11px;color:var(--tm);margin-bottom:14px">Choose where Drivehub reads and saves reporting files</div>
+            <div style="display:flex;gap:8px;margin-bottom:12px">
+              <button id="src-pc" onclick="setSrc('pc')" style="flex:1;padding:9px;border-radius:9px;background:rgba(167,139,250,.14);border:1px solid rgba(167,139,250,.4);color:#ede9fe;font-family:var(--f);font-size:12px;font-weight:600;cursor:pointer">💻 Local PC path</button>
+              <button id="src-gd" onclick="setSrc('gd')" style="flex:1;padding:9px;border-radius:9px;background:var(--bg2);border:1px solid var(--bd);color:var(--ts);font-family:var(--f);font-size:12px;font-weight:600;cursor:pointer">📂 Google Drive folder</button>
+            </div>
+            <div id="src-pc-row" class="fg"><label style="font-size:11px;color:var(--tm);font-family:var(--m);letter-spacing:.5px">PATH ON PC</label><input type="text" placeholder="C:\Users\YChyzhyk\OneDrive\RSP Reports\" style="margin-top:6px;font-family:var(--m);font-size:12px"/></div>
+            <div id="src-gd-row" class="fg" style="display:none"><label style="font-size:11px;color:var(--tm);font-family:var(--m);letter-spacing:.5px">GOOGLE DRIVE FOLDER URL</label><input type="url" placeholder="https://drive.google.com/drive/folders/…" style="margin-top:6px;font-family:var(--m);font-size:12px"/></div>
+          </div>
+
+          <!-- Messaging integrations -->
+          <div style="background:var(--bgc);border:1px solid var(--bd);border-radius:14px;padding:20px">
+            <div style="font-weight:700;font-size:13px;color:#ffffff;margin-bottom:4px">💬 Corporate Messaging</div>
+            <div style="font-size:11px;color:var(--tm);margin-bottom:14px">Link messaging channels for corporate communications from the web interface</div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;border-radius:10px;background:var(--bg2);border:1px solid var(--bd)">
+                <div style="display:flex;align-items:center;gap:10px"><span style="font-size:18px">💚</span><div><div style="font-size:12px;font-weight:600;color:#ffffff">WhatsApp</div><div style="font-size:10px;color:var(--tm);font-family:var(--m)">Not connected</div></div></div>
+                <button style="padding:6px 14px;border-radius:8px;background:rgba(37,211,102,.12);border:1px solid rgba(37,211,102,.3);color:#4ade80;font-family:var(--f);font-size:11px;font-weight:600;cursor:pointer">Connect</button>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;border-radius:10px;background:var(--bg2);border:1px solid var(--bd)">
+                <div style="display:flex;align-items:center;gap:10px"><span style="font-size:18px">✈️</span><div><div style="font-size:12px;font-weight:600;color:#ffffff">Telegram</div><div style="font-size:10px;color:var(--tm);font-family:var(--m)">Not connected</div></div></div>
+                <button style="padding:6px 14px;border-radius:8px;background:rgba(0,136,204,.12);border:1px solid rgba(0,136,204,.3);color:#38bdf8;font-family:var(--f);font-size:11px;font-weight:600;cursor:pointer">Connect</button>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;border-radius:10px;background:var(--bg2);border:1px solid var(--bd)">
+                <div style="display:flex;align-items:center;gap:10px"><span style="font-size:18px">📧</span><div><div style="font-size:12px;font-weight:600;color:#ffffff">E-mail</div><div style="font-size:10px;color:var(--ac);font-family:var(--m)">accountant@woodhub.info</div></div></div>
+                <button style="padding:6px 14px;border-radius:8px;background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.25);color:var(--ac);font-family:var(--f);font-size:11px;font-weight:600;cursor:pointer">✓ Connected</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Report style -->
+          <div style="background:var(--bgc);border:1px solid var(--bd);border-radius:14px;padding:20px">
+            <div style="font-weight:700;font-size:13px;color:#ffffff;margin-bottom:4px">📄 Report Design &amp; Format</div>
+            <div style="font-size:11px;color:var(--tm);margin-bottom:14px">Choose how exported reports look and which file format to use</div>
+            <div style="margin-bottom:14px">
+              <div style="font-size:10px;font-family:var(--m);letter-spacing:1.5px;color:var(--tm);margin-bottom:8px">STYLE</div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <button onclick="setRStyle(this,'light')" style="padding:8px 16px;border-radius:9px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#ffffff;font-family:var(--f);font-size:12px;font-weight:600;cursor:pointer">☀ Light</button>
+                <button onclick="setRStyle(this,'dark')" style="padding:8px 16px;border-radius:9px;background:rgba(167,139,250,.14);border:1px solid rgba(167,139,250,.4);color:#ede9fe;font-family:var(--f);font-size:12px;font-weight:600;cursor:pointer">✦ In the style of the website</button>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:10px;font-family:var(--m);letter-spacing:1.5px;color:var(--tm);margin-bottom:8px">FORMAT</div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap" id="rfmt-group">
+                <button onclick="setRFmt(this,'.xls')"  style="padding:7px 14px;border-radius:8px;background:var(--bg2);border:1px solid var(--bd);color:var(--ts);font-family:var(--m);font-size:10px;cursor:pointer">.xls</button>
+                <button onclick="setRFmt(this,'.xlsx')" style="padding:7px 14px;border-radius:8px;background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.3);color:var(--ac);font-family:var(--m);font-size:10px;cursor:pointer;font-weight:700">.xlsx ✓</button>
+                <button onclick="setRFmt(this,'.doc')"  style="padding:7px 14px;border-radius:8px;background:var(--bg2);border:1px solid var(--bd);color:var(--ts);font-family:var(--m);font-size:10px;cursor:pointer">.doc</button>
+                <button onclick="setRFmt(this,'.docx')" style="padding:7px 14px;border-radius:8px;background:var(--bg2);border:1px solid var(--bd);color:var(--ts);font-family:var(--m);font-size:10px;cursor:pointer">.docx</button>
+                <button onclick="setRFmt(this,'.pdf')"  style="padding:7px 14px;border-radius:8px;background:var(--bg2);border:1px solid var(--bd);color:var(--ts);font-family:var(--m);font-size:10px;cursor:pointer">.pdf</button>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:8px">
+            <button class="bp" style="min-width:140px">Save changes</button>
+            <button class="bo" onclick="setNav('dashboard')">← Back to Dashboard</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- EXCEPTIONS -->
+      <div id="p-exceptions" class="pg hidden">
+        <div class="ph"><div><div class="pt">Exception Register</div><div class="ps">All 1,652 package-level exception records &middot; Pittsburgh &middot; Feb 2&#8211;Mar 2 2026</div></div></div>
+        <div class="eg">
+          <div class="ec"><div class="ev" style="color:#fbbf24">349</div><div class="el">OD Not Delivered</div></div>
+          <div class="ec"><div class="ev" style="color:#fbbf24">382</div><div class="el">Incomplete D1</div></div>
+          <div class="ec"><div class="ev" style="color:#fbbf24">362</div><div class="el">Incomplete D2</div></div>
+          <div class="ec"><div class="ev" style="color:#f87171">46</div><div class="el">Lost (SP + Delivery)</div></div>
+          <div class="ec"><div class="ev">284</div><div class="el">Bad Weather</div></div>
+          <div class="ec"><div class="ev">84</div><div class="el">SP Lates</div></div>
+          <div class="ec"><div class="ev">63</div><div class="el">Before Cutoff</div></div>
+          <div class="ec"><div class="ev">13</div><div class="el">Signature Missing</div></div>
+        </div>
+        <div class="plb"><div class="pli">&#128230;</div><div class="plt">Full exception register available in Sprint 4</div><div class="pls">Searchable by tracking ID, SP, territory, ZIP, exception type &middot; Export to CSV/XLS</div></div>
+      </div>
+
+      <!-- BILLING -->
+      <div id="p-billing" class="pg hidden">
+        <div class="ph"><div><div class="pt">Billing Module</div><div class="ps">SP payment statements &amp; RSP&#8594;OnTrac invoice &middot; Feb 2&#8211;Mar 2 2026</div></div></div>
+        <div class="bg2">
+          <div class="kc" style="border-color:rgba(0,212,255,.2)"><div class="kl"><span class="ki-wrap">Billable Volume<button class="ki-btn" aria-label="Info">i</button><div class="ki-tip"><strong>Billable Volume</strong><span class="ki-desc">Packages eligible for SP billing after removing excused exceptions.</span><span class="ki-note">Excludes: Bad Weather · Before Cutoff</span></div></span></div><div class="kv" style="color:var(--ac)">27,017</div><div class="kf"><span class="ks">packages &middot; after all exceptions</span></div></div>
+          <div class="kc"><div class="kl">Gross Revenue</div><div class="kv" style="color:var(--tm)">&#8212;</div><div class="kf"><span class="ks" style="color:#fbbf24">&#9888; Rate table pending (Sprint 5)</span></div></div>
+          <div class="kc" style="border-color:rgba(239,68,68,.2)"><div class="kl">Deductions</div><div class="kv" style="color:var(--tm)">&#8212;</div><div class="kf"><span class="ks">lost packages + SLA penalties</span></div></div>
+        </div>
+        <div class="plb"><div class="pli">&#128178;</div><div class="plt">Full billing module available in Sprint 5</div><div class="pls">SP payment statements &middot; RSP&#8594;OnTrac invoice PDF &middot; Rate table by ZIP territory</div></div>
+      </div>
+
+      <!-- CLAIMS -->
+      <div id="p-claims" class="pg hidden">
+        <div class="ph"><div><div class="pt">Claims Queue</div><div class="ps">16 Lost (SP) packages requiring insurance claim filing &middot; Pittsburgh</div></div></div>
+        <div class="ct"><table>
+          <thead><tr><th>Tracking ID</th><th>SP</th><th>ZIP Territory</th><th>City</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td class="mo" style="color:var(--ac)">1LSCXLNA033353244</td><td style="font-weight:700;color:var(--tp)">1480</td><td class="mo">15280-99</td><td>Pittsburgh, PA</td><td><span class="ch cr">OPEN</span></td><td><button class="la">File claim &#8594;</button></td></tr>
+            <tr><td class="mo" style="color:var(--ac)">C12847291038472</td><td style="font-weight:700;color:var(--tp)">1542</td><td class="mo">15240-49</td><td>Carnegie, PA</td><td><span class="ch ca">IN PROGRESS</span></td><td><button class="la">Update &#8594;</button></td></tr>
+            <tr><td class="mo" style="color:var(--ac)">1LSCXLNA044821901</td><td style="font-weight:700;color:var(--tp)">1480</td><td class="mo">15280-99</td><td>Pittsburgh, PA</td><td><span class="ch cr">OPEN</span></td><td><button class="la">File claim &#8594;</button></td></tr>
+            <tr><td class="mo" style="color:var(--ac)">D10192837461092</td><td style="font-weight:700;color:var(--tp)">1591</td><td class="mo">15360-79</td><td>Bethel Park, PA</td><td><span class="ch cg">RESOLVED</span></td><td><button class="la" style="color:var(--tm)">View &#8594;</button></td></tr>
+            <tr><td colspan="6" style="font-family:var(--m);font-size:10px;color:var(--tm);padding:14px">+ 12 more claims &middot; Full list available in Sprint 6</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+
+      <!-- DISPUTES -->
+      <div id="p-disputes" class="pg hidden">
+        <div class="ph"><div><div class="pt">Dispute Tracker</div><div class="ps">23 Delivered No OD + 13 Signature Missing = 36 potential shipper disputes</div></div></div>
+        <div class="plb"><div class="pli">&#9878;</div><div class="plt">Full dispute tracker available in Sprint 6</div><div class="pls">Delivered No OD &middot; Signature Missing &middot; SP notification log &middot; Status workflow</div></div>
+      </div>
+
+      <!-- ANALYTICS -->
+      <div id="p-analytics" class="pg hidden">
+        <div class="ph"><div><div class="pt">Analytics &amp; KPI Trends</div><div class="ps">12-week rolling trends &middot; Z-score anomaly detection &middot; SP Risk Watch</div></div></div>
+        <div class="an"><div class="ant">&#9888; Phase 1 Analytics &#8212; Ready for Sprint 8</div><div class="anb">Requires 3+ months of historical FasTrack data. Current dataset: 1 period (Feb&#8211;Mar 2026).</div></div>
+        <div class="plb"><div class="pli">&#128200;</div><div class="plt">Charts &amp; anomaly detection available in Sprint 8</div><div class="pls">LOS% &middot; OTP% &middot; Exception Rate &middot; Volume trends &middot; SP Risk Watch table</div></div>
+      </div>
+
+      <!-- REPORTS -->
+      <div id="p-reports" class="pg hidden">
+        <div class="ph"><div><div class="pt">Reports &amp; Export</div><div class="ps">Generate period-close documents and data exports</div></div></div>
+        <div class="rg">
+          <div class="rc"><div class="rico">&#128202;</div><div class="rtl">FasTrack XLS Export</div><div class="rde">Regenerate FasTrack-equivalent workbook (6 sheets) from normalized database</div><button class="bp">Download XLS</button></div>
+          <div class="rc"><div class="rico">&#128196;</div><div class="rtl">Period-Close PDF Pack</div><div class="rde">RSP income statement &middot; SP statements &middot; Claims register &middot; SLA compliance report</div><button class="bo">Generate PDF</button></div>
+          <div class="rc"><div class="rico">&#128203;</div><div class="rtl">Audit Log CSV</div><div class="rde">All API calls &middot; imports &middot; exports &middot; status changes with timestamps</div><button class="bo">Export CSV</button></div>
+        </div>
+        <p style="font-family:var(--m);font-size:10px;color:var(--tm);text-align:center;margin-top:20px;letter-spacing:.5px">Full export functionality available in Sprint 7</p>
+      </div>
+
+      <!-- SETTINGS -->
+      <div id="p-settings" class="pg hidden">
+        <div class="ph"><div><div class="pt">Settings</div><div class="ps">RSP configuration &middot; Territory rate table &middot; User management</div></div></div>
+        <div class="sg2">
+          <div class="sc2">
+            <h3>RSP Information</h3>
+            <div class="sr2"><span class="sk">RSP ID</span><span class="sv">1480</span></div>
+            <div class="sr2"><span class="sk">Owner</span><span class="sv">CHYZHYK, YAUHENI</span></div>
+            <div class="sr2"><span class="sk">Facility</span><span class="sv">Pittsburgh</span></div>
+            <div class="sr2"><span class="sk">Region</span><span class="sv">UPSTATE</span></div>
+            <div class="sr2"><span class="sk">OFID</span><span class="sv">310300</span></div>
+            <div class="sr2"><span class="sk">Sub-SPs</span><span class="sv">16</span></div>
+            <div class="sr2"><span class="sk">Territories</span><span class="sv">9 ZIP zones</span></div>
+          </div>
+          <div class="sc2" style="border-color:rgba(245,158,11,.2)">
+            <h3>Territory Rate Table</h3>
+            <p style="font-size:11px;color:#fbbf24;margin-bottom:14px">&#9888; Rate per package by ZIP territory &#8212; required for Sprint 5 billing</p>
+            <div class="rr2"><span class="rz">ZIP 15201&#8211;09</span><span class="rp">Pending</span></div>
+            <div class="rr2"><span class="rz">ZIP 15210&#8211;19</span><span class="rp">Pending</span></div>
+            <div class="rr2"><span class="rz">ZIP 15280&#8211;99 (T9)</span><span class="rp">Pending</span></div>
+            <p style="font-family:var(--m);font-size:10px;color:var(--tm);margin-top:10px">+ 6 more territories &middot; Enter rates before Sprint 5</p>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- Export Modal -->
+<div class="exm" id="exm">
+  <div class="exb">
+    <h3>&#8595; Export Report</h3>
+    <p>Select columns, data sections, and file format before downloading.</p>
+
+    <!-- Presets -->
+    <div class="ex-presets">
+      <button class="ex-pre sel" id="ep-full" onclick="setPreset('full')">Full Report</button>
+      <button class="ex-pre" id="ep-perf" onclick="setPreset('perf')">Performance Only</button>
+      <button class="ex-pre" id="ep-exc" onclick="setPreset('exc')">Exceptions Only</button>
+      <button class="ex-pre" id="ep-billing" onclick="setPreset('billing')">Billing Fields</button>
+      <button class="ex-pre" id="ep-custom" onclick="setPreset('custom')">Custom</button>
+    </div>
+
+    <!-- SP Table columns -->
+    <div class="ex-sec">
+      <div class="ex-sec-t">SP Performance Table Columns</div>
+      <div class="ex-grid" id="ex-cols"></div>
+    </div>
+
+    <!-- Additional data sections -->
+    <div class="ex-sec">
+      <div class="ex-sec-t">Additional Data Sections</div>
+      <div class="ex-grid">
+        <label class="ex-cb"><input type="checkbox" id="ex-kpi" checked/><span>KPI Summary Cards</span></label>
+        <label class="ex-cb"><input type="checkbox" id="ex-exc2" checked/><span>Exception Register</span></label>
+        <label class="ex-cb"><input type="checkbox" id="ex-claims"/><span>Claims Queue</span></label>
+        <label class="ex-cb"><input type="checkbox" id="ex-disputes"/><span>Dispute Register</span></label>
+        <label class="ex-cb"><input type="checkbox" id="ex-meta" checked/><span>Period &amp; RSP Metadata</span></label>
+        <label class="ex-cb"><input type="checkbox" id="ex-terr"/><span>Territory Breakdown</span></label>
+      </div>
+    </div>
+
+    <!-- Format -->
+    <div class="ex-sec">
+      <div class="ex-sec-t">Export Format</div>
+      <div class="ex-fmt">
+        <div class="ex-fopt sel" id="ef-csv" onclick="setFmt('csv')">
+          <div class="ico">📊</div><div class="flab">CSV</div><div class="fsub">Opens in Excel</div>
+        </div>
+        <div class="ex-fopt" id="ef-xls" onclick="setFmt('xls')">
+          <div class="ico">📗</div><div class="flab">XLS (XLSX)</div><div class="fsub">Native Excel · Sprint 7</div>
+        </div>
+        <div class="ex-fopt" id="ef-pdf" onclick="setFmt('pdf')">
+          <div class="ico">📄</div><div class="flab">PDF</div><div class="fsub">Print-ready · Sprint 7</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ex-actions">
+      <button class="bo" onclick="closeExport()">Cancel</button>
+      <button class="bp" onclick="doExport()">&#8595; Download Export</button>
+    </div>
+  </div>
+</div>
+
+<!-- Period Modal -->
+<div class="mo2" id="pm">
+  <div class="mb">
+    <div class="mt">Select Reporting Period</div>
+    <div class="ms">Filter all dashboard data to a custom date range</div>
+    <div class="mr">
+      <div class="mf"><label>From</label><input type="date" id="df" value="2026-02-02"/></div>
+      <div class="mf"><label>To</label><input type="date" id="dt" value="2026-03-02"/></div>
+    </div>
+    <div class="mp">
+      <button class="prb" onclick="setPP(7)">7 days</button>
+      <button class="prb" onclick="setPP(30)">30 days</button>
+      <button class="prb" onclick="setPP(90)">90 days</button>
+    </div>
+    <div class="mac">
+      <button class="bo" onclick="closePeriod()">Cancel</button>
+      <button class="bp" onclick="applyPeriod()">Apply Period</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// DATA
+const SPD=[
+  {sp:1514,zip:"15201-09",vol:1840,los:99.1,otp:97.2,d1:12, d2:10, lost:0,lates:0, st:"green"},
+  {sp:1521,zip:"15210-19",vol:2100,los:98.8,otp:96.5,d1:18, d2:14, lost:0,lates:0, st:"green"},
+  {sp:1528,zip:"15220-29",vol:1920,los:99.3,otp:97.8,d1:9,  d2:7,  lost:1,lates:0, st:"amber"},
+  {sp:1535,zip:"15230-39",vol:1750,los:98.6,otp:96.1,d1:22, d2:19, lost:0,lates:0, st:"green"},
+  {sp:1542,zip:"15240-49",vol:2240,los:99.0,otp:97.4,d1:15, d2:11, lost:2,lates:0, st:"amber"},
+  {sp:1549,zip:"15250-59",vol:1680,los:98.9,otp:97.0,d1:11, d2:8,  lost:0,lates:0, st:"green"},
+  {sp:1556,zip:"15260-69",vol:1590,los:99.2,otp:97.6,d1:8,  d2:6,  lost:0,lates:0, st:"green"},
+  {sp:1563,zip:"15270-79",vol:2050,los:98.7,otp:96.8,d1:20, d2:17, lost:1,lates:0, st:"amber"},
+  {sp:1480,zip:"15280-99",vol:3966,los:71.2,otp:0.3, d1:303,d2:300,lost:5,lates:84,st:"red"},
+  {sp:1570,zip:"15301-19",vol:1820,los:99.1,otp:97.3,d1:14, d2:10, lost:0,lates:0, st:"green"},
+  {sp:1577,zip:"15320-39",vol:1940,los:98.5,otp:96.4,d1:19, d2:16, lost:2,lates:0, st:"amber"},
+  {sp:1584,zip:"15340-59",vol:1710,los:99.0,otp:97.1,d1:10, d2:8,  lost:0,lates:0, st:"green"},
+  {sp:1591,zip:"15360-79",vol:2180,los:98.8,otp:96.9,d1:24, d2:21, lost:3,lates:0, st:"amber"},
+  {sp:1598,zip:"15100-19",vol:1610,los:99.4,otp:97.9,d1:7,  d2:5,  lost:0,lates:0, st:"green"},
+  {sp:1605,zip:"15380-99",vol:1890,los:98.6,otp:96.6,d1:17, d2:14, lost:2,lates:0, st:"amber"},
+  {sp:1612,zip:"15250-59",vol:1776,los:99.1,otp:97.5,d1:13, d2:9,  lost:0,lates:0, st:"green"},
+];
+const COLS=[
+  {k:"st",  l:"Status",       vis:true, sort:false,al:"left", w:100,st:"alpha"},
+  {k:"sp",  l:"SP ID",        vis:true, sort:true, al:"left", w:75, st:"num"},
+  {k:"zip", l:"ZIP Territory",vis:true, sort:true, al:"left", w:110,st:"alpha"},
+  {k:"vol", l:"Volume",       vis:true, sort:true, al:"right",w:85, st:"num"},
+  {k:"los", l:"LOS%",         vis:true, sort:true, al:"right",w:75, st:"num"},
+  {k:"otp", l:"OTP%",         vis:true, sort:true, al:"right",w:75, st:"num"},
+  {k:"d1",  l:"D1",           vis:true, sort:true, al:"right",w:60, st:"num"},
+  {k:"d2",  l:"D2",           vis:true, sort:true, al:"right",w:60, st:"num"},
+  {k:"lost",l:"Lost",         vis:true, sort:true, al:"right",w:60, st:"num"},
+  {k:"lates",l:"Lates",       vis:true, sort:true, al:"right",w:60, st:"num"},
+];
+const CW={};COLS.forEach(c=>CW[c.k]=c.w);
+let CF="all",CS="vol",CD="desc";
+const SDOT={green:"sg",amber:"sa",red:"srd"};
+const CHIP={green:{cls:"cc",t:"OK"},amber:{cls:"ca",t:"Watch"},red:{cls:"cr",t:"Alert"}};
+
+function buildHead(){
+  const tr=document.getElementById("sph");tr.innerHTML="";
+  COLS.forEach(c=>{
+    if(!c.vis)return;
+    const th=document.createElement("th");
+    th.dataset.key=c.k;th.style.width=CW[c.k]+"px";th.style.minWidth="48px";
+    if(c.al==="right")th.className="tr";if(c.sort)th.className+=" sr";
+    const w=document.createElement("div");w.className="thw";
+    w.style.justifyContent=c.al==="right"?"flex-end":"flex-start";
+    const lb=document.createElement("span");lb.id="th-"+c.k;
+    lb.textContent=c.l+(c.sort?(CS===c.k?(CD==="desc"?" \u25bc":" \u25b2"):" \u21c5"):"");
+    w.appendChild(lb);
+    if(c.sort||c.k==="st"){const rh=document.createElement("div");rh.className="rh";rh.addEventListener("mousedown",e=>startRes(e,c.k));w.appendChild(rh);}
+    th.appendChild(w);
+    if(c.sort)th.addEventListener("click",e=>{if(e.target.classList.contains("rh"))return;sortSP(c.k);});
+    tr.appendChild(th);
+  });
+}
+function renderTable(){
+  buildHead();
+  let rows=SPD.filter(r=>CF==="all"||r.st===CF);
+  const col=COLS.find(c=>c.k===CS);
+  rows.sort((a,b)=>{const m=CD==="desc"?-1:1;const av=a[CS],bv=b[CS];return col&&col.st==="alpha"?m*String(av).localeCompare(String(bv)):m*(av-bv);});
+  const lc=v=>v>=98?"color:var(--ac);font-weight:700":v>=95?"color:#fbbf24;font-weight:700":"color:#f87171;font-weight:700";
+  const oc=v=>v>=95?"color:var(--ac);font-weight:700":v>=80?"color:#fbbf24;font-weight:700":"color:#f87171;font-weight:700";
+  const fc=v=>v>50?"color:#f87171;font-weight:700":v>20?"color:#fbbf24":"color:var(--tm)";
+  const lsc=v=>v>0?"color:#f87171;font-weight:700":"color:var(--tm)";
+  const ch=r=>`<span class="ch ${CHIP[r.st].cls}" style="font-size:9px">${CHIP[r.st].t}</span>`;
+  document.getElementById("spb").innerHTML=rows.map(r=>{
+    const cells=[];
+    COLS.forEach(c=>{
+      if(!c.vis)return;
+      const ra=c.al==="right"?" tr":"";let ct="";
+      if(c.k==="st") ct=`<div class="sw"><div class="sd ${SDOT[r.st]}"></div>${ch(r)}</div>`;
+      else if(c.k==="sp") ct=`<span class="mo" style="color:var(--tp);font-weight:600">${r.sp}</span>`;
+      else if(c.k==="zip") ct=`<span class="mo" style="color:var(--tm)">${r.zip}</span>`;
+      else if(c.k==="vol") ct=`<span style="color:var(--tp);font-weight:600">${r.vol.toLocaleString()}</span>`;
+      else if(c.k==="los") ct=`<span style="${lc(r.los)}">${r.los.toFixed(1)}%</span>`;
+      else if(c.k==="otp") ct=`<span style="${oc(r.otp)}">${r.otp.toFixed(1)}%</span>`;
+      else if(c.k==="d1") ct=`<span style="${fc(r.d1)}">${r.d1}</span>`;
+      else if(c.k==="d2") ct=`<span style="${fc(r.d2)}">${r.d2}</span>`;
+      else if(c.k==="lost") ct=`<span style="${lsc(r.lost)}">${r.lost}</span>`;
+      else if(c.k==="lates") ct=`<span style="${lsc(r.lates)}">${r.lates}</span>`;
+      cells.push(`<td class="${ra}">${ct}</td>`);
+    });
+    return`<tr${r.st==="red"?" class='rr'":""}>${cells.join("")}</tr>`;
+  }).join("");
+  document.getElementById("tc2").textContent=`Showing ${rows.length} of ${SPD.length} SPs \u00b7 Pittsburgh \u00b7 Feb 2\u2013Mar 2 2026`;
+}
+function sortSP(col){if(CS===col)CD=CD==="desc"?"asc":"desc";else{CS=col;CD="desc";}renderTable();}
+function filterSP(f){
+  CF=f;
+  document.querySelectorAll(".ftb").forEach(b=>{b.className="ftb";});
+  const map={all:"fta",green:"ftg",amber:"fam",red:"frd"};
+  document.getElementById("f-"+f).classList.add(map[f]);
+  renderTable();
+}
+function buildColPanel(){
+  const l=document.getElementById("ccl");l.innerHTML="";
+  COLS.forEach(c=>{
+    const row=document.createElement("label");row.className="ccr";
+    const cb=document.createElement("input");cb.type="checkbox";cb.checked=c.vis;
+    if(c.k==="st")cb.disabled=true;
+    cb.addEventListener("change",()=>{c.vis=cb.checked;renderTable();});
+    row.appendChild(cb);row.appendChild(document.createTextNode(c.l));
+    l.appendChild(row);
+  });
+}
+function toggleColPanel(){document.getElementById("cp").classList.toggle("open");}
+let RC=null,RSX=0,RSW=0;
+function startRes(e,key){e.stopPropagation();e.preventDefault();RC=key;RSX=e.clientX;RSW=CW[key];document.addEventListener("mousemove",onRes);document.addEventListener("mouseup",endRes);e.target.classList.add("dr");}
+function onRes(e){if(!RC)return;const nw=Math.max(48,RSW+(e.clientX-RSX));CW[RC]=nw;const th=document.querySelector(`th[data-key="${RC}"]`);if(th)th.style.width=nw+"px";}
+function endRes(){RC=null;document.removeEventListener("mousemove",onRes);document.removeEventListener("mouseup",endRes);document.querySelectorAll(".rh.dr").forEach(h=>h.classList.remove("dr"));}
+function setNav(id){
+  document.querySelectorAll("[id^='p-']").forEach(p=>p.classList.add("hidden"));
+  document.getElementById("p-"+id).classList.remove("hidden");
+  document.querySelectorAll(".nb").forEach(b=>b.classList.remove("ac"));
+  document.getElementById("n-"+id).classList.add("ac");
+}
+function toggleFac(){document.getElementById("fdd").classList.toggle("open");}
+function selectFac(e,name,rsp){
+  document.getElementById("facLabel").textContent=name;
+  document.getElementById("facRSP").textContent="RSP "+rsp;
+  document.getElementById("dfn").textContent='Facility "'+name+'" (code — '+rsp+')';
+  document.getElementById("sideRSP").textContent=rsp;
+  document.getElementById("sideFac").textContent=name;
+  document.getElementById("fdd").classList.remove("open");
+  document.querySelectorAll(".fo").forEach(b=>b.classList.remove("ac"));
+  e.currentTarget.classList.add("ac");
+}
+document.addEventListener("click",e=>{
+  const fw=document.getElementById("fpw");if(fw&&!fw.contains(e.target))document.getElementById("fdd").classList.remove("open");
+  const cp=document.getElementById("cp");if(cp&&!cp.contains(e.target)&&!e.target.closest(".bo"))cp.classList.remove("open");
+});
+function openPeriod(){document.getElementById("pm").classList.add("open");}
+function closePeriod(){document.getElementById("pm").classList.remove("open");}
+function setPP(d){const t=new Date(),f=new Date();f.setDate(t.getDate()-d);document.getElementById("dt").value=t.toISOString().slice(0,10);document.getElementById("df").value=f.toISOString().slice(0,10);}
+const MO=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+function applyPeriod(){
+  const f=new Date(document.getElementById("df").value),t=new Date(document.getElementById("dt").value);
+  const fmt=d=>`${MO[d.getUTCMonth()]} ${d.getUTCDate()}`;
+  const lbl=`\uD83D\uDCC5 ${fmt(f)} \u2013 ${fmt(t)}, ${t.getUTCFullYear()}`;
+  document.getElementById("pb").textContent=lbl;
+  document.getElementById("dps").textContent=`${fmt(f)}\u2013${fmt(t)} ${t.getUTCFullYear()} \u00b7 16 SPs \u00b7 9 Territories \u00b7 RSP 1480`;
+  closePeriod();
+}
+function doLogin(){document.getElementById("ls").style.display="none";stopCanvas();document.getElementById("app").classList.add("v");renderTable();buildColPanel();}
+function doLogout(){document.getElementById("app").classList.remove("v");document.getElementById("ls").style.display="flex";startCanvas();}
+
+
+// ── ALERT CONTEXT POPUP ───────────────────────────────────────────
+function openAlertCtx(e){
+  e.stopPropagation();
+  const ctx=document.getElementById("alert-ctx");
+  const abn=document.getElementById("abn");
+  const r=abn.getBoundingClientRect();
+  ctx.style.left=Math.min(r.left,window.innerWidth-360)+"px";
+  ctx.style.top=(r.bottom+10)+"px";
+  ctx.style.display="block";
+  setTimeout(()=>document.addEventListener("click",_closeAlertOut),50);
+}
+function closeAlertCtx(){
+  document.getElementById("alert-ctx").style.display="none";
+  document.removeEventListener("click",_closeAlertOut);
+}
+function _closeAlertOut(e){if(!document.getElementById("alert-ctx").contains(e.target))closeAlertCtx();}
+
+// ── ACCOUNT PAGE HELPERS ──────────────────────────────────────────
+function loadAvatar(input){
+  if(!input.files||!input.files[0])return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    document.getElementById("av-img").src=e.target.result;
+    document.getElementById("av-img").style.display="block";
+    document.getElementById("av-letter").style.display="none";
+    // also update header avatar
+    const hav=document.getElementById("av-btn");
+    hav.style.backgroundImage="url("+e.target.result+")";
+    hav.style.backgroundSize="cover";
+    hav.style.backgroundPosition="center";
+    hav.textContent="";
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+function fmtDOB(el){
+  let v=el.value.replace(/\D/g,"");
+  if(v.length>=3)v=v.slice(0,2)+"."+v.slice(2);
+  if(v.length>=6)v=v.slice(0,5)+"."+v.slice(5,9);
+  el.value=v;
+}
+function setSrc(mode){
+  document.getElementById("src-pc-row").style.display=mode==="pc"?"block":"none";
+  document.getElementById("src-gd-row").style.display=mode==="gd"?"block":"none";
+  const pc=document.getElementById("src-pc"),gd=document.getElementById("src-gd");
+  if(mode==="pc"){pc.style.background="rgba(167,139,250,.14)";pc.style.borderColor="rgba(167,139,250,.4)";pc.style.color="#ede9fe";gd.style.background="var(--bg2)";gd.style.borderColor="var(--bd)";gd.style.color="var(--ts)";}
+  else{gd.style.background="rgba(167,139,250,.14)";gd.style.borderColor="rgba(167,139,250,.4)";gd.style.color="#ede9fe";pc.style.background="var(--bg2)";pc.style.borderColor="var(--bd)";pc.style.color="var(--ts)";}
+}
+function setRStyle(btn,s){btn.parentElement.querySelectorAll("button").forEach(b=>{b.style.background="rgba(255,255,255,.05)";b.style.borderColor="rgba(255,255,255,.12)";b.style.color="var(--ts)";});btn.style.background="rgba(167,139,250,.18)";btn.style.borderColor="rgba(167,139,250,.45)";btn.style.color="#ede9fe";}
+function setRFmt(btn,fmt){btn.closest("#rfmt-group").querySelectorAll("button").forEach(b=>{b.style.background="var(--bg2)";b.style.borderColor="var(--bd)";b.style.color="var(--ts)";b.style.fontWeight="normal";b.textContent=b.textContent.replace(" ✓","");});btn.style.background="rgba(0,212,255,.1)";btn.style.borderColor="rgba(0,212,255,.3)";btn.style.color="var(--ac)";btn.style.fontWeight="700";btn.textContent=fmt+" ✓";}
+
+// ── EXPORT ──────────────────────────────────────────────────────────────────
+const EX_COLS_DEF=[
+  {k:"sp",   l:"SP ID",         checked:true},
+  {k:"zip",  l:"ZIP Territory",  checked:true},
+  {k:"vol",  l:"Volume",         checked:true},
+  {k:"los",  l:"LOS%",           checked:true},
+  {k:"otp",  l:"Customer OTP%",  checked:true},
+  {k:"d1",   l:"Incomplete D1",  checked:true},
+  {k:"d2",   l:"Incomplete D2",  checked:true},
+  {k:"lost", l:"Lost (SP)",      checked:true},
+  {k:"lates",l:"SP Lates",       checked:true},
+  {k:"st",   l:"Status",         checked:false},
+];
+const PRESETS={
+  full:    ["sp","zip","vol","los","otp","d1","d2","lost","lates","st"],
+  perf:    ["sp","zip","vol","los","otp"],
+  exc:     ["sp","zip","d1","d2","lost","lates"],
+  billing: ["sp","zip","vol","lost"],
+};
+let EX_FMT="csv",EX_PRESET="full";
+
+function buildExColPanel(){
+  const g=document.getElementById("ex-cols");g.innerHTML="";
+  EX_COLS_DEF.forEach(c=>{
+    const lbl=document.createElement("label");lbl.className="ex-cb";
+    const cb=document.createElement("input");cb.type="checkbox";cb.id="ec-"+c.k;cb.checked=c.checked;
+    cb.addEventListener("change",()=>{setPreset("custom");});
+    const sp=document.createElement("span");sp.textContent=c.l;
+    lbl.appendChild(cb);lbl.appendChild(sp);g.appendChild(lbl);
+  });
+}
+function setPreset(p){
+  EX_PRESET=p;
+  document.querySelectorAll(".ex-pre").forEach(b=>b.classList.remove("sel"));
+  document.getElementById("ep-"+p).classList.add("sel");
+  if(p==="custom")return;
+  const keys=PRESETS[p];
+  EX_COLS_DEF.forEach(c=>{
+    const cb=document.getElementById("ec-"+c.k);
+    if(cb)cb.checked=keys.includes(c.k);
+  });
+}
+function setFmt(f){
+  EX_FMT=f;
+  document.querySelectorAll(".ex-fopt").forEach(b=>b.classList.remove("sel"));
+  document.getElementById("ef-"+f).classList.add("sel");
+}
+function openExport(){buildExColPanel();setPreset("full");document.getElementById("exm").classList.add("open");}
+function closeExport(){document.getElementById("exm").classList.remove("open");}
+
+function doExport(){
+  if(EX_FMT!=="csv"){alert("XLS and PDF export are available in Sprint 7.\nCSV export is available now — switching to CSV.");setFmt("csv");return;}
+  const cols=EX_COLS_DEF.filter(c=>{const cb=document.getElementById("ec-"+c.k);return cb&&cb.checked;});
+  const incKPI=document.getElementById("ex-kpi").checked;
+  const incExc=document.getElementById("ex-exc2").checked;
+  const incMeta=document.getElementById("ex-meta").checked;
+  const fac=document.getElementById("facLabel").textContent;
+  const rsp=document.getElementById("facRSP").textContent;
+  const period=document.getElementById("pb").textContent.replace("📅","").trim();
+  let rows=SPD.filter(r=>CF==="all"||r.st===CF);
+  let csv="";
+  if(incMeta){csv+=`Drivehub Export — Accounting Module for RSP-partners\n`;csv+=`Facility,${fac}\n${rsp},Period,${period}\n\n`;}
+  if(incKPI){csv+=`KPI SUMMARY\nMetric,Value\nTotal Volume,27062\nDelivery Stops,25203\nLOS Rate,98.5%\nCustomer OTP,88.3%\nBillable Volume,27017\nLost (SP),16\nBad Weather,284\nIncomplete D1+D2,742\n\n`;}
+  csv+=`SP PERFORMANCE TABLE\n`;
+  csv+=cols.map(c=>c.l).join(",")+"\n";
+  rows.forEach(r=>{
+    csv+=cols.map(c=>{
+      if(c.k==="los"||c.k==="otp")return r[c.k].toFixed(1)+"%";
+      if(c.k==="vol")return r[c.k];
+      return r[c.k];
+    }).join(",")+"\n";
+  });
+  if(incExc){csv+=`\nEXCEPTION SUMMARY\nType,Count\nOD Not Delivered,349\nIncomplete D1,382\nIncomplete D2,362\nLost SP+Delivery,46\nBad Weather,284\nSP Lates,84\nBefore Cutoff,63\nSignature Missing,13\n`;}
+  const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");a.href=url;
+  const ts=new Date().toISOString().slice(0,10);
+  a.download=`Drivehub_${fac.replace(/\s/g,"")}_${ts}.csv`;
+  a.click();URL.revokeObjectURL(url);
+  closeExport();
+}
+document.addEventListener("click",e=>{
+  const em=document.getElementById("exm");
+  if(em&&e.target===em)closeExport();
+});
+
+// CANVAS — exact port from OnRoute.express chunks/376.ce7dcb7cceba5fab.js
+let RAF=null;const MX={x:0,y:0};
+function startCanvas(){
+  const cv=document.getElementById("lc");if(!cv)return;
+  const ctx=cv.getContext("2d");
+  let W=window.innerWidth,H=window.innerHeight;
+  cv.width=W;cv.height=H;
+  const nc=Math.min(120,Math.floor(W/12));
+  const nodes=[];
+  for(let i=0;i<nc;i++)nodes.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,r:1.5*Math.random()+.5,op:.5*Math.random()+.2});
+  const routes=[];
+  for(let r=0;r<5;r++){const pts=[];const sx=Math.random()*W,sy=Math.random()*H;for(let p=0;p<6;p++)pts.push({x:sx+p*W/6+(Math.random()-.5)*200,y:sy+(Math.random()-.5)*300});routes.push({points:pts,progress:Math.random(),speed:.001+.002*Math.random(),opacity:.03+.04*Math.random()});}
+  function loop(){
+    ctx.clearRect(0,0,W,H);
+    const g=ctx.createRadialGradient(.3*W,.4*H,0,.3*W,.4*H,.6*W);g.addColorStop(0,"rgba(0,212,255,0.025)");g.addColorStop(1,"transparent");ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+    routes.forEach(rt=>{
+      rt.progress+=rt.speed;if(rt.progress>1)rt.progress=0;
+      ctx.beginPath();ctx.moveTo(rt.points[0].x,rt.points[0].y);
+      for(let i=1;i<rt.points.length;i++){const mx=(rt.points[i].x+rt.points[i-1].x)/2,my=(rt.points[i].y+rt.points[i-1].y)/2;ctx.quadraticCurveTo(rt.points[i-1].x,rt.points[i-1].y,mx,my);}
+      ctx.strokeStyle=`rgba(0,212,255,${rt.opacity})`;ctx.lineWidth=1;ctx.stroke();
+      const seg=Math.floor(rt.progress*(rt.points.length-1)),nxt=Math.min(seg+1,rt.points.length-1),t=rt.progress*(rt.points.length-1)-seg;
+      const dx=rt.points[seg].x+(rt.points[nxt].x-rt.points[seg].x)*t,dy=rt.points[seg].y+(rt.points[nxt].y-rt.points[seg].y)*t;
+      ctx.beginPath();ctx.arc(dx,dy,2,0,Math.PI*2);ctx.fillStyle=`rgba(0,212,255,${.4+rt.opacity})`;ctx.fill();
+    });
+    nodes.forEach((n,i)=>{
+      n.x+=n.vx;n.y+=n.vy;
+      const ddx=MX.x-n.x,ddy=MX.y-n.y;if(Math.sqrt(ddx*ddx+ddy*ddy)<200){n.vx+=3e-5*ddx;n.vy+=3e-5*ddy;}
+      if(n.x<0||n.x>W)n.vx*=-1;if(n.y<0||n.y>H)n.vy*=-1;
+      ctx.beginPath();ctx.arc(n.x,n.y,n.r,0,Math.PI*2);ctx.fillStyle=`rgba(0,212,255,${n.op})`;ctx.fill();
+      for(let j=i+1;j<nodes.length;j++){const m=nodes[j],d=Math.sqrt((n.x-m.x)**2+(n.y-m.y)**2);if(d<160){ctx.beginPath();ctx.moveTo(n.x,n.y);ctx.lineTo(m.x,m.y);ctx.strokeStyle=`rgba(0,212,255,${(1-d/160)*.08})`;ctx.lineWidth=.5;ctx.stroke();}}
+    });
+    ctx.strokeStyle="rgba(0,212,255,0.015)";ctx.lineWidth=.5;
+    for(let x=0;x<W;x+=80){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+    for(let y=0;y<H;y+=80){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+    RAF=requestAnimationFrame(loop);
+  }
+  loop();
+  window.addEventListener("resize",()=>{W=window.innerWidth;H=window.innerHeight;cv.width=W;cv.height=H;});
+  window.addEventListener("mousemove",e=>{MX.x=e.clientX;MX.y=e.clientY;});
+}
+function stopCanvas(){if(RAF){cancelAnimationFrame(RAF);RAF=null;}}
+window.addEventListener("load",startCanvas);
+
+// ═══════════════════════════════════════════════════════════════════
+// ██████  DRIVEHUB VISUAL CONSTRUCTOR  ████████████████████████████
+// ═══════════════════════════════════════════════════════════════════
+const CON={
+  mode:null,          // null | 'text' | 'annotate'
+  annotations:[],     // [{id,x,y,page,target,desc,ts}]
+  textChanges:[],     // [{selector,oldVal,newVal,ts}]
+  activeEdit:null,    // currently editing element
+  nextId:1,
+  visible:true,
+};
+
+// ── INJECT STYLES ───────────────────────────────────────────────────
+(function injectCSS(){
+  const s=document.createElement("style");
+  s.textContent=`
+  /* ── Constructor Toolbar ── */
+  #dh-con{position:fixed;bottom:24px;right:24px;z-index:10001;display:none;flex-direction:column;align-items:flex-end;gap:8px;font-family:'Outfit',-apple-system,sans-serif}
+  #dh-con.vis{display:flex}
+  #dh-tb{display:flex;align-items:center;gap:6px;background:rgba(18,19,30,.96);border:1px solid rgba(167,139,250,.40);border-radius:14px;padding:8px 10px;box-shadow:0 8px 40px rgba(0,0,0,.6),0 0 0 1px rgba(167,139,250,.20),0 0 30px rgba(167,139,250,.16);backdrop-filter:blur(16px)}
+  .dh-sep{width:1px;height:20px;background:rgba(255,255,255,.08);margin:0 2px}
+  .dh-btn{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:9px;border:1px solid transparent;background:transparent;font-family:inherit;font-size:11px;font-weight:600;color:rgba(255,255,255,.73);cursor:pointer;transition:all .18s;white-space:nowrap;line-height:1}
+  .dh-btn:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.96)}
+  .dh-btn.act-text{background:rgba(251,191,36,.12);border-color:rgba(251,191,36,.35);color:#fbbf24;box-shadow:0 0 14px rgba(251,191,36,.12)}
+  .dh-btn.act-ann{background:rgba(167,139,250,.40);border-color:rgba(167,139,250,.62);color:#ede9fe;box-shadow:0 0 14px rgba(167,139,250,.40)}
+  .dh-badge{min-width:16px;height:16px;border-radius:8px;background:rgba(167,139,250,.40);border:1px solid rgba(167,139,250,.62);color:#ede9fe;font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;padding:0 4px}
+  .dh-badge.tx{background:rgba(251,191,36,.2);border-color:rgba(251,191,36,.4);color:#fbbf24}
+  #dh-label{font-family:'JetBrains Mono','SF Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(167,139,250,.82);padding:0 4px}
+
+  /* ── Text-edit mode: hover shimmer on editable elements ── */
+  body.dh-text-mode [data-dh-text]:hover{outline:2px dashed rgba(251,191,36,.6)!important;outline-offset:2px!important;cursor:text!important;border-radius:3px}
+  body.dh-text-mode [data-dh-text][contenteditable="true"]{outline:2px solid #fbbf24!important;outline-offset:2px!important;border-radius:3px;background:rgba(251,191,36,.06)!important;min-width:20px;display:inline-block}
+
+  /* ── Annotate mode: crosshair cursor on main ── */
+  body.dh-ann-mode main,body.dh-ann-mode header,body.dh-ann-mode aside{cursor:crosshair!important}
+
+  /* ── Annotation pins ── */
+  .dh-pin{position:fixed;z-index:8900;pointer-events:auto;cursor:pointer;transform:translate(-50%,-50%);transition:transform .15s}
+  .dh-pin:hover{transform:translate(-50%,-50%) scale(1.2)}
+  .dh-pin-dot{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#a78bfa,#8b5cf6);border:2px solid rgba(237,233,254,.5);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;box-shadow:0 2px 12px rgba(167,139,250,.72),0 0 0 4px rgba(167,139,250,.22);font-family:'Outfit',sans-serif;line-height:1}
+  .dh-pin-line{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);width:1px;height:16px;background:rgba(167,139,250,.62);margin-bottom:2px}
+
+  /* ── Annotation tooltip on hover ── */
+  .dh-pin-tip{position:absolute;bottom:calc(100% + 22px);left:50%;transform:translateX(-50%);background:rgba(18,19,30,.97);border:1px solid rgba(167,139,250,.48);border-radius:10px;padding:8px 12px;min-width:180px;max-width:260px;font-size:11px;color:rgba(255,255,255,.92);white-space:normal;line-height:1.5;box-shadow:0 8px 32px rgba(0,0,0,.5);display:none;pointer-events:none;z-index:9100}
+  .dh-pin-tip strong{color:#ede9fe;font-size:10px;display:block;margin-bottom:3px;font-family:'JetBrains Mono',monospace;letter-spacing:.5px}
+  .dh-pin:hover .dh-pin-tip{display:block}
+
+  /* ── Annotation dialog ── */
+  #dh-dialog{display:none;position:fixed;z-index:10100;background:rgba(10,10,15,.88);backdrop-filter:blur(12px);inset:0;align-items:center;justify-content:center;padding:16px}
+  #dh-dialog.open{display:flex}
+  #dh-dlg{background:rgba(18,19,30,.98);border:1px solid rgba(167,139,250,.48);border-radius:18px;padding:24px;width:100%;max-width:400px;box-shadow:0 40px 100px rgba(0,0,0,.8),0 0 0 1px rgba(167,139,250,.16)}
+  #dh-dlg h4{font-weight:700;font-size:13px;color:#ffffff;margin-bottom:4px;letter-spacing:-.01em}
+  #dh-dlg p{font-size:11px;color:rgba(255,255,255,.55);margin-bottom:16px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.5px}
+  #dh-ann-input{width:100%;background:rgba(10,10,15,.8);border:1px solid rgba(167,139,250,.33);border-radius:10px;padding:12px;font-family:'Outfit',sans-serif;font-size:13px;color:rgba(255,255,255,.96);resize:none;outline:none;min-height:80px;line-height:1.5;transition:border-color .2s}
+  #dh-ann-input:focus{border-color:rgba(167,139,250,.72);box-shadow:0 0 0 3px rgba(167,139,250,.16)}
+  #dh-ann-input::placeholder{color:rgba(255,255,255,.32)}
+  .dh-page-tag{display:inline-block;margin-bottom:12px;padding:3px 10px;border-radius:6px;background:rgba(167,139,250,.22);border:1px solid rgba(167,139,250,.40);font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;color:#ede9fe}
+  .dh-dlg-btns{display:flex;gap:8px;margin-top:14px}
+  .dh-dlg-btns button{flex:1;padding:9px;border-radius:9px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .18s;border:none}
+  .dh-cancel{background:rgba(255,255,255,.05);color:rgba(255,255,255,.68)}
+  .dh-cancel:hover{background:rgba(255,255,255,.09);color:rgba(255,255,255,.90)}
+  .dh-save{background:linear-gradient(135deg,#a78bfa,#8b5cf6);color:#fff;box-shadow:0 2px 12px rgba(167,139,250,.48)}
+  .dh-save:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(167,139,250,.45)}
+
+  /* ── Annotations side panel ── */
+  #dh-panel{position:fixed;right:24px;bottom:80px;z-index:10000;width:280px;background:rgba(18,19,30,.97);border:1px solid rgba(167,139,250,.33);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.6);display:none;flex-direction:column;max-height:60vh;overflow:hidden;backdrop-filter:blur(16px)}
+  #dh-panel.open{display:flex}
+  #dh-ph{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.06)}
+  #dh-ph span{font-size:11px;font-weight:700;color:rgba(255,255,255,.96);letter-spacing:-.01em}
+  #dh-ph button{background:none;border:none;color:rgba(255,255,255,.48);cursor:pointer;font-size:13px;padding:2px 6px;transition:color .15s}
+  #dh-ph button:hover{color:rgba(255,255,255,.90)}
+  #dh-plist{overflow-y:auto;flex:1;padding:8px}
+  .dh-pitem{padding:8px 10px;border-radius:9px;margin-bottom:4px;border:1px solid rgba(255,255,255,.04);transition:background .15s;cursor:pointer}
+  .dh-pitem:hover{background:rgba(167,139,250,.40)}
+  .dh-pitem-hdr{display:flex;align-items:center;gap:8px;margin-bottom:3px}
+  .dh-pitem-num{width:18px;height:18px;border-radius:50%;background:rgba(167,139,250,.33);border:1px solid rgba(167,139,250,.54);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:800;color:#ede9fe;flex-shrink:0}
+  .dh-pitem-pg{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,.48);letter-spacing:.5px}
+  .dh-pitem-del{margin-left:auto;background:none;border:none;color:rgba(239,68,68,.4);cursor:pointer;font-size:11px;padding:0 4px;transition:color .15s}
+  .dh-pitem-del:hover{color:#f87171}
+  .dh-pitem-txt{font-size:11px;color:rgba(255,255,255,.84);line-height:1.4}
+  .dh-ptx{background:rgba(251,191,36,.06);border-color:rgba(251,191,36,.12)}
+  .dh-ptx .dh-pitem-num{background:rgba(251,191,36,.15);border-color:rgba(251,191,36,.35);color:#fbbf24}
+  .dh-ptx .dh-pitem-pg{color:rgba(251,191,36,.4)}
+  #dh-pfooter{padding:10px 12px;border-top:1px solid rgba(255,255,255,.06);display:flex;gap:6px}
+  #dh-pfooter button{flex:1;padding:7px;border-radius:8px;font-family:'Outfit',sans-serif;font-size:11px;font-weight:600;cursor:pointer;transition:all .18s;border:none}
+  #dh-exp{background:linear-gradient(135deg,#a78bfa,#8b5cf6);color:#fff;box-shadow:0 2px 10px rgba(167,139,250,.40)}
+  #dh-exp:hover{transform:translateY(-1px);box-shadow:0 4px 18px rgba(167,139,250,.62)}
+  #dh-clr{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2)}
+  #dh-clr:hover{background:rgba(239,68,68,.18)}
+
+  /* ── Mini toggle (always visible once logged in) ── */
+  #dh-toggle{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:10002;background:rgba(18,19,30,.9);border:1px solid rgba(167,139,250,.33);border-radius:20px;padding:5px 14px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(167,139,250,.72);cursor:pointer;display:block;transition:all .2s;backdrop-filter:blur(10px)}
+  #dh-toggle:hover{color:#ede9fe;border-color:rgba(167,139,250,.45)}
+  #dh-toggle.vis{display:block}
+  `;
+  document.head.appendChild(s);
+})();
+
+// ── INJECT HTML ─────────────────────────────────────────────────────
+(function injectHTML(){
+  // Mini toggle tab
+  const tog=document.createElement("button");
+  tog.id="dh-toggle";tog.textContent="⬡ Constructor";
+  tog.onclick=()=>conToggleVisible();
+  document.body.appendChild(tog);
+
+  // Toolbar
+  const tb=document.createElement("div");tb.id="dh-con";
+  tb.innerHTML=`
+    <div id="dh-panel">
+      <div id="dh-ph"><span>📋 Change Log <span id="dh-count" class="dh-badge" style="margin-left:6px">0</span></span>
+        <div style="display:flex;gap:4px">
+          <button onclick="conTogglePanel()" title="Close">✕</button>
+        </div>
+      </div>
+      <div id="dh-plist"></div>
+      <div id="dh-pfooter">
+        <button id="dh-exp" onclick="conExport()">⬇ Export .md</button>
+        <button id="dh-clr" onclick="conClearAll()">Clear all</button>
+      </div>
+    </div>
+    <div id="dh-tb">
+      <span id="dh-label">Constructor</span>
+      <div class="dh-sep"></div>
+      <button class="dh-btn" id="dh-btn-text" onclick="conSetMode('text')" title="Click any text element to edit it inline">
+        ✏ Edit Text <span class="dh-badge tx" id="dh-tx-count">0</span>
+      </button>
+      <button class="dh-btn" id="dh-btn-ann" onclick="conSetMode('annotate')" title="Click anywhere to place a numbered change note">
+        📌 Annotate <span class="dh-badge" id="dh-ann-count">0</span>
+      </button>
+      <div class="dh-sep"></div>
+      <button class="dh-btn" onclick="conTogglePanel()" title="View all changes">📋 Log</button>
+      <button class="dh-btn" onclick="conExport()" style="color:rgba(167,139,250,.8)">⬇ .md</button>
+    </div>`;
+  document.body.appendChild(tb);
+
+  // Annotation dialog
+  const dlg=document.createElement("div");dlg.id="dh-dialog";
+  dlg.innerHTML=`
+    <div id="dh-dlg">
+      <h4>📌 Add Change Annotation</h4>
+      <div class="dh-page-tag" id="dh-dlg-page">DASHBOARD</div>
+      <p>Describe the change you want at this location</p>
+      <textarea id="dh-ann-input" placeholder="e.g. Change the KPI card label from 'Total Volume' to 'Inducted Volume' and add a sparkline chart below the number…" rows="4"></textarea>
+      <div class="dh-dlg-btns">
+        <button class="dh-cancel" onclick="conCancelAnnotation()">Cancel</button>
+        <button class="dh-save" onclick="conSaveAnnotation()">Save #<span id="dh-ann-n">1</span></button>
+      </div>
+    </div>`;
+  document.body.appendChild(dlg);
+})();
+
+// ── MARK ALL TEXT NODES ─────────────────────────────────────────────
+function conMarkTextNodes(){
+  const skip=new Set(["SCRIPT","STYLE","INPUT","TEXTAREA","CANVAS","svg","path"]);
+  function walk(el,depth){
+    if(depth>12||skip.has(el.tagName)||el.id==="dh-con"||el.id==="dh-dialog"||el.id==="dh-toggle"||el.id==="dh-panel")return;
+    if(el.children.length===0&&el.textContent.trim().length>0&&el.textContent.trim().length<200){
+      if(!el.dataset.dhText){
+        el.dataset.dhText="1";
+        el.addEventListener("click",conHandleTextClick);
+        el.addEventListener("keydown",e=>{if(e.key==="Escape")conCancelTextEdit(e.target);if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();conCommitTextEdit(e.target);}});
+        el.addEventListener("blur",e=>conCommitTextEdit(e.target));
+      }
+    }
+    Array.from(el.children).forEach(c=>walk(c,depth+1));
+  }
+  walk(document.body,0);
+}
+
+// ── TEXT MODE ───────────────────────────────────────────────────────
+let _pendingText=null;
+function conHandleTextClick(e){
+  if(CON.mode!=="text")return;
+  e.stopPropagation();e.preventDefault();
+  const el=e.currentTarget;
+  if(el.contentEditable==="true")return;
+  if(CON.activeEdit&&CON.activeEdit!==el)conCommitTextEdit(CON.activeEdit);
+  el._dhOriginal=el.textContent;
+  el.contentEditable="true";
+  el.focus();
+  const range=document.createRange();range.selectNodeContents(el);
+  const sel=window.getSelection();sel.removeAllRanges();sel.addRange(range);
+  CON.activeEdit=el;
+}
+function conCommitTextEdit(el){
+  if(el.contentEditable!=="true")return;
+  el.contentEditable="false";
+  const newVal=el.textContent.trim();
+  const oldVal=el._dhOriginal||"";
+  if(newVal!==oldVal&&newVal.length>0){
+    const page=conCurrentPage();
+    CON.textChanges.push({id:CON.nextId++,type:"text",page,selector:conSelector(el),oldVal,newVal,ts:new Date().toISOString()});
+    el.style.outline="1px solid rgba(251,191,36,.4)";
+    el.style.borderRadius="2px";
+    conRefreshPanel();
+    conFlashBadge("dh-tx-count",CON.textChanges.length);
+  }
+  CON.activeEdit=null;
+  delete el._dhOriginal;
+}
+function conCancelTextEdit(el){
+  if(!el||el.contentEditable!=="true")return;
+  el.textContent=el._dhOriginal||el.textContent;
+  el.contentEditable="false";
+  CON.activeEdit=null;
+  delete el._dhOriginal;
+}
+
+// ── ANNOTATE MODE ───────────────────────────────────────────────────
+let _pendingPin=null;
+function conHandlePageClick(e){
+  if(CON.mode!=="annotate")return;
+  if(e.target.closest("#dh-con")||e.target.closest("#dh-dialog")||e.target.closest("#dh-toggle"))return;
+  e.stopPropagation();
+  _pendingPin={x:e.clientX,y:e.clientY,page:conCurrentPage(),target:e.target.tagName+(e.target.id?"#"+e.target.id:"")+(e.target.className&&typeof e.target.className==="string"?" ."+e.target.className.trim().split(/\s+/)[0]:"")};
+  document.getElementById("dh-dlg-page").textContent=conCurrentPage().toUpperCase();
+  document.getElementById("dh-ann-n").textContent=CON.nextId;
+  document.getElementById("dh-ann-input").value="";
+  document.getElementById("dh-dialog").classList.add("open");
+  setTimeout(()=>document.getElementById("dh-ann-input").focus(),80);
+}
+function conSaveAnnotation(){
+  const desc=document.getElementById("dh-ann-input").value.trim();
+  if(!desc){document.getElementById("dh-ann-input").focus();return;}
+  const id=CON.nextId++;
+  CON.annotations.push({id,..._pendingPin,desc,ts:new Date().toISOString()});
+  conPlacePin(CON.annotations[CON.annotations.length-1]);
+  document.getElementById("dh-dialog").classList.remove("open");
+  _pendingPin=null;
+  conRefreshPanel();
+  conFlashBadge("dh-ann-count",CON.annotations.length);
+}
+function conCancelAnnotation(){
+  document.getElementById("dh-dialog").classList.remove("open");
+  _pendingPin=null;
+}
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape"){
+    if(document.getElementById("dh-dialog").classList.contains("open"))conCancelAnnotation();
+    if(CON.activeEdit)conCancelTextEdit(CON.activeEdit);
+  }
+  if(e.key==="Enter"&&document.getElementById("dh-dialog").classList.contains("open")&&e.ctrlKey)conSaveAnnotation();
+});
+
+function conPlacePin(ann){
+  const pin=document.createElement("div");pin.className="dh-pin";pin.id="dh-pin-"+ann.id;
+  pin.style.left=ann.x+"px";pin.style.top=ann.y+"px";
+  pin.innerHTML=`<div class="dh-pin-line"></div><div class="dh-pin-dot">${ann.id}</div><div class="dh-pin-tip"><strong>#${ann.id} · ${ann.page}</strong>${ann.desc}</div>`;
+  pin.addEventListener("click",e=>{e.stopPropagation();conScrollToItem(ann.id);});
+  document.body.appendChild(pin);
+}
+function conRemovePin(id){
+  const p=document.getElementById("dh-pin-"+id);if(p)p.remove();
+}
+
+// ── MODE SWITCHER ───────────────────────────────────────────────────
+function conSetMode(m){
+  if(CON.mode===m){
+    conSetMode(null);return;
+  }
+  if(CON.activeEdit)conCancelTextEdit(CON.activeEdit);
+  CON.mode=m;
+  document.body.classList.remove("dh-text-mode","dh-ann-mode");
+  document.getElementById("dh-btn-text").classList.remove("act-text");
+  document.getElementById("dh-btn-ann").classList.remove("act-ann");
+  if(m==="text"){
+    document.body.classList.add("dh-text-mode");
+    document.getElementById("dh-btn-text").classList.add("act-text");
+    conMarkTextNodes();
+  } else if(m==="annotate"){
+    document.body.classList.add("dh-ann-mode");
+    document.getElementById("dh-btn-ann").classList.add("act-ann");
+  }
+}
+document.addEventListener("click",conHandlePageClick,true);
+
+// ── PANEL ───────────────────────────────────────────────────────────
+let _panelOpen=false;
+function conTogglePanel(){
+  _panelOpen=!_panelOpen;
+  document.getElementById("dh-panel").classList.toggle("open",_panelOpen);
+  if(_panelOpen)conRefreshPanel();
+}
+function conRefreshPanel(){
+  const all=[
+    ...CON.textChanges.map(c=>({...c,kind:"text"})),
+    ...CON.annotations.map(c=>({...c,kind:"ann"}))
+  ].sort((a,b)=>a.id-b.id);
+  const total=all.length;
+  document.getElementById("dh-count").textContent=total;
+  document.getElementById("dh-tx-count").textContent=CON.textChanges.length;
+  document.getElementById("dh-ann-count").textContent=CON.annotations.length;
+  const list=document.getElementById("dh-plist");
+  if(total===0){list.innerHTML='<div style="padding:20px;text-align:center;font-size:11px;color:rgba(255,255,255,.38);font-family:\'JetBrains Mono\',monospace;letter-spacing:.5px">No changes yet</div>';return;}
+  list.innerHTML=all.map(item=>{
+    const isText=item.kind==="text";
+    return`<div class="dh-pitem${isText?" dh-ptx":""}" onclick="conScrollToItem(${item.id})">
+      <div class="dh-pitem-hdr">
+        <div class="dh-pitem-num">${item.id}</div>
+        <span class="dh-pitem-pg">${item.page} · ${isText?"TEXT":"ANNOTATE"}</span>
+        <button class="dh-pitem-del" onclick="event.stopPropagation();conDeleteItem(${item.id},'${item.kind}')" title="Remove">✕</button>
+      </div>
+      <div class="dh-pitem-txt">${isText?`<em style="color:rgba(255,255,255,.50)">"${item.oldVal}"</em> → <strong style="color:${isText?"#fbbf24":"#ede9fe"}">"${item.newVal}"</strong>`:`${item.desc}`}</div>
+    </div>`;
+  }).join("");
+}
+function conScrollToItem(id){
+  const pin=document.getElementById("dh-pin-"+id);
+  if(pin){pin.scrollIntoView({behavior:"smooth",block:"center"});pin.querySelector(".dh-pin-dot").style.transform="scale(1.5)";setTimeout(()=>pin.querySelector(".dh-pin-dot").style.transform="",600);}
+}
+function conDeleteItem(id,kind){
+  if(kind==="ann"){CON.annotations=CON.annotations.filter(a=>a.id!==id);conRemovePin(id);}
+  else{CON.textChanges=CON.textChanges.filter(t=>t.id!==id);}
+  conRefreshPanel();
+}
+function conClearAll(){
+  if(!confirm("Clear all annotations and text changes?"))return;
+  CON.annotations.forEach(a=>conRemovePin(a.id));
+  CON.annotations=[];CON.textChanges=[];CON.nextId=1;
+  conRefreshPanel();
+}
+
+// ── EXPORT .md ──────────────────────────────────────────────────────
+function conExport(){
+  const all=[
+    ...CON.textChanges.map(c=>({...c,kind:"text"})),
+    ...CON.annotations.map(c=>({...c,kind:"ann"}))
+  ].sort((a,b)=>a.id-b.id);
+  if(all.length===0){alert("No changes to export yet.\n\nUse ✏ Edit Text or 📌 Annotate mode to record changes first.");return;}
+  const now=new Date();
+  const dateStr=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}`;
+  const fac=document.getElementById("facLabel").textContent;
+  const rsp=document.getElementById("facRSP").textContent;
+  let md=`# Drivehub — UI Change Annotations\n`;
+  md+=`**Exported:** ${dateStr} · **Facility:** ${fac} · **${rsp}**\n\n---\n\n`;
+  all.forEach(item=>{
+    const tag=item.kind==="text"?"TEXT EDIT":"ANNOTATION";
+    const page=item.page.toUpperCase();
+    md+=`## ${item.id}. [${tag}] — ${page}\n`;
+    if(item.kind==="text"){
+      md+=`Rename \`"${item.oldVal}"\` → \`"${item.newVal}"\`\n\n`;
+    } else {
+      md+=`${item.desc}\n\n`;
+      md+=`> *Location: (${Math.round(item.x)}px, ${Math.round(item.y)}px) · Element: \`${item.target}\`*\n\n`;
+    }
+  });
+  md+=`---\n*Generated by Drivehub Visual Constructor · ${all.length} change${all.length!==1?"s":""} total*\n`;
+  const blob=new Blob([md],{type:"text/markdown;charset=utf-8"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");a.href=url;
+  a.download=`drivehub_changes_${dateStr}.md`;a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ── HELPERS ─────────────────────────────────────────────────────────
+function conCurrentPage(){
+  const active=document.querySelector("[id^='p-']:not(.hidden)");
+  return active?active.id.replace("p-",""):"dashboard";
+}
+function conSelector(el){
+  if(el.id)return"#"+el.id;
+  const cls=typeof el.className==="string"?"."+el.className.trim().split(/\s+/).slice(0,2).join("."):"";
+  return(el.tagName.toLowerCase()+cls).slice(0,60);
+}
+function conFlashBadge(id,n){
+  const b=document.getElementById(id);if(!b)return;
+  b.textContent=n;b.style.transform="scale(1.4)";
+  setTimeout(()=>b.style.transform="",300);
+}
+
+// ── SHOW/HIDE CONSTRUCTOR ────────────────────────────────────────────
+function conToggleVisible(){
+  CON.visible=!CON.visible;
+  document.getElementById("dh-con").classList.toggle("vis",CON.visible);
+  document.getElementById("dh-toggle").textContent=CON.visible?"⬡ Hide Constructor":"⬡ Constructor";
+  // ensure toggle itself always stays visible regardless
+  document.getElementById("dh-toggle").style.display="block";
+}
+
+// ── BOOT ─────────────────────────────────────────────────────────────
+// Constructor is always visible — on login page AND inside the app.
+// The toolbar and toggle show immediately on page load.
+window.addEventListener("DOMContentLoaded",function(){
+  document.getElementById("dh-con").classList.add("vis");
+  document.getElementById("dh-toggle").classList.add("vis");
+  // ensure toggle never gets hidden on login page
+  document.getElementById("dh-toggle").style.display="block";
+});
+
+const _origLogin=doLogin;
+doLogin=function(){
+  _origLogin();
+  // re-mark text nodes after app shell renders
+  if(CON.mode==="text") conMarkTextNodes();
+};
+const _origLogout=doLogout;
+doLogout=function(){
+  _origLogout();
+  conSetMode(null);
+  document.getElementById("dh-panel").classList.remove("open");
+  // keep toolbar and toggle visible on login page
+  document.getElementById("dh-con").classList.add("vis");
+};
+</script>
+</body>
+</html>
