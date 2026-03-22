@@ -332,10 +332,21 @@ tr:hover td{background:rgba(255,255,255,.03)}
 .notif-bell{position:relative;cursor:pointer;padding:4px;border-radius:6px;background:none;border:none;color:var(--muted);display:flex;align-items:center}
 .notif-bell:hover{color:var(--text);background:rgba(255,255,255,.04)}
 .notif-dot{position:absolute;top:2px;right:2px;width:8px;height:8px;border-radius:50%;background:#f87171;border:2px solid var(--bg)}
-.notif-panel{position:absolute;top:calc(100% + 8px);right:0;width:340px;background:rgba(14,15,24,.99);border:1px solid rgba(0,212,255,.18);border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.8),0 0 0 1px rgba(0,212,255,.06),0 0 40px rgba(0,0,0,.4);z-index:200;max-height:400px;overflow-y:auto;display:none;backdrop-filter:blur(20px)}
+.notif-panel{position:fixed;top:0;right:16px;width:340px;background:#0e0f18;border:1px solid rgba(0,212,255,.18);border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.85),0 0 0 1px rgba(0,212,255,.08),0 0 40px rgba(0,0,0,.5);z-index:9990;max-height:400px;overflow-y:auto;display:none}
 .notif-panel.open{display:block}
 .notif-item{display:flex;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border-sub);font-size:12px;transition:background .12s;cursor:pointer}
 .notif-item:hover{background:rgba(0,212,255,.04)}
+.notif-item:active{background:rgba(0,212,255,.08)}
+.notif-item .notif-action{margin-left:auto;flex-shrink:0;font-size:10px;color:var(--dim);opacity:0;transition:opacity .15s;font-family:var(--mono);letter-spacing:.5px;display:flex;align-items:center;gap:3px}
+.notif-item:hover .notif-action{opacity:1}
+.notif-detail-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.notif-detail-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;background:var(--border-sub)}
+.notif-detail-type{display:inline-block;font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;font-family:var(--mono);color:var(--primary);margin-bottom:4px}
+.notif-detail-title{font-size:18px;font-weight:600;margin-bottom:4px}
+.notif-detail-time{font-size:11px;color:var(--dim);font-family:var(--mono)}
+.notif-detail-section{margin-bottom:16px}
+.notif-detail-section h4{font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;font-family:var(--mono);color:var(--muted);margin-bottom:8px}
+.notif-detail-section p{font-size:13px;line-height:1.7;color:var(--text)}
 .notif-item.unread{background:rgba(0,212,255,.03);border-left:3px solid var(--primary)}
 .notif-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px}
 
@@ -439,7 +450,7 @@ body.light-theme .btn::after,body.light-theme .demo-btn::after,body.light-theme 
 .ch{padding:14px 16px 0;font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px;letter-spacing:-.01em;color:var(--text)}
 body.light-theme .card{background:rgba(255,255,255,.97);border-color:rgba(0,0,0,.1);box-shadow:0 1px 4px rgba(0,0,0,.06)}
 body.light-theme .card:hover{border-color:rgba(0,160,210,.2);box-shadow:0 4px 20px rgba(0,0,0,.08),0 0 16px rgba(0,160,210,.06)}
-body.light-theme .notif-panel{background:rgba(255,255,255,.99);border-color:rgba(0,0,0,.12);box-shadow:0 20px 60px rgba(0,0,0,.15),0 0 0 1px rgba(0,0,0,.04)}
+body.light-theme .notif-panel{background:#ffffff;border-color:rgba(0,0,0,.12);box-shadow:0 20px 60px rgba(0,0,0,.18),0 0 0 1px rgba(0,0,0,.06)}
 
 /* ── Annotation 4: Time badge bright green ── */
 .time-badge{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:99px;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.5px;color:#4ade80;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.2);white-space:nowrap;text-shadow:0 0 8px rgba(74,222,128,.3)}
@@ -635,7 +646,7 @@ a,button,select,.nav-item,.tab-item,.demo-btn,.demo-dropdown summary,.btn,.notif
   .tz-select{padding:5px 8px;font-size:11px;min-height:32px}
 
   /* Notification panel */
-  .notif-panel{width:320px;right:-8px}
+  .notif-panel{width:320px}
   .notif-item{padding:12px 14px;min-height:44px}
 
   /* Inputs bigger for touch */
@@ -676,7 +687,7 @@ a,button,select,.nav-item,.tab-item,.demo-btn,.demo-dropdown summary,.btn,.notif
   .g4,.g3,.g2,.gc{grid-template-columns:1fr}
   .g21,.g31{grid-template-columns:1fr}
   .page{padding:16px}
-  .notif-panel{width:calc(100vw - 32px);right:-60px}
+  .notif-panel{width:calc(100vw - 32px);right:16px}
   .kanban{grid-template-columns:1fr}
   .login-box{max-width:100%}
   .drv-hero-stats{gap:16px}
@@ -1390,20 +1401,23 @@ function ringChart(pct,color='#00d4ff',label='',sub=''){
 function renderNotifPanel(){
   const unread=notifications.filter(n=>!n.read).length;
   return `<div style="position:relative">
-    <button class="notif-bell" onclick="toggleNotif()">${icon('Bell')}${unread>0?'<div class="notif-dot"></div>':''}</button>
-    <div class="notif-panel${state.notifOpen?' open':''}" id="notif-panel">
+    <button class="notif-bell" onclick="toggleNotif()" id="notif-bell-btn">${icon('Bell')}${unread>0?'<div class="notif-dot"></div>':''}</button>
+    <div class="notif-panel" id="notif-panel">
       <div style="padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
         <span style="font-size:13px;font-weight:600">Notifications</span>
         ${unread>0?`<span class="badge b-new">${unread} new</span>`:''}
       </div>
-      ${notifications.slice(0,8).map(n=>`<div class="notif-item${n.read?'':' unread'}" onclick="readNotif(${n.id})">
+      ${notifications.slice(0,8).map(n=>{
+        var canNav=notifCanNavigate(n);
+        return`<div class="notif-item${n.read?'':' unread'}" onclick="handleNotifClick(${n.id})">
         <div class="notif-icon" style="background:var(--border-sub);font-size:16px">${n.icon}</div>
         <div style="flex:1;min-width:0">
           <div style="font-weight:500;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(n.title)}</div>
           <div style="color:var(--muted);font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(n.body)}</div>
           <div style="color:var(--dim);font-size:10px;margin-top:2px;font-family:var(--mono)">${esc(n.time)}</div>
         </div>
-      </div>`).join('')}
+        <span class="notif-action">${canNav?'→ Go':'ⓘ'}</span>
+      </div>`}).join('')}
     </div>
   </div>`;
 }
@@ -2525,8 +2539,115 @@ window.setDrvTab=tab=>{state.drvTab=tab;state.page='driver';rerenderPage();};
 window.updateReqStatus=(id,status)=>{const r=requests.find(r=>r.id===id);if(r)r.status=status;rerenderPage();};
 window.deleteReq=id=>{requests=requests.filter(r=>r.id!==id);toast('Deleted');rerenderPage();};
 window.updateSubPlan=(id,plan)=>{const s=subs.find(s=>s.id===id);if(s){s.plan=plan;s.price=PLAN_P[plan];}toast('Plan updated');rerenderPage();};
-window.toggleNotif=()=>{state.notifOpen=!state.notifOpen;const p=document.getElementById('notif-panel');if(p)p.classList.toggle('open',state.notifOpen);};
+window.toggleNotif=()=>{
+  state.notifOpen=!state.notifOpen;
+  const p=document.getElementById('notif-panel');
+  if(!p)return;
+  if(state.notifOpen){
+    const bell=document.getElementById('notif-bell-btn')||document.querySelector('.notif-bell');
+    if(bell){
+      const r=bell.getBoundingClientRect();
+      p.style.top=(r.bottom+8)+'px';
+      p.style.right=Math.max(16,window.innerWidth-r.right)+'px';
+      if(window.innerWidth<480){p.style.right='16px';}
+    }
+    p.classList.add('open');
+  }else{
+    p.classList.remove('open');
+  }
+};
 window.readNotif=id=>{const n=notifications.find(n=>n.id===id);if(n)n.read=true;rerenderPage();};
+
+/* ── Notification navigation mapping ── */
+var NOTIF_NAV_MAP={
+  dispatch:{page:'driver',tab:'route',desc:'A delivery route has been dispatched and assigned to a driver. All stops are loaded and the driver can begin their route.',cause:'Automatic dispatch triggered by the route scheduler when package batches complete morning sort and pass quality checks.',solution:'No action needed — this is an informational confirmation. The assigned driver will see the route in their portal.'},
+  pickup:{page:'driver',tab:'route',desc:'Warehouse pickup has been confirmed. All packages for this route have been scanned and are ready for loading.',cause:'Triggered when the warehouse scan station confirms 100% of the manifested packages for a route are inducted.',solution:'No action needed — the driver should proceed to load their vehicle and begin the route.'},
+  delivery:{page:'driver',tab:'route',desc:'A specific delivery stop has been successfully completed with proof of delivery captured.',cause:'The driver marked this stop as delivered in the scanning app, and the GPS/photo proof of delivery was recorded.',solution:'No action needed — delivery confirmation is logged. Check the driver route tab for full stop-by-stop progress.'},
+  task:{page:'requests',tab:null,desc:'A compliance or operational task requires attention before its deadline.',cause:'Generated by the platform compliance monitoring system when an audit, license renewal, or inspection deadline approaches.',solution:'Navigate to Requests to view task details. Assign responsibility and ensure the deadline is met to avoid penalties.'},
+  submission:{page:'billing',tab:null,desc:'A driver has submitted actual delivery data that differs from the OnTrac API values.',cause:'Drivers can report discrepancies when API data does not reflect actual performance — e.g., stops completed but not yet synced.',solution:'Navigate to Billing to review the submission. Accountants can approve, reject, or flag the discrepancy for further investigation.'},
+  alert:{page:'billing',tab:null,desc:'A financial alert has been triggered — typically an overdue invoice or payment issue.',cause:'The billing system detected an unpaid invoice past its due date or a failed payment transaction.',solution:'Navigate to Billing to view the invoice. Contact the company to arrange payment or initiate the overdue collection workflow.'},
+  sim:{page:null,tab:null,desc:'A live simulation event from the platform real-time operations feed.',cause:'Generated by the day simulation engine to demonstrate live operational events as they would occur during a normal business day.',solution:'This is a simulated event for demonstration purposes. In production, these would reflect actual live operational data.'},
+  system:{page:null,tab:null,desc:'A system-level notification about platform health, API connectivity, or infrastructure status.',cause:'The platform monitors OnTrac API response times, data freshness, and system health. Alerts fire when thresholds are exceeded.',solution:'Check the Dashboard for current system status. If the issue persists, drivers can use the manual data submission feature as a fallback.'},
+  message:{page:null,tab:null,desc:'A message has been received from a team member or external contact.',cause:'Direct communication from another platform user — could be about scheduling, operations, or general inquiries.',solution:'Currently, messages are informational. Navigate to the Communications Hub (Owner role) or respond via your company internal channels.'}
+};
+
+function notifCanNavigate(n){
+  if(!state.user)return false;
+  var map=NOTIF_NAV_MAP[n.type]||NOTIF_NAV_MAP.sim;
+  if(!map.page)return false;
+  var role=state.user.role;
+  /* Check if the user's role can access the target page */
+  if(map.page==='driver'&&role!=='driver')return(role==='admin'||role==='general_manager'||role==='manager');
+  if(map.page==='billing'&&role==='manager')return false;
+  if(map.page==='billing'&&role==='driver')return false;
+  return true;
+}
+
+function resolveNotifPage(n){
+  var map=NOTIF_NAV_MAP[n.type]||NOTIF_NAV_MAP.sim;
+  var role=state.user?state.user.role:'admin';
+  var targetPage=n.page||map.page;
+  if(!targetPage)return null;
+  /* Remap "driver" page for non-driver roles → tracking */
+  if(targetPage==='driver'&&role!=='driver')return{page:'tracking',tab:null};
+  /* Remap "dashboard" for owner → owner_command */
+  if(targetPage==='dashboard'&&role==='owner')return{page:'owner_command',tab:null};
+  /* Remap "billing" for accountant → billing with accTab if submission */
+  if(targetPage==='billing'&&n.type==='submission')return{page:'billing',tab:'manual'};
+  return{page:targetPage,tab:map.tab||null};
+}
+
+window.handleNotifClick=function(id){
+  var n=notifications.find(function(x){return x.id===id;});
+  if(!n)return;
+  /* Mark as read */
+  n.read=true;
+  /* Close the notification panel */
+  state.notifOpen=false;
+  var p=document.getElementById('notif-panel');
+  if(p)p.classList.remove('open');
+  /* Determine if we can navigate */
+  if(notifCanNavigate(n)){
+    var target=resolveNotifPage(n);
+    if(target){
+      if(target.tab&&state.user&&state.user.role==='driver'){
+        state.drvTab=target.tab;state.page='driver';
+      }else{
+        state.page=target.page;
+      }
+      if(target.page==='reporting')startApiSimulation();else stopApiSimulation();
+      render();
+      return;
+    }
+  }
+  /* No navigation target — show detail popup */
+  showNotifDetail(n);
+};
+
+window.showNotifDetail=function(n){
+  var map=NOTIF_NAV_MAP[n.type]||NOTIF_NAV_MAP.sim;
+  var typeLabel=(n.type||'notification').replace(/_/g,' ');
+  var now=new Date();
+  var dateStr=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
+  var html=`<div class="overlay" id="notif-detail-modal"><div class="modal" style="max-width:520px">
+    <div class="notif-detail-header">
+      <div class="notif-detail-icon">${n.icon}</div>
+      <div style="flex:1;min-width:0">
+        <div class="notif-detail-type">${esc(typeLabel)}</div>
+        <div class="notif-detail-title">${esc(n.title)}</div>
+        <div class="notif-detail-time">${esc(n.time)} · ${dateStr}</div>
+      </div>
+    </div>
+    <div class="notif-detail-section"><h4>Description</h4><p>${esc(n.body)}</p></div>
+    <div class="notif-detail-section"><h4>What This Means</h4><p>${esc(map.desc)}</p></div>
+    <div class="notif-detail-section"><h4>Cause</h4><p>${esc(map.cause)}</p></div>
+    <div class="notif-detail-section"><h4>Recommended Action</h4><p>${esc(map.solution)}</p></div>
+    <div class="modal-foot"><button class="btn btn-o" onclick="closeModal('notif-detail-modal')">Close</button></div>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',html);
+  document.getElementById('notif-detail-modal').addEventListener('click',function(e){if(e.target.id==='notif-detail-modal')closeModal('notif-detail-modal');});
+  rerenderPage();
+};
 window.setTimeRange=(id,range)=>{state.timeRange=range;rerenderPage();};
 window.approveSubmission=id=>{const s=driverSubmissions.find(s=>s.id===id);if(s){s.status='approved';toast('Approved — actual value will be used');}rerenderPage();};
 window.rejectSubmission=id=>{const s=driverSubmissions.find(s=>s.id===id);if(s){s.status='rejected';toast('Rejected — API value retained','err');}rerenderPage();};
