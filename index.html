@@ -60,7 +60,7 @@ button{cursor:pointer}
 ::-webkit-scrollbar-thumb{background:rgba(0,212,255,.3);border-radius:2px}
 
 .app{display:flex;height:100vh;overflow:hidden;position:relative;z-index:1}
-.sidebar{width:220px;min-width:220px;background:var(--sb);display:flex;flex-direction:column;border-right:1px solid var(--border)}
+.sidebar{width:220px;min-width:220px;background:rgba(15,16,25,.92);display:flex;flex-direction:column;border-right:1px solid var(--border);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
 .sb-head{padding:16px;border-bottom:1px solid var(--border)}
 .sb-logo{display:flex;align-items:center;gap:10px}
 .sb-logo-icon{width:32px;height:32px;background:linear-gradient(135deg,#00d4ff,#0099cc);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 12px var(--primary-glow)}
@@ -79,6 +79,78 @@ button{cursor:pointer}
 .user-role{font-size:11px;color:var(--sb-muted)}
 .logout-btn{margin-left:auto;background:none;border:none;color:var(--sb-muted);display:flex;align-items:center;padding:4px;border-radius:4px;flex-shrink:0}
 .logout-btn:hover{color:var(--sb-fg)}
+
+/* ── Account Dropdown ── */
+.sb-foot{position:relative}
+.acct-dd{display:none;position:absolute;bottom:calc(100% + 8px);left:8px;right:8px;background:rgba(15,16,25,.97);border:1px solid var(--border);border-radius:14px;padding:6px 0;z-index:500;box-shadow:0 -8px 40px rgba(0,0,0,.7),0 0 0 1px rgba(0,212,255,.04);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);max-height:calc(100vh - 120px);overflow-y:auto;animation:acctSlide .2s cubic-bezier(.16,1,.3,1)}
+.acct-dd.open{display:block}
+@keyframes acctSlide{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.acct-dd-head{display:flex;align-items:center;gap:10px;padding:14px 14px 10px}
+.acct-dd-avatar{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0;box-shadow:0 0 0 2px rgba(0,212,255,.2);overflow:hidden;background-size:cover;background-position:center}
+.acct-dd-name{font-size:13px;font-weight:600;color:var(--text)}
+.acct-dd-email{font-size:11px;color:var(--muted);font-family:var(--mono)}
+.acct-dd-sep{height:1px;margin:4px 12px;background:var(--border)}
+.acct-dd-lbl{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:var(--muted);padding:8px 14px 4px;font-family:var(--mono)}
+.acct-dd-item{display:flex;align-items:center;gap:10px;padding:8px 14px;cursor:pointer;transition:all .12s;font-size:12px;color:rgba(255,255,255,.7);border:none;background:none;width:100%;text-align:left;font-family:inherit}
+.acct-dd-item:hover{background:rgba(0,212,255,.06);color:var(--text)}
+.acct-dd-item svg{width:16px;height:16px;flex-shrink:0;opacity:.6}
+.acct-dd-item:hover svg{opacity:1}
+.acct-dd-tag{margin-left:auto;font-size:9px;font-family:var(--mono);padding:2px 6px;border-radius:4px;letter-spacing:.5px}
+.acct-dd-tag.soon{background:var(--warn-bg);color:var(--warn-t)}
+.acct-dd-tag.live{background:var(--ok-bg);color:var(--ok-t)}
+.acct-dd-tag.beta{background:var(--pur-bg);color:var(--pur-t)}
+.acct-dd-footer{padding:8px 14px;display:flex;gap:6px}
+.acct-dd-footer .btn{flex:1;justify-content:center;font-size:11px;padding:7px 10px}
+
+/* ── Account Settings Page ── */
+.acct-page{max-width:680px}
+.acct-avatar-wrap{display:flex;align-items:flex-start;gap:24px;margin-bottom:24px;flex-wrap:wrap}
+.acct-avatar-col{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:12px}
+.acct-avatar-big{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:28px;flex-shrink:0;box-shadow:0 0 0 3px rgba(0,212,255,.2);overflow:hidden;background-size:cover;background-position:center}
+.acct-avatar-big img{width:100%;height:100%;object-fit:cover;display:none}
+.acct-upload-label{cursor:pointer;padding:6px 14px;border-radius:8px;border:1px solid var(--border);background:rgba(15,16,25,.6);font-size:11px;color:rgba(255,255,255,.7);transition:all .2s}
+.acct-upload-label:hover{border-color:rgba(0,212,255,.3);color:var(--text)}
+.acct-fields{flex:1;min-width:260px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.acct-fields .fg{display:flex;flex-direction:column}
+.acct-fields .fg label{font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:1px;margin-bottom:6px}
+.acct-section{background:rgba(15,16,25,.7);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:16px;backdrop-filter:blur(8px)}
+.acct-section h3{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px}
+.acct-section .desc{font-size:11px;color:var(--muted);margin-bottom:14px}
+.acct-msg-row{display:flex;align-items:center;justify-content:space-between;padding:12px;border-radius:10px;background:rgba(15,16,25,.5);border:1px solid var(--border);margin-bottom:8px}
+.acct-msg-row:last-child{margin-bottom:0}
+.acct-msg-info{display:flex;align-items:center;gap:10px}
+.acct-msg-icon{font-size:18px}
+.acct-msg-name{font-size:12px;font-weight:600;color:var(--text)}
+.acct-msg-status{font-size:10px;color:var(--muted);font-family:var(--mono)}
+.acct-src-btn{flex:1;padding:9px;border-radius:9px;border:1px solid var(--border);background:rgba(15,16,25,.5);color:rgba(255,255,255,.7);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s}
+.acct-src-btn.active{background:rgba(0,212,255,.12);border-color:rgba(0,212,255,.3);color:var(--primary)}
+.acct-connect-btn{padding:6px 14px;border-radius:8px;border:1px solid;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;background:transparent;transition:all .2s}
+.acct-style-btn{padding:8px 16px;border-radius:9px;border:1px solid var(--border);background:rgba(15,16,25,.5);color:rgba(255,255,255,.7);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s}
+.acct-style-btn.active{background:rgba(0,212,255,.12);border-color:rgba(0,212,255,.3);color:var(--primary)}
+.acct-fmt-btn{padding:7px 14px;border-radius:8px;background:rgba(15,16,25,.5);border:1px solid var(--border);color:rgba(255,255,255,.7);font-family:var(--mono);font-size:10px;cursor:pointer;transition:all .2s}
+.acct-fmt-btn.active{background:rgba(0,212,255,.1);border-color:rgba(0,212,255,.3);color:var(--primary);font-weight:700}
+
+/* ── Feature Detail Pages ── */
+.fp{max-width:760px}
+.fp-hero{display:flex;align-items:center;gap:16px;margin-bottom:20px;flex-wrap:wrap}
+.fp-icon{width:56px;height:56px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.fp-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;padding:3px 10px;border-radius:6px;letter-spacing:.5px;font-family:var(--mono)}
+.fp-badge.live{background:var(--ok-bg);color:var(--ok-t)}
+.fp-badge.beta{background:var(--pur-bg);color:var(--pur-t)}
+.fp-badge.soon{background:var(--warn-bg);color:var(--warn-t)}
+.fp-section{background:rgba(15,16,25,.7);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:16px;backdrop-filter:blur(8px)}
+.fp-section h3{font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.fp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.fp-metric{background:rgba(15,16,25,.5);border:1px solid var(--border);border-radius:10px;padding:14px}
+.fp-metric-val{font-size:20px;font-weight:700;color:var(--text)}
+.fp-metric-label{font-size:11px;color:var(--muted);margin-top:2px}
+.fp-kv{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border-sub);font-size:12px}
+.fp-kv:last-child{border-bottom:none}
+.fp-log{font-family:var(--mono);font-size:11px;color:var(--muted);background:rgba(0,0,0,.3);border-radius:8px;padding:12px;max-height:180px;overflow-y:auto;line-height:1.8}
+.fp-log .ok{color:var(--ok-t)}.fp-log .warn{color:var(--warn-t)}.fp-log .err{color:var(--err-t)}.fp-log .dim{color:var(--dim)}
+.fp-bar{height:8px;border-radius:4px;background:var(--border);margin-top:6px;overflow:hidden}
+.fp-bar-fill{height:100%;border-radius:4px;transition:width .3s}
+
 .main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
 .topbar{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;border-bottom:1px solid var(--border);background:rgba(10,10,15,.9);backdrop-filter:blur(20px);flex-shrink:0;gap:8px}
 .topbar-left{display:flex;align-items:center;gap:8px}
@@ -328,6 +400,25 @@ tr:hover td{background:rgba(255,255,255,.03)}
 .tr-opt:hover{color:var(--text);background:rgba(255,255,255,.04)}
 .tr-opt.active{background:rgba(0,212,255,.12);color:var(--primary)}
 
+/* Custom date range panel */
+.tr-custom-panel{position:absolute;top:calc(100% + 6px);right:0;z-index:200;background:rgba(14,15,24,.97);border:1px solid rgba(0,212,255,.18);border-radius:12px;padding:14px;min-width:320px;box-shadow:0 16px 48px rgba(0,0,0,.7),0 0 0 1px rgba(0,212,255,.04);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);animation:trSlide .2s cubic-bezier(.16,1,.3,1)}
+.tr-custom-row{display:flex;gap:8px;margin-bottom:10px}
+.tr-custom-row .fg{flex:1}
+.tr-custom-row .fg label{font-size:9px;color:var(--muted);font-family:var(--mono);letter-spacing:1px;display:block;margin-bottom:4px}
+.tr-custom-row .fg input,.tr-custom-row .fg select{width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;background:rgba(15,16,25,.8);color:var(--text);font-size:11px;font-family:var(--mono);outline:none}
+.tr-custom-row .fg input:focus,.tr-custom-row .fg select:focus{border-color:rgba(0,212,255,.4)}
+.tr-sort-lbl{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:var(--muted);font-family:var(--mono);margin:8px 0 6px}
+.tr-custom-presets{display:flex;gap:4px;margin-bottom:10px;flex-wrap:wrap}
+.tr-custom-presets button{padding:4px 10px;border-radius:5px;border:1px solid var(--border);background:none;color:var(--muted);font-size:10px;font-family:var(--mono);cursor:pointer;transition:all .15s}
+.tr-custom-presets button:hover{border-color:rgba(0,212,255,.3);color:var(--text)}
+.tr-custom-presets button.active{background:rgba(0,212,255,.12);border-color:rgba(0,212,255,.3);color:var(--primary)}
+
+/* Notification refresh */
+.notif-refresh{display:inline-flex;align-items:center;gap:4px;cursor:pointer;transition:all .2s;border-radius:4px;padding:1px 2px}
+.notif-refresh:hover{opacity:.7}
+.notif-refresh svg{transition:transform .3s}
+.notif-refresh:hover svg{transform:rotate(180deg)}
+
 /* Notifications */
 .notif-bell{position:relative;cursor:pointer;padding:4px;border-radius:6px;background:none;border:none;color:var(--muted);display:flex;align-items:center}
 .notif-bell:hover{color:var(--text);background:rgba(255,255,255,.04)}
@@ -475,7 +566,7 @@ body.light-theme .chart-switch select{background:rgba(255,255,255,.9);border-col
 .dh-pin-del:hover{transform:scale(1.15);background:#ef4444}
 body.dh-ann-mode .dh-pin-del{display:flex}
 
-/* Constructor styles */
+/* Edits styles */
 #dh-con{position:fixed;bottom:24px;right:24px;z-index:10001;display:none;flex-direction:column;align-items:flex-end;gap:8px}
 #dh-con.vis{display:flex}
 #dh-tb{display:flex;align-items:center;gap:6px;background:rgba(18,19,30,.96);border:1px solid rgba(167,139,250,.40);border-radius:14px;padding:8px 10px;box-shadow:0 8px 40px rgba(0,0,0,.6),0 0 30px rgba(167,139,250,.16);backdrop-filter:blur(16px)}
@@ -657,7 +748,7 @@ a,button,select,.nav-item,.tab-item,.demo-btn,.demo-dropdown summary,.btn,.notif
   select.inp{padding-right:32px}
   label{font-size:11px;margin-bottom:6px}
 
-  /* Constructor toolbar */
+  /* Edits toolbar */
   #dh-con{bottom:16px;right:16px}
   #dh-tb{padding:6px 8px;gap:4px;border-radius:12px}
   .dh-btn{padding:8px 10px;min-height:36px;font-size:11px}
@@ -812,120 +903,27 @@ let reqSeq=7,coSeq=21;
 // SEEDED PRNG — deterministic random for consistent renders
 // ══════════════════════════════════════════════════════════
 function seededRng(seed){var s=seed;return function(){s=(s*16807+0)%2147483647;return(s-1)/2147483646;};}
-var _rng=seededRng(20250323);
-function srand(){return _rng();}
-function srandRange(min,max){return min+srand()*(max-min);}
-function srandInt(min,max){return Math.round(srandRange(min,max));}
 
 // ══════════════════════════════════════════════════════════
 // PLATFORM HISTORICAL DATA — 18 months of simulated metrics
 // ══════════════════════════════════════════════════════════
 var PLATFORM_HISTORY=(function(){
-  var rng=seededRng(42);
-  var r=function(){return rng();};
-  var months=[];
-  // Start from Oct 2023 through Mar 2025 (18 months)
-  var baseCompanies=6,baseDrivers=120,baseMRR=3200,baseRequests=8;
+  var rng=seededRng(42);var r=function(){return rng();};var months=[];
+  var baseCompanies=6,baseMRR=3200;
   for(var m=0;m<18;m++){
-    var ym=new Date(2023,9+m,1);
-    var year=ym.getFullYear(),mo=ym.getMonth();
-    var growth=1+m*0.065+r()*0.02; // ~6.5% compound monthly growth
+    var ym=new Date(2023,9+m,1);var year=ym.getFullYear(),mo=ym.getMonth();
+    var growth=1+m*0.065+r()*0.02;
     var seasonal=1+(mo===11?0.18:mo===0?-0.04:mo===6?0.08:mo===4?0.05:0);
     var coCount=Math.round(baseCompanies*growth*seasonal);
-    var activeDrivers=Math.round(baseDrivers*growth*seasonal);
-    var mrr=Math.round(baseMRR*growth*seasonal);
-    var reqCount=Math.round(baseRequests*growth*(0.9+r()*0.2));
-    var starterCo=Math.round(coCount*0.30);
-    var proCo=Math.round(coCount*0.45);
-    var entCo=coCount-starterCo-proCo;
-    var starterRev=starterCo*99,proRev=proCo*299,entRev=entCo*799;
-    var totalMRR=starterRev+proRev+entRev;
+    var starterCo=Math.round(coCount*0.30),proCo=Math.round(coCount*0.45),entCo=coCount-starterCo-proCo;
+    var totalMRR=starterCo*99+proCo*299+entCo*799;
     var churnRate=Math.max(0.5,4.2-m*0.12+r()*1.5);
     var newCo=Math.max(1,Math.round(coCount*0.08+r()*2));
-    var churned=Math.max(0,Math.round(coCount*churnRate/100));
-    var fleet=Math.round(activeDrivers*1.15);
-    var totalStops=Math.round(activeDrivers*55*(0.9+r()*0.2)*22);
-    var avgOTP=+(93+r()*5+m*0.1).toFixed(1);
-    var custSat=+(4.2+r()*0.5+m*0.02).toFixed(1);
-    if(custSat>4.9)custSat=4.9;
-    var paidRate=0.82+m*0.008+r()*0.05;if(paidRate>0.97)paidRate=0.97;
-    var overdueRate=1-paidRate-0.03;if(overdueRate<0.01)overdueRate=0.01;
-    months.push({
-      date:ym.toISOString().slice(0,7),
-      label:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][mo]+" '"+String(year).slice(2),
-      year:year,month:mo,
-      companies:coCount,newCompanies:newCo,churnedCompanies:churned,churnRate:+churnRate.toFixed(1),
-      starterCo:starterCo,proCo:proCo,entCo:entCo,
-      drivers:activeDrivers,fleet:fleet,
-      mrr:totalMRR,starterRev:starterRev,proRev:proRev,entRev:entRev,
-      requests:reqCount,
-      totalStops:totalStops,
-      avgOTP:avgOTP,custSat:Math.min(custSat,4.9),
-      paidRate:+(paidRate*100).toFixed(1),
-      overdueRate:+(overdueRate*100).toFixed(1),
-    });
+    months.push({date:ym.toISOString().slice(0,7),label:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][mo]+" '"+String(year).slice(2),year:year,month:mo,companies:coCount,newCompanies:newCo,churnRate:+churnRate.toFixed(1),starterCo:starterCo,proCo:proCo,entCo:entCo,mrr:totalMRR});
   }
   return months;
 })();
-
-// Daily data for the last 90 days (for "today" / "week" / "month" views)
-var PLATFORM_DAILY=(function(){
-  var rng=seededRng(7777);
-  var r=function(){return rng();};
-  var days=[];
-  var baseRev=subs.filter(function(s){return s.active;}).reduce(function(a,s){return a+s.price;},0);
-  var baseDailyRev=Math.round(baseRev/30);
-  for(var d=0;d<90;d++){
-    var dt=new Date(2025,0,1); dt.setDate(dt.getDate()+(d));
-    var dow=dt.getDay(); // 0=Sun
-    var dayMult=dow===0?0.35:dow===6?1.3:dow===5?1.15:dow===4?1.05:1.0;
-    var monthEffect=1+(dt.getMonth()-0)*0.015; // slight growth Jan→Mar
-    var rev=Math.round(baseDailyRev*dayMult*monthEffect*(0.92+r()*0.16));
-    var stops=Math.round(rev/1.38);
-    var newReq=dow===0?0:Math.round(0.8+r()*1.5);
-    var closedReq=dow===0?0:Math.round(0.5+r()*1.2);
-    days.push({
-      date:dt.toISOString().slice(0,10),
-      dow:dow,
-      revenue:rev,
-      stops:stops,
-      newRequests:newReq,
-      closedRequests:closedReq,
-      activeDrivers:Math.round(companies.reduce(function(a,c){return a+c.drivers;},0)*(dow===0?0.15:dow===6?0.65:0.92)*(0.95+r()*0.1)),
-      otp:+(93+r()*5).toFixed(1),
-    });
-  }
-  return days;
-})();
-
-// Helper: filter data by time range
-function getTimeRangeFilter(range){
-  var now=new Date(2025,2,23); // Mar 23 2025 — simulated "today"
-  var start;
-  switch(range){
-    case'today':start=new Date(2025,2,23);break;
-    case'week':start=new Date(2025,2,17);break; // Mon of this week
-    case'month':start=new Date(2025,2,1);break;
-    case'quarter':start=new Date(2025,0,1);break;
-    case'ytd':start=new Date(2025,0,1);break;
-    default:start=new Date(2025,2,1);
-  }
-  return{start:start,end:now};
-}
-function filterDaily(range){
-  var f=getTimeRangeFilter(range);
-  return PLATFORM_DAILY.filter(function(d){var dt=new Date(d.date);return dt>=f.start&&dt<=f.end;});
-}
-function filterMonthly(range){
-  var f=getTimeRangeFilter(range);
-  return PLATFORM_HISTORY.filter(function(m){var dt=new Date(m.date+'-01');return dt>=new Date(f.start.getFullYear(),f.start.getMonth()-1,1)&&dt<=f.end;});
-}
-// Compute period-over-period change
-function periodChange(current,previous){
-  if(!previous||previous===0)return'+0%';
-  var pct=((current-previous)/previous*100).toFixed(1);
-  return(pct>=0?'+':'')+pct+'%';
-}
+function periodChange(current,previous){if(!previous||previous===0)return'+0%';var pct=((current-previous)/previous*100).toFixed(1);return(pct>=0?'+':'')+pct+'%';}
 
 // ── Premium Feature Toggle ──
 var ownerPremium=false;
@@ -1273,11 +1271,11 @@ function getLocSummary(){
 function getOwnerOps(coId){
   const co=companies.find(c=>c.id===coId);
   if(!co)return null;
-  var rng=seededRng(coId*1000+73);var r=function(){return rng();};
+  var _rng2=seededRng(coId*1000+73);var _r2=function(){return _rng2();};
   const driverUsers=USERS.filter(u=>u.role==='driver'&&u.co===coId);
   const driverCount=co.drivers||driverUsers.length;
   const now=new Date();const hour=now.getHours();
-  const totalPkgs=Math.round(co.fleet*38+r()*co.fleet*5);
+  const totalPkgs=Math.round(co.fleet*38+_r2()*co.fleet*5);
   const scanned=Math.round(totalPkgs*0.98);
   const loaded=Math.round(scanned*(hour<7?0.3:hour<9?0.88:0.97));
   const outForDel=Math.round(loaded*(hour<8?0.1:hour<10?0.65:hour<14?0.88:0.95));
@@ -1294,12 +1292,12 @@ function getOwnerOps(coId){
   const dailyRev=Math.round(totalPkgs*revPerStop);
   const weeklyRev=Math.round(dailyRev*5.2);const monthlyRev=Math.round(dailyRev*22);
   const dailyCost=Math.round(dailyRev*0.72);const dailyProfit=dailyRev-dailyCost;const profitMargin=Math.round((dailyProfit/dailyRev)*100);
-  const losRate=+(98+r()*1.8).toFixed(1);const otpRate=+(93+r()*5).toFixed(1);
-  const custSat=+(4.3+r()*0.6).toFixed(1);
-  const revTrend30=Array.from({length:30},(_,i)=>{const base=dailyRev;const day=i%7;const dayMult=day===5?1.35:day===6?0.35:day===4?1.15:1.0;return{day:i+1,label:`${Math.ceil((i+1)/7)}w`,revenue:Math.round(base*dayMult*(0.9+r()*0.2))};});
+  const losRate=+(98+_r2()*1.8).toFixed(1);const otpRate=+(93+_r2()*5).toFixed(1);
+  const custSat=+(4.3+_r2()*0.6).toFixed(1);
+  const revTrend30=Array.from({length:30},(_,i)=>{const base=dailyRev;const day=i%7;const dayMult=day===5?1.35:day===6?0.35:day===4?1.15:1.0;return{day:i+1,label:`${Math.ceil((i+1)/7)}w`,revenue:Math.round(base*dayMult*(0.9+_r2()*0.2))};});
   const drvNames=["J. Williams","M. Hernandez","K. Brown","R. Patel","A. Nguyen","T. Jackson","L. Garcia","D. Kim","S. Cooper","B. Foster","C. Mendez","P. Santos","V. Chen","H. Moore","N. Rivera","F. Lee","G. White","E. Thompson","I. Clark","O. Young","W. Adams","X. Hall","Y. Allen","Z. Baker"];
   const driverMatrix=[];
-  for(let i=0;i<driverCount;i++){const name=drvNames[i%drvNames.length]+(i>=drvNames.length?` ${Math.floor(i/drvNames.length)+1}`:'');const stops=Math.round(40+r()*45);const done=Math.round(stops*(hour<10?0.2:hour<14?0.55:hour<17?0.82:0.95));const otp=+(90+r()*9).toFixed(1);const stat=done>=stops?'completed':done>0?'active':'idle';driverMatrix.push({id:i+1,name,stops,done,remaining:stops-done,otp,status:stat,vehicle:`CV-${1000+i}`,zone:`Z${(i%6)+1}`,rating:+(4.2+r()*0.7).toFixed(1),earnings:Math.round(done*revPerStop),miles:Math.round(done*1.8)});}
+  for(let i=0;i<driverCount;i++){const name=drvNames[i%drvNames.length]+(i>=drvNames.length?` ${Math.floor(i/drvNames.length)+1}`:'');const stops=Math.round(40+_r2()*45);const done=Math.round(stops*(hour<10?0.2:hour<14?0.55:hour<17?0.82:0.95));const otp=+(90+_r2()*9).toFixed(1);const stat=done>=stops?'completed':done>0?'active':'idle';driverMatrix.push({id:i+1,name,stops,done,remaining:stops-done,otp,status:stat,vehicle:`CV-${1000+i}`,zone:`Z${(i%6)+1}`,rating:+(4.2+_r2()*0.7).toFixed(1),earnings:Math.round(done*revPerStop),miles:Math.round(done*1.8)});}
   const compliance={dot:{status:'active',expiry:'2026-08-15',daysLeft:148},mc:{status:'active',expiry:'2026-06-01',daysLeft:73},insurance:{status:co.id===6?'expired':'active',expiry:co.id===6?'2025-01-15':'2026-12-30',daysLeft:co.id===6?-430:285},bizLicense:{status:'active',expiry:'2026-11-20',daysLeft:245},safetyAudit:{lastDate:'2025-11-15',score:96,nextDue:'2026-05-15',daysLeft:56},drugTest:{compliant:driverCount-2,total:driverCount,lastBatch:'2025-02-20'},vehicleInspection:{passed:co.fleet-3,total:co.fleet,nextDue:'2025-04-01'}};
   const messages=[{id:1,from:'Platform Admin',time:'2h ago',subject:'Q2 Rate Adjustment Notice',preview:'Rate increases effective April 1st for all LA Metro zones...',unread:true,priority:'high'},{id:2,from:'Zone 7 Dispatch',time:'3h ago',subject:'Weather Alert — Storm Warning',preview:'NWS advisory for afternoon thunderstorms. Secure packages...',unread:true,priority:'urgent'},{id:3,from:'HR Operations',time:'5h ago',subject:'Driver Onboarding: 4 New Hires',preview:'Background checks completed. CDL verification pending for...',unread:false,priority:'normal'},{id:4,from:'Fleet Maintenance',time:'1d ago',subject:'Vehicle CV-1023 Service Due',preview:'Scheduled maintenance overdue by 3 days...',unread:false,priority:'medium'},{id:5,from:'Accounting',time:'1d ago',subject:'Invoice #INV-2025-0412 — Payment Received',preview:'$14,280 received from OnTrac for February settlement...',unread:false,priority:'normal'}];
   const alerts=[{type:'warning',text:`${driversLate} driver(s) behind schedule`,time:'12 min ago'},{type:'info',text:`Peak volume: +18% vs average. ${Math.round(totalPkgs*0.18)} additional packages.`,time:'1h ago'},{type:'success',text:`Morning sort completed. ${loaded} packages loaded across ${routesActive} routes.`,time:'3h ago'},{type:'error',text:`Vehicle CV-1023 maintenance overdue.`,time:'6h ago'}];
@@ -1386,6 +1384,9 @@ const SVG={
   Send:`<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>`,
   ClipboardList:`<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></svg>`,
   Calendar:`<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
+  User:`<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
+  Cpu:`<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"/></svg>`,
+  Settings:`<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
 };
 const icon=name=>SVG[name]||'';
 
@@ -1552,51 +1553,30 @@ function buildNotifPanelHTML(){
 // PAGES
 // ══════════════════════════════════════════════════════════
 function renderDashboard(){
-  var range=state.timeRange||'month';
-  var daily=filterDaily(range);
-  var monthly=filterMonthly(range);
   var curMonth=PLATFORM_HISTORY[PLATFORM_HISTORY.length-1];
   var prevMonth=PLATFORM_HISTORY[PLATFORM_HISTORY.length-2]||curMonth;
-
   const activeC=companies.filter(c=>c.status==='active').length;
   const pendingC=companies.filter(c=>c.status==='pending').length;
   const rev=subs.filter(s=>s.active).reduce((a,s)=>a+s.price,0);
-  var periodRev=daily.length>0?daily.reduce(function(a,d){return a+d.revenue;},0):rev;
-  var periodLabel=range==='today'?'today':range==='week'?'this week':range==='month'?'this month':range==='quarter'?'this quarter':'year to date';
   var revChange=periodChange(curMonth.mrr,prevMonth.mrr);
   const openR=requests.filter(r=>r.status==='new'||r.status==='in_progress').length;
   const urgR=requests.filter(r=>r.priority==='urgent'&&r.status!=='completed').length;
   const fleet=companies.reduce((a,c)=>a+c.fleet,0);
   const drivers=companies.reduce((a,c)=>a+c.drivers,0);
-
-  // Revenue trend from historical data — use daily for short ranges, monthly for long
-  var revTrend;
-  if(range==='today'||range==='week'){
-    revTrend=daily.map(function(d){return{month:d.date.slice(5),revenue:d.revenue};});
-  }else if(range==='month'){
-    revTrend=daily.filter(function(_,i){return i%3===0;}).map(function(d){return{month:'D'+d.date.slice(8),revenue:d.revenue};});
-  }else{
-    revTrend=monthly.map(function(m){return{month:m.label,revenue:m.mrr};});
-  }
-  if(revTrend.length<2)revTrend=[{month:'Prev',revenue:Math.round(rev*0.92)},{month:'Now',revenue:rev}];
-
+  // Revenue trend from historical data, sliced by time range
+  var rawTrend=PLATFORM_HISTORY.slice(-8).map(function(m){return{month:m.label,revenue:m.mrr};});
+  var revTrend=trSliceData(rawTrend);
+  if(revTrend.length<2)revTrend=rawTrend.slice(-2);
   const statusDist=[{name:'Active',value:activeC,color:'#00d4ff'},{name:'Pending',value:pendingC,color:'#fbbf24'},{name:'Suspended',value:companies.filter(c=>c.status==='suspended').length,color:'#f87171'}].filter(d=>d.value>0);
-  const recentR=[...requests].sort((a,b)=>b.created.localeCompare(a.created)).slice(0,5);
-  const topCo=companies.filter(c=>c.status==='active').sort((a,b)=>b.rev-a.rev).slice(0,5);
-  const SC={new:'var(--info-t)',in_progress:'var(--warn-t)',completed:'var(--ok-t)',cancelled:'var(--muted)'};
-  const pendSubs=driverSubmissions.filter(s=>s.status==='pending').length;
-
-  // Plan distribution for the period
+  // Plan distribution
   var starterC=subs.filter(s=>s.plan==='starter'&&s.active).length;
   var proC=subs.filter(s=>s.plan==='professional'&&s.active).length;
   var entC=subs.filter(s=>s.plan==='enterprise'&&s.active).length;
   var planDist=[{name:'Starter ('+starterC+')',value:starterC,color:'#14b8a6'},{name:'Pro ('+proC+')',value:proC,color:'#00d4ff'},{name:'Enterprise ('+entC+')',value:entC,color:'#a78bfa'}].filter(function(d){return d.value>0;});
-
-  var avgDailyStops=daily.length>0?Math.round(daily.reduce(function(a,d){return a+d.stops;},0)/daily.length):0;
-  var avgOTP=daily.length>0?+(daily.reduce(function(a,d){return a+parseFloat(d.otp);},0)/daily.length).toFixed(1):curMonth.avgOTP;
-
-  var newCoLabel=periodChange(curMonth.companies,prevMonth.companies);
-
+  const recentR=[...requests].sort((a,b)=>b.created.localeCompare(a.created)).slice(0,5);
+  const topCo=companies.filter(c=>c.status==='active').sort((a,b)=>b.rev-a.rev).slice(0,5);
+  const SC={new:'var(--info-t)',in_progress:'var(--warn-t)',completed:'var(--ok-t)',cancelled:'var(--muted)'};
+  const pendSubs=driverSubmissions.filter(s=>s.status==='pending').length;
   const kpi=(title,val,sub,ic,trend,bg='var(--primary-bg)',negTrend=false)=>`
     <div class="card cb"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
       <div style="flex:1;min-width:0"><div class="kpi-label">${esc(title)}</div><div class="kpi-val">${esc(val)}</div><div class="kpi-sub">${esc(sub)}</div></div>
@@ -1604,14 +1584,14 @@ function renderDashboard(){
     </div>${trend?`<div class="kpi-trend${negTrend?' neg':''}">${icon('ArrowUpRight')} ${esc(trend)}</div>`:''}</div>`;
   return `<div class="page">
     <div class="ph"><div><div class="pt">Overview</div><div class="ps">Platform performance at a glance</div></div><div style="display:flex;align-items:center;gap:10px">${timeRangePicker('dash',state.timeRange)}${liveTimeBadge()}</div></div>
-    <div class="g4 mb4">${kpi('Active Companies',activeC,`${pendingC} pending`,'Building2',newCoLabel)}${kpi('Monthly Revenue','$'+rev.toLocaleString(),'from active subscriptions','DollarSign',revChange+' vs last month','var(--ok-bg)')}${kpi('Open Requests',openR,`${urgR} urgent`,'FileText','',urgR>0?'var(--err-bg)':'var(--primary-bg)')}${kpi('Driver Reports',pendSubs+' pending',`${driverSubmissions.length} total`,'ClipboardList','Needs review','var(--warn-bg)')}</div>
-    <div class="g4 mb4">${kpi('Total Fleet',fleet+' vehicles',drivers+' active drivers','Truck','+'+curMonth.newCompanies+' new','var(--primary-bg)')}${kpi('Avg Daily Stops',avgDailyStops.toLocaleString(),periodLabel,'Package','')}${kpi('Avg On-Time',avgOTP+'%','platform average','Clock','',parseFloat(avgOTP)>=95?'var(--ok-bg)':'var(--warn-bg)')}${kpi('Churn Rate',curMonth.churnRate+'%','companies/month','ArrowUpRight',curMonth.churnRate<3?'Healthy':'Needs attention',curMonth.churnRate<3?'var(--ok-bg)':'var(--warn-bg)',curMonth.churnRate>=3)}</div>
+    <div class="g4 mb4">${kpi('Active Companies',activeC,`${pendingC} pending`,'Building2',periodChange(curMonth.companies,prevMonth.companies))}${kpi('Monthly Revenue','$'+rev.toLocaleString(),'from active subscriptions','DollarSign',revChange+' vs last month','var(--ok-bg)')}${kpi('Open Requests',openR,`${urgR} urgent`,'FileText','',urgR>0?'var(--err-bg)':'var(--primary-bg)')}${kpi('Driver Reports',pendSubs+' pending',`${driverSubmissions.length} total`,'ClipboardList','Needs review','var(--warn-bg)')}</div>
+    <div class="g4 mb4">${kpi('Total Fleet',fleet+' vehicles',drivers+' active drivers','Truck','+'+curMonth.newCompanies+' new','var(--primary-bg)')}${kpi('Platform Churn',curMonth.churnRate+'%','companies/month','ArrowUpRight','',curMonth.churnRate<3?'var(--ok-bg)':'var(--warn-bg)',curMonth.churnRate>=3)}${kpi('Avg On-Time',curMonth?Math.round(93+curMonth.companies*0.1)+'%':'—','platform average','Clock','',true?'var(--ok-bg)':'var(--warn-bg)')}${kpi('Plan Revenue','$'+curMonth.mrr.toLocaleString()+'/mo','all plans combined','DollarSign',revChange,'var(--primary-bg)')}</div>
     <div class="g21 mb4">
       <div class="card"><div class="ch">${icon('TrendingUp')}&nbsp;Revenue Trend</div><div class="cb">${lineChart(revTrend,'revenue')}</div></div>
       <div class="card"><div class="ch">Company Status</div><div class="cb">${donutChart(statusDist)}</div></div>
     </div>
     <div class="g21 mb4">
-      <div class="card"><div class="ch">${icon('Users')}&nbsp;Company Growth</div><div class="cb">${lineChart(PLATFORM_HISTORY.slice(-8).map(function(m){return{month:m.label,revenue:m.companies};}),'revenue','#4ade80')}</div></div>
+      <div class="card"><div class="ch">${icon('Users')}&nbsp;Company Growth</div><div class="cb">${lineChart(trSliceData(PLATFORM_HISTORY.slice(-8).map(function(m){return{month:m.label,revenue:m.companies};})),'revenue','#4ade80')}</div></div>
       <div class="card"><div class="ch">Plan Distribution</div><div class="cb">${donutChart(planDist)}</div></div>
     </div>
     <div class="g2 mb4">
@@ -1632,7 +1612,7 @@ function renderCompanies(){
       <div class="inp-w" style="flex:1;min-width:180px"><span class="inp-ic">${icon('Search')}</span><input class="inp has-ic" id="co-search" placeholder="Search by name or location…" value="${esc(search)}" oninput="rerenderPage()"/></div>
       <select class="inp" id="co-status" style="width:140px" onchange="rerenderPage()"><option value="all"${statusF==='all'?' selected':''}>All Statuses</option>${['active','pending','suspended','inactive'].map(s=>`<option value="${s}"${statusF===s?' selected':''}>${s.charAt(0).toUpperCase()+s.slice(1)}</option>`).join('')}</select>
     </div>
-    ${filtered.length===0?`<div style="text-align:center;padding:60px 0;color:var(--muted)">No companies found</div>`:`<div class="gc">${filtered.map(c=>`<div class="card cb"><div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px"><div style="flex:1;min-width:0;padding-right:8px"><div style="font-weight:600;font-size:13px;line-height:1.2">${esc(c.name)}</div>${c.dot?`<div style="font-size:11px;color:var(--muted);margin-top:2px;font-family:var(--mono)">${esc(c.dot)}</div>`:''}</div><div style="display:flex;gap:6px;flex-shrink:0">${statusBadge(c.status)}<button class="btn-g" style="padding:4px;border-radius:4px" onclick="openEditCo(${c.id})">${icon('Pencil')}</button></div></div><div style="display:flex;flex-direction:column;gap:4px;margin-bottom:10px">${(c.city||c.state)?`<div class="icon-row">${icon('MapPin')}<span>${esc([c.city,c.state].filter(Boolean).join(', '))}</span></div>`:''} ${c.phone?`<div class="icon-row">${icon('Phone')}<span>${esc(c.phone)}</span></div>`:''}</div>${c.specs&&c.specs.length?`<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px">${c.specs.slice(0,3).map(s=>`<span class="spec-tag">${esc(s)}</span>`).join('')}</div>`:''}<div style="margin-top:auto;padding-top:10px;border-top:1px solid var(--border-sub);display:flex;align-items:center;justify-content:space-between"><div style="display:flex;align-items:center;gap:10px"><div class="icon-row">${icon('Truck')}&nbsp;${c.fleet}</div><div class="icon-row">${icon('Users')}&nbsp;${c.drivers}</div></div>${planBadge(c.plan)}</div></div>`).join('')}</div>`}
+    ${filtered.length===0?`<div style="text-align:center;padding:60px 0;color:var(--muted)">No companies found</div>`:`<div class="gc">${filtered.map(c=>`<div class="card cb" style="cursor:pointer" onclick="showCompanyDetail(${c.id})"><div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px"><div style="flex:1;min-width:0;padding-right:8px"><div style="font-weight:600;font-size:13px;line-height:1.2">${esc(c.name)}</div>${c.dot?`<div style="font-size:11px;color:var(--muted);margin-top:2px;font-family:var(--mono)">${esc(c.dot)}</div>`:''}</div><div style="display:flex;gap:6px;flex-shrink:0">${statusBadge(c.status)}<button class="btn-g" style="padding:4px;border-radius:4px" onclick="event.stopPropagation();openEditCo(${c.id})">${icon('Pencil')}</button></div></div><div style="display:flex;flex-direction:column;gap:4px;margin-bottom:10px">${(c.city||c.state)?`<div class="icon-row">${icon('MapPin')}<span>${esc([c.city,c.state].filter(Boolean).join(', '))}</span></div>`:''} ${c.phone?`<div class="icon-row">${icon('Phone')}<span>${esc(c.phone)}</span></div>`:''}</div>${c.specs&&c.specs.length?`<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px">${c.specs.slice(0,3).map(s=>`<span class="spec-tag">${esc(s)}</span>`).join('')}</div>`:''}<div style="margin-top:auto;padding-top:10px;border-top:1px solid var(--border-sub);display:flex;align-items:center;justify-content:space-between"><div style="display:flex;align-items:center;gap:10px"><div class="icon-row">${icon('Truck')}&nbsp;${c.fleet}</div><div class="icon-row">${icon('Users')}&nbsp;${c.drivers}</div></div>${planBadge(c.plan)}</div></div>`).join('')}</div>`}
   </div>`;
 }
 
@@ -1672,26 +1652,22 @@ function renderBilling(){
   var mostPopularPlan='';var maxCount=0;
   Object.keys(planCounts).forEach(function(k){if(planCounts[k]>maxCount){maxCount=planCounts[k];mostPopularPlan=k;}});
 
-  // CHANGED: Revenue by plan for this period
+  // Revenue by plan
   var revByPlan={starter:0,professional:0,enterprise:0};
   subs.filter(function(s){return s.active;}).forEach(function(s){revByPlan[s.plan]=(revByPlan[s.plan]||0)+s.price;});
 
-  // Time-range aware data
-  var range=state.timeRange||'month';
-  var monthly=filterMonthly(range);
+  // Historical MRR data
   var curMonth=PLATFORM_HISTORY[PLATFORM_HISTORY.length-1];
   var prevMonth=PLATFORM_HISTORY[PLATFORM_HISTORY.length-2]||curMonth;
   var mrrChange=periodChange(curMonth.mrr,prevMonth.mrr);
+  var mrrTrend=trSliceData(PLATFORM_HISTORY.slice(-8).map(function(m){return{month:m.label,revenue:m.mrr};}));
 
   // Payment status summary
   var paidCount=subs.filter(function(s){return s.pay==='paid';}).length;
   var overdueCount=subs.filter(function(s){return s.pay==='overdue';}).length;
-  var pendingCount=subs.filter(function(s){return s.pay==='pending';}).length;
+  var pendingPayCount=subs.filter(function(s){return s.pay==='pending';}).length;
   var suspendedCount=subs.filter(function(s){return s.pay==='suspended';}).length;
   var collectionRate=subs.length>0?Math.round(paidCount/subs.length*100):0;
-
-  // MRR trend from historical data
-  var mrrTrend=PLATFORM_HISTORY.slice(-8).map(function(m){return{month:m.label,revenue:m.mrr};});
 
   // Plan revenue distribution for donut
   var planRevDist=[
@@ -1719,7 +1695,7 @@ function renderBilling(){
     <div class="g2 mb4">
       <div class="card cb">
         <div style="font-weight:600;font-size:13px;margin-bottom:12px">${icon('BarChart2')}&nbsp;Payment Status</div>
-        ${[{l:'Paid',c:paidCount,color:'var(--ok-t)',pct:subs.length>0?Math.round(paidCount/subs.length*100):0},{l:'Pending',c:pendingCount,color:'var(--warn-t)',pct:subs.length>0?Math.round(pendingCount/subs.length*100):0},{l:'Overdue',c:overdueCount,color:'var(--err-t)',pct:subs.length>0?Math.round(overdueCount/subs.length*100):0},{l:'Suspended',c:suspendedCount,color:'var(--muted)',pct:subs.length>0?Math.round(suspendedCount/subs.length*100):0}].map(function(s){return'<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border-sub)"><span style="font-size:12px;min-width:70px;color:'+s.color+';font-weight:500">'+s.l+'</span><div style="flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden"><div style="height:100%;width:'+s.pct+'%;background:'+s.color+';border-radius:3px"></div></div><span style="font-size:12px;font-weight:600;min-width:36px;text-align:right">'+s.c+'</span></div>';}).join('')}
+        ${[{l:'Paid',c:paidCount,color:'var(--ok-t)',pct:subs.length>0?Math.round(paidCount/subs.length*100):0},{l:'Pending',c:pendingPayCount,color:'var(--warn-t)',pct:subs.length>0?Math.round(pendingPayCount/subs.length*100):0},{l:'Overdue',c:overdueCount,color:'var(--err-t)',pct:subs.length>0?Math.round(overdueCount/subs.length*100):0},{l:'Suspended',c:suspendedCount,color:'var(--muted)',pct:subs.length>0?Math.round(suspendedCount/subs.length*100):0}].map(function(s){return'<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border-sub)"><span style="font-size:12px;min-width:70px;color:'+s.color+';font-weight:500">'+s.l+'</span><div style="flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden"><div style="height:100%;width:'+s.pct+'%;background:'+s.color+';border-radius:3px"></div></div><span style="font-size:12px;font-weight:600;min-width:36px;text-align:right">'+s.c+'</span></div>';}).join('')}
       </div>
       <div class="card cb">
         <div style="font-weight:600;font-size:13px;margin-bottom:12px">${icon('Users')}&nbsp;Platform Growth</div>
@@ -2478,6 +2454,198 @@ function renderOwnerValuation(){
 }
 
 // ══════════════════════════════════════════════════════════
+// ADMIN — DATA STREAMS
+// ══════════════════════════════════════════════════════════
+var _dsTab='active';
+function renderAdminDataStreams(){
+  var streams=[
+    {id:'ontrac_api',name:'OnTrac FasTrak API',type:'REST API',status:'connected',latency:'142ms',uptime:99.8,lastSync:'2 min ago',records:'27,062/day',icon:'📦',color:'var(--ok-t)'},
+    {id:'fedex_ground',name:'FedEx Ground ISP',type:'REST API',status:'pending',latency:'—',uptime:0,lastSync:'Never',records:'—',icon:'📦',color:'var(--warn-t)'},
+    {id:'amazon_dsp',name:'Amazon DSP Relay',type:'Batch Import',status:'planned',latency:'—',uptime:0,lastSync:'Never',records:'—',icon:'📦',color:'var(--muted)'},
+    {id:'lasership',name:'LaserShip Connect',type:'SFTP Batch',status:'connected',latency:'—',uptime:98.2,lastSync:'6 hrs ago',records:'8,440/day',icon:'📦',color:'var(--ok-t)'},
+    {id:'google_maps',name:'Google Maps Platform',type:'REST API',status:'connected',latency:'89ms',uptime:99.97,lastSync:'Live',records:'~5,000 req/hr',icon:'🌐',color:'var(--ok-t)'},
+    {id:'weather_api',name:'OpenWeather API',type:'REST API',status:'connected',latency:'210ms',uptime:99.5,lastSync:'15 min ago',records:'96 req/day',icon:'🌤️',color:'var(--ok-t)'},
+    {id:'twilio_sms',name:'Twilio SMS Gateway',type:'REST API',status:'connected',latency:'320ms',uptime:99.9,lastSync:'Live',records:'~200 msg/day',icon:'💬',color:'var(--ok-t)'},
+    {id:'stripe',name:'Stripe Payments',type:'REST API + Webhooks',status:'connected',latency:'180ms',uptime:99.99,lastSync:'Live',records:'~50 txn/day',icon:'💳',color:'var(--ok-t)'},
+    {id:'samsara',name:'Samsara Fleet Telematics',type:'REST API',status:'beta',latency:'250ms',uptime:97.1,lastSync:'5 min ago',records:'~12,000 events/day',icon:'📡',color:'var(--pur-t)'},
+    {id:'geotab',name:'Geotab GO Devices',type:'SDK',status:'planned',latency:'—',uptime:0,lastSync:'Never',records:'—',icon:'📡',color:'var(--muted)'},
+    {id:'quickbooks',name:'QuickBooks Online',type:'REST API',status:'beta',latency:'410ms',uptime:98.8,lastSync:'1 hr ago',records:'~30 sync/day',icon:'📊',color:'var(--pur-t)'},
+    {id:'slack_webhook',name:'Slack Notifications',type:'Webhook',status:'connected',latency:'120ms',uptime:99.7,lastSync:'Live',records:'~80 msg/day',icon:'💬',color:'var(--ok-t)'},
+  ];
+  var statusMap={connected:{label:'Connected',cls:'b-active'},beta:{label:'Beta',cls:'b-new'},pending:{label:'Pending',cls:'b-pending'},planned:{label:'Planned',cls:'b-suspended'}};
+  var tab=_dsTab;
+  var filtered=tab==='all'?streams:streams.filter(function(s){return tab==='active'?(s.status==='connected'||s.status==='beta'):s.status===tab;});
+  var connectedCount=streams.filter(function(s){return s.status==='connected';}).length;
+  var betaCount=streams.filter(function(s){return s.status==='beta';}).length;
+  return'<div class="page">'+
+    '<div class="ph"><div><div class="pt">'+icon('Zap')+'&nbsp;Data Streams</div><div class="ps">'+streams.length+' integrations · '+connectedCount+' connected · '+betaCount+' beta</div></div></div>'+
+    '<div class="g4 mb4">'+
+      '<div class="card cb"><div class="kpi-label">Connected</div><div class="kpi-val" style="color:var(--ok-t)">'+connectedCount+'</div><div class="kpi-sub">active streams</div></div>'+
+      '<div class="card cb"><div class="kpi-label">Avg Latency</div><div class="kpi-val">187ms</div><div class="kpi-sub">across all APIs</div></div>'+
+      '<div class="card cb"><div class="kpi-label">Uptime (30d)</div><div class="kpi-val" style="color:var(--ok-t)">99.6%</div><div class="kpi-sub">platform-wide</div></div>'+
+      '<div class="card cb"><div class="kpi-label">Daily Records</div><div class="kpi-val">47K+</div><div class="kpi-sub">ingested today</div></div>'+
+    '</div>'+
+    '<div class="tab-bar mb4" style="max-width:450px">'+['active','all','pending','planned'].map(function(t){var labels={active:'Active ('+streams.filter(function(s){return s.status==='connected'||s.status==='beta';}).length+')',all:'All ('+streams.length+')',pending:'Pending',planned:'Planned'};return'<div class="tab-item'+(tab===t?' active':'')+'" onclick="_dsTab=\''+t+'\';rerenderPage()">'+labels[t]+'</div>';}).join('')+'</div>'+
+    '<div class="gc">'+filtered.map(function(s){
+      var st=statusMap[s.status]||statusMap.planned;
+      return'<div class="card cb" style="cursor:pointer" onclick="openFeature(\''+s.id+'\')">'+
+        '<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px"><div style="display:flex;align-items:center;gap:10px"><span style="font-size:20px">'+s.icon+'</span><div><div style="font-weight:600;font-size:13px">'+esc(s.name)+'</div><div style="font-size:11px;color:var(--muted);font-family:var(--mono)">'+esc(s.type)+'</div></div></div><span class="badge '+st.cls+'">'+st.label+'</span></div>'+
+        (s.status==='connected'||s.status==='beta'?
+          '<div style="display:flex;flex-wrap:wrap;gap:12px;font-size:11px;margin-bottom:8px">'+
+            '<div><span style="color:var(--muted)">Latency</span> <strong>'+s.latency+'</strong></div>'+
+            '<div><span style="color:var(--muted)">Uptime</span> <strong style="color:'+s.color+'">'+s.uptime+'%</strong></div>'+
+            '<div><span style="color:var(--muted)">Last sync</span> <strong>'+s.lastSync+'</strong></div>'+
+          '</div>'+
+          '<div style="font-size:11px;color:var(--muted)">Throughput: <strong style="color:var(--text)">'+s.records+'</strong></div>'+
+          '<div style="height:4px;border-radius:2px;background:var(--border);margin-top:8px;overflow:hidden"><div style="height:100%;width:'+s.uptime+'%;background:'+s.color+';border-radius:2px"></div></div>'
+          :'<div style="font-size:12px;color:var(--muted);padding:10px 0">Integration not yet configured</div><button class="btn btn-o btn-sm" onclick="event.stopPropagation();openFeature(\''+s.id+'\')">Configure →</button>')+
+      '</div>';
+    }).join('')+'</div>'+
+  '</div>';
+}
+
+// ══════════════════════════════════════════════════════════
+// ADMIN — PLATFORM SETTINGS
+// ══════════════════════════════════════════════════════════
+var _psTab='general';
+function renderAdminPlatform(){
+  var u=state.user;
+  var tab=_psTab;
+  var tabBar='<div class="tab-bar mb4" style="max-width:600px">'+[
+    {id:'general',label:'General'},{id:'auth',label:'Auth & Security'},{id:'billing_cfg',label:'Billing Config'},
+    {id:'notifications_cfg',label:'Notifications'},{id:'appearance',label:'Appearance'},{id:'api_keys',label:'API Keys'}
+  ].map(function(t){return'<div class="tab-item'+(tab===t.id?' active':'')+'" onclick="_psTab=\''+t.id+'\';rerenderPage()">'+t.label+'</div>';}).join('')+'</div>';
+
+  var content='';
+  if(tab==='general'){
+    content='<div class="fp-section"><h3>'+icon('Building2')+'&nbsp;Platform Identity</h3>'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">'+
+        '<div class="fg"><label style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:1px;margin-bottom:6px">PLATFORM NAME</label><input class="inp" value="DriveHub"/></div>'+
+        '<div class="fg"><label style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:1px;margin-bottom:6px">TAGLINE</label><input class="inp" value="DSP Management System"/></div>'+
+        '<div class="fg"><label style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:1px;margin-bottom:6px">SUPPORT EMAIL</label><input class="inp" value="support@drivehub.work"/></div>'+
+        '<div class="fg"><label style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:1px;margin-bottom:6px">PRIMARY DOMAIN</label><input class="inp" value="drivehub.work" disabled style="opacity:.6"/></div>'+
+        '<div class="fg"><label style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:1px;margin-bottom:6px">DEFAULT TIMEZONE</label><select class="inp">'+US_TZ.map(function(z){return'<option value="'+z.v+'"'+(z.v==='America/New_York'?' selected':'')+'>'+z.l+'</option>';}).join('')+'</select></div>'+
+        '<div class="fg"><label style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:1px;margin-bottom:6px">DEFAULT CURRENCY</label><select class="inp"><option selected>USD ($)</option><option>EUR (€)</option><option>GBP (£)</option><option>CAD (C$)</option></select></div>'+
+      '</div></div>'+
+      '<div class="fp-section"><h3>'+icon('Users')+'&nbsp;Role Permissions Matrix</h3>'+
+        '<table><thead><tr><th>Permission</th><th>Admin</th><th>Owner</th><th>GM</th><th>Accountant</th><th>Manager</th><th>Driver</th></tr></thead><tbody>'+
+        [{p:'Dashboard',a:1,o:1,g:1,c:0,m:1,d:0},{p:'Companies',a:1,o:1,g:1,c:0,m:1,d:0},{p:'Billing & Finance',a:1,o:1,g:0,c:1,m:0,d:0},{p:'Driver Tracking',a:1,o:0,g:1,c:0,m:1,d:0},{p:'Analytics & Reports',a:1,o:1,g:1,c:1,m:0,d:0},{p:'Team Management',a:1,o:1,g:1,c:0,m:0,d:0},{p:'Driver Portal',a:0,o:0,g:0,c:0,m:0,d:1},{p:'Data Streams',a:1,o:0,g:0,c:0,m:0,d:0},{p:'Platform Settings',a:1,o:0,g:0,c:0,m:0,d:0},{p:'System Config',a:1,o:0,g:0,c:0,m:0,d:0}].map(function(r){
+          var chk=function(v){return v?'<span style="color:var(--ok-t)">✓</span>':'<span style="color:var(--dim)">—</span>';};
+          return'<tr><td style="font-weight:500">'+r.p+'</td><td style="text-align:center">'+chk(r.a)+'</td><td style="text-align:center">'+chk(r.o)+'</td><td style="text-align:center">'+chk(r.g)+'</td><td style="text-align:center">'+chk(r.c)+'</td><td style="text-align:center">'+chk(r.m)+'</td><td style="text-align:center">'+chk(r.d)+'</td></tr>';
+        }).join('')+
+        '</tbody></table></div>';
+  } else if(tab==='auth'){
+    content='<div class="fp-section"><h3>'+icon('Shield')+'&nbsp;Authentication Settings</h3>'+
+      ['Session timeout','Password policy','Two-factor auth','IP Whitelisting','SSO / SAML','Login attempts lockout'].map(function(s,i){
+        var vals=['30 min idle','Min 8 chars, 1 uppercase, 1 number','Optional (TOTP)','Disabled','Not configured','5 attempts → 15 min lock'];
+        var statuses=['var(--ok-t)','var(--ok-t)','var(--warn-t)','var(--muted)','var(--muted)','var(--ok-t)'];
+        return'<div class="fp-kv"><span style="color:var(--muted)">'+s+'</span><span style="font-weight:500;color:'+statuses[i]+'">'+vals[i]+'</span></div>';
+      }).join('')+'</div>'+
+      '<div class="fp-section"><h3>'+icon('Clock')+'&nbsp;Active Sessions</h3>'+
+        '<div class="fp-log">'+ 
+        '<span class="dim">admin@rspplatform.com</span> · Chrome 122 · Windows · <span class="ok">Current session</span><br>'+
+        '<span class="dim">owner@firstchoice.com</span> · Safari 17 · macOS · Last active 2h ago<br>'+
+        '<span class="dim">driver@firstchoice.com</span> · Mobile App · iOS 17 · Last active 24m ago<br>'+
+        '<span class="dim">accountant@swiftdel.com</span> · Firefox 124 · Windows · Last active 4h ago'+
+        '</div></div>';
+  } else if(tab==='billing_cfg'){
+    content='<div class="fp-section"><h3>'+icon('CreditCard')+'&nbsp;Billing Configuration</h3>'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">'+
+        '<div class="fg"><label style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:1px;margin-bottom:6px">PAYMENT PROCESSOR</label><select class="inp"><option selected>Stripe</option><option>Square</option><option>Manual / ACH</option></select></div>'+
+        '<div class="fg"><label style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:1px;margin-bottom:6px">BILLING CYCLE</label><select class="inp"><option selected>Monthly</option><option>Quarterly</option><option>Annual</option></select></div>'+
+        '<div class="fg"><label style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:1px;margin-bottom:6px">INVOICE PREFIX</label><input class="inp" value="INV-2025-"/></div>'+
+        '<div class="fg"><label style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:1px;margin-bottom:6px">TAX RATE (%)</label><input class="inp" type="number" value="0" step="0.1"/></div>'+
+      '</div></div>'+
+      '<div class="fp-section"><h3>'+icon('DollarSign')+'&nbsp;Subscription Plans</h3>'+
+        '<table><thead><tr><th>Plan</th><th style="text-align:right">Price</th><th>Vehicles</th><th>Features</th><th>Status</th></tr></thead><tbody>'+
+        '<tr><td style="font-weight:600">Starter</td><td style="text-align:right;font-weight:600;color:var(--primary)">$99/mo</td><td>Up to 20</td><td>Basic analytics, Email support</td><td><span class="badge b-active">Active</span></td></tr>'+
+        '<tr><td style="font-weight:600">Professional</td><td style="text-align:right;font-weight:600;color:var(--primary)">$299/mo</td><td>Up to 100</td><td>Advanced analytics, Priority support, CRM</td><td><span class="badge b-active">Active</span></td></tr>'+
+        '<tr><td style="font-weight:600">Enterprise</td><td style="text-align:right;font-weight:600;color:var(--primary)">$799/mo</td><td>Unlimited</td><td>Full suite, Dedicated AM, API access</td><td><span class="badge b-active">Active</span></td></tr>'+
+        '</tbody></table></div>';
+  } else if(tab==='notifications_cfg'){
+    content='<div class="fp-section"><h3>'+icon('Bell')+'&nbsp;Notification Channels</h3>'+
+      [{ch:'In-app Notifications',st:'Enabled',c:'var(--ok-t)'},{ch:'Email Alerts',st:'Enabled — SMTP via SendGrid',c:'var(--ok-t)'},{ch:'SMS (Twilio)',st:'Connected',c:'var(--ok-t)'},{ch:'Slack Webhook',st:'Connected — #dispatch',c:'var(--ok-t)'},{ch:'Push Notifications',st:'Planned — Sprint 9',c:'var(--warn-t)'},{ch:'Telegram Bot',st:'Planned — Sprint 10',c:'var(--warn-t)'}].map(function(n){return'<div class="fp-kv"><span style="color:var(--muted)">'+n.ch+'</span><span style="font-weight:500;color:'+n.c+'">'+n.st+'</span></div>';}).join('')+'</div>'+
+      '<div class="fp-section"><h3>'+icon('FileText')+'&nbsp;Event Categories</h3>'+
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px">'+
+        ['Route dispatched','Package delivered','Delivery exception','Driver submission','Payment received','Invoice overdue','SLA breach','API downtime','New company signup','Compliance deadline','Fleet maintenance due','Driver onboarding'].map(function(e){
+          return'<div style="display:flex;align-items:center;gap:8px;padding:6px 0"><span style="color:var(--ok-t)">✓</span><span>'+e+'</span></div>';
+        }).join('')+'</div></div>';
+  } else if(tab==='appearance'){
+    content='<div class="fp-section"><h3>'+icon('Star')+'&nbsp;Theme & Branding</h3>'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">'+
+        '<div class="fg"><label style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:1px;margin-bottom:6px">PRIMARY COLOR</label><div style="display:flex;gap:8px;align-items:center"><input class="inp" value="#00d4ff" style="flex:1"/><div style="width:32px;height:32px;border-radius:8px;background:#00d4ff;flex-shrink:0;border:1px solid var(--border)"></div></div></div>'+
+        '<div class="fg"><label style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:1px;margin-bottom:6px">DARK BG COLOR</label><div style="display:flex;gap:8px;align-items:center"><input class="inp" value="#0a0a0f" style="flex:1"/><div style="width:32px;height:32px;border-radius:8px;background:#0a0a0f;flex-shrink:0;border:1px solid var(--border)"></div></div></div>'+
+        '<div class="fg"><label style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:1px;margin-bottom:6px">FONT FAMILY</label><select class="inp"><option selected>Outfit</option><option>Inter</option><option>DM Sans</option><option>General Sans</option></select></div>'+
+        '<div class="fg"><label style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:1px;margin-bottom:6px">BORDER RADIUS</label><select class="inp"><option>8px (compact)</option><option selected>14px (default)</option><option>20px (round)</option></select></div>'+
+      '</div></div>'+
+      '<div class="fp-section"><h3>'+icon('LayoutDashboard')+'&nbsp;Login Page</h3>'+
+        '<div class="fp-kv"><span style="color:var(--muted)">Star field animation</span><span style="font-weight:500;color:var(--ok-t)">Enabled — 120 particles</span></div>'+
+        '<div class="fp-kv"><span style="color:var(--muted)">Demo account dropdowns</span><span style="font-weight:500">Collapsed by default</span></div>'+
+        '<div class="fp-kv"><span style="color:var(--muted)">Light/Dark toggle</span><span style="font-weight:500;color:var(--ok-t)">Enabled</span></div>'+
+        '<div class="fp-kv"><span style="color:var(--muted)">Footer text</span><span style="font-weight:500">2026 © DriveHub Inc.</span></div>'+
+      '</div>';
+  } else if(tab==='api_keys'){
+    content='<div class="fp-section"><h3>'+icon('Shield')+'&nbsp;API Keys & Tokens</h3>'+
+      '<div style="font-size:12px;color:var(--muted);margin-bottom:14px">Manage API access tokens for external integrations. Keys shown are masked for security.</div>'+
+      [{name:'OnTrac FasTrak',key:'otk_live_****…7f2a',created:'2026-01-15',status:'Active',scope:'read:volume, read:exceptions, read:sp'},{name:'Google Maps',key:'AIza****…X9dQ',created:'2025-11-20',status:'Active',scope:'maps, geocode, directions'},{name:'Stripe',key:'sk_live_****…mK0p',created:'2025-12-01',status:'Active',scope:'payments, invoices, subscriptions'},{name:'Twilio',key:'AC****…8e3d',created:'2026-02-10',status:'Active',scope:'sms:send, sms:read'},{name:'Samsara',key:'samsara_****…b1c2',created:'2026-03-01',status:'Beta',scope:'fleet:read, events:read'},{name:'Webhook Secret',key:'whsec_****…4d9f',created:'2026-03-15',status:'Active',scope:'outbound events HMAC'}].map(function(k){
+        return'<div style="display:flex;align-items:center;justify-content:space-between;padding:12px;border-radius:10px;background:rgba(15,16,25,.5);border:1px solid var(--border);margin-bottom:8px">'+
+          '<div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12px">'+esc(k.name)+'</div><div style="font-size:11px;font-family:var(--mono);color:var(--muted);margin-top:2px">'+esc(k.key)+'</div><div style="font-size:10px;color:var(--dim);margin-top:2px">Scope: '+esc(k.scope)+'</div></div>'+
+          '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><span class="badge '+(k.status==='Active'?'b-active':'b-new')+'">'+k.status+'</span><span style="font-size:10px;color:var(--dim);font-family:var(--mono)">'+esc(k.created)+'</span></div></div>';
+      }).join('')+
+      '<button class="btn btn-p btn-sm" style="margin-top:8px" onclick="toast(\'API key generation coming in Sprint 10\')">'+icon('Plus')+' Generate New Key</button></div>';
+  }
+  return'<div class="page"><div class="ph"><div><div class="pt">'+icon('Settings')+'&nbsp;Platform Settings</div><div class="ps">Administration · Configuration · Security</div></div><button class="btn btn-p" onclick="toast(\'Settings saved\')">Save All Changes</button></div>'+tabBar+content+'</div>';
+}
+
+// ══════════════════════════════════════════════════════════
+// ADMIN — SYSTEM CONFIG
+// ══════════════════════════════════════════════════════════
+function renderAdminSystem(){
+  var env=[
+    {k:'Environment',v:'Production',c:'var(--ok-t)'},{k:'Build',v:'v2.4.1-beta (Mar 23 2026)',c:'var(--text)'},
+    {k:'Hosting',v:'GitHub Pages + Cloudflare CDN',c:'var(--text)'},{k:'Database',v:'PostgreSQL 16 (planned)',c:'var(--warn-t)'},
+    {k:'Cache',v:'Redis 7 (planned)',c:'var(--warn-t)'},{k:'Queue',v:'BullMQ (planned)',c:'var(--warn-t)'},
+    {k:'File Storage',v:'AWS S3 (planned)',c:'var(--warn-t)'},{k:'Search',v:'Elasticsearch 8 (planned)',c:'var(--warn-t)'},
+    {k:'Auth Provider',v:'In-memory (demo) → Auth.js planned',c:'var(--warn-t)'},{k:'Monitoring',v:'Console + Sentry (planned)',c:'var(--warn-t)'},
+  ];
+  var health=[
+    {k:'CPU Usage',v:'12%',pct:12,c:'var(--ok-t)'},{k:'Memory',v:'284 MB / 2 GB',pct:14,c:'var(--ok-t)'},
+    {k:'Storage',v:'1.2 GB / 50 GB',pct:2,c:'var(--ok-t)'},{k:'Network I/O',v:'2.4 Mbps avg',pct:18,c:'var(--primary)'},
+    {k:'API Rate',v:'1,247 req/hr',pct:25,c:'var(--primary)'},{k:'Disk IOPS',v:'340 ops/s',pct:8,c:'var(--ok-t)'},
+  ];
+  var jobs=[
+    {name:'OnTrac API Sync',schedule:'Every 60s',last:'2 min ago',status:'ok',next:'58s'},
+    {name:'Daily Compliance Check',schedule:'01:00 UTC',last:'7 hrs ago',status:'ok',next:'17 hrs'},
+    {name:'Invoice Generation',schedule:'1st of month',last:'22 days ago',status:'ok',next:'8 days'},
+    {name:'Analytics Aggregation',schedule:'Every 15 min',last:'8 min ago',status:'ok',next:'7 min'},
+    {name:'Driver Telemetry Ingest',schedule:'Every 5s',last:'Just now',status:'ok',next:'5s'},
+    {name:'Backup — Database',schedule:'Daily 03:00 UTC',last:'5 hrs ago',status:'ok',next:'19 hrs'},
+    {name:'Backup — File Storage',schedule:'Weekly Sun 04:00',last:'6 days ago',status:'ok',next:'1 day'},
+    {name:'SSL Certificate Renewal',schedule:'Auto (Let\'s Encrypt)',last:'45 days ago',status:'ok',next:'45 days'},
+  ];
+  return'<div class="page"><div class="ph"><div><div class="pt">'+icon('Cpu')+'&nbsp;System Configuration</div><div class="ps">Infrastructure · Health · Scheduled Jobs · Maintenance</div></div></div>'+
+    '<div class="fp-section"><h3>'+icon('Zap')+'&nbsp;System Health</h3><div class="g3">'+health.map(function(h){
+      return'<div style="padding:10px 0"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="color:var(--muted)">'+h.k+'</span><span style="font-weight:600;color:'+h.c+'">'+h.v+'</span></div><div style="height:6px;border-radius:3px;background:var(--border);overflow:hidden"><div style="height:100%;width:'+h.pct+'%;background:'+h.c+';border-radius:3px"></div></div></div>';
+    }).join('')+'</div></div>'+
+    '<div class="fp-section"><h3>'+icon('Settings')+'&nbsp;Environment</h3>'+env.map(function(e){
+      return'<div class="fp-kv"><span style="color:var(--muted)">'+e.k+'</span><span style="font-weight:500;color:'+e.c+'">'+e.v+'</span></div>';
+    }).join('')+'</div>'+
+    '<div class="fp-section"><h3>'+icon('Clock')+'&nbsp;Scheduled Jobs ('+jobs.length+')</h3>'+
+      '<table><thead><tr><th>Job</th><th>Schedule</th><th>Last Run</th><th>Next</th><th>Status</th></tr></thead><tbody>'+
+      jobs.map(function(j){return'<tr><td style="font-weight:500">'+esc(j.name)+'</td><td style="font-size:11px;font-family:var(--mono);color:var(--muted)">'+esc(j.schedule)+'</td><td style="font-size:11px;color:var(--muted)">'+esc(j.last)+'</td><td style="font-size:11px;color:var(--text)">'+esc(j.next)+'</td><td><span class="badge b-active">OK</span></td></tr>';}).join('')+
+      '</tbody></table></div>'+
+    '<div class="fp-section"><h3>'+icon('AlertTriangle')+'&nbsp;Maintenance Actions</h3>'+
+      '<div style="display:flex;flex-wrap:wrap;gap:8px">'+
+        '<button class="btn btn-o btn-sm" onclick="toast(\'Cache cleared\')">'+icon('Trash2')+' Clear Cache</button>'+
+        '<button class="btn btn-o btn-sm" onclick="toast(\'Reindex started\')">'+icon('Search')+' Reindex Search</button>'+
+        '<button class="btn btn-o btn-sm" onclick="toast(\'Backup initiated\')">'+icon('Package')+' Manual Backup</button>'+
+        '<button class="btn btn-o btn-sm" onclick="toast(\'Logs exported\')">'+icon('FileText')+' Export Logs</button>'+
+        '<button class="btn btn-warn btn-sm" onclick="toast(\'Simulation restarted\')">'+icon('Zap')+' Restart Simulation</button>'+
+      '</div></div>'+
+  '</div>';
+}
+
+// ══════════════════════════════════════════════════════════
 // ONROUTE RATES — Rate Bidding Platform
 // ══════════════════════════════════════════════════════════
 function renderOnRouteRates(){
@@ -2540,9 +2708,15 @@ function renderSidebar(){
     {id:'team',label:'Team',icon:'Users',res:'users'},
     {id:'tracking',label:'Driver Tracking',icon:'MapPin',res:'tracking'},
     {id:'kanban_board',label:'Project Board',icon:'ClipboardList',res:'analytics',badge:kbTasks.filter(function(t){return t.pendingEdit&&!t.editApproved;}).length},
+    {id:'_sec',label:'Analytics'},
     {id:'driver_stats',label:'Driver Statistics',icon:'BarChart2',res:'driver_stats'},
     {id:'acct_locations',label:'Location Reports',icon:'Globe',res:'locations'},
     {id:'reporting',label:'Analytics & Reports',icon:'FileText',res:'reporting'},
+    {id:'onroute_rates',label:'OnRouteRates',icon:'Globe',res:'analytics'},
+    {id:'_sec',label:'Platform Admin'},
+    {id:'admin_data_streams',label:'Data Streams',icon:'Zap',res:'analytics'},
+    {id:'admin_platform',label:'Platform Settings',icon:'Settings',res:'analytics'},
+    {id:'admin_system',label:'System Config',icon:'Cpu',res:'analytics'},
   ];
   const OWNER_NAV=[
     {id:'owner_command',label:'Command Center',icon:'LayoutDashboard',res:'analytics'},
@@ -2588,18 +2762,345 @@ function renderSidebar(){
     {id:'onroute_rates',label:'OnRouteRates',icon:'Globe',res:'driver'},
   ];
   const NAV=isDriver?DRIVER_NAV:(u&&u.role==='owner'?OWNER_NAV:(u&&u.role==='accountant'?ACCT_NAV:(u&&u.role==='general_manager'?GM_NAV:(u&&u.role==='manager'?MGR_NAV:ADMIN_NAV))));
-  const visible=NAV.filter(n=>!u||hasPerm(u.role,n.res)||n.id==='dashboard'||n.id.startsWith('owner_'));
+  const visible=NAV.filter(n=>n.id==='_sec'||!u||hasPerm(u.role,n.res)||n.id==='dashboard'||n.id.startsWith('owner_'));
   return`<div class="sidebar"><div class="sb-head"><div class="sb-logo"><div class="sb-logo-icon"><span style="font-size:11px;font-weight:800;letter-spacing:-0.5px;color:#fff;line-height:1;font-family:'Outfit',sans-serif">DH</span></div><div><div class="sb-logo-name">DriveHub</div><div class="sb-logo-sub">${isDriver?'Driver Portal':u&&u.role==='owner'?'Owner Console':isAcc?'Finance Console':u&&u.role==='general_manager'?'Operations':u&&u.role==='manager'?'Manager':'Admin Console'}</div></div></div></div>
   <div class="sb-nav"><div class="sb-section">${isDriver?'Driver':'Navigation'}</div>${visible.map((n,i)=>{
+    if(n.id==='_sec') return`<div class="sb-section" style="margin-top:14px">${esc(n.label)}</div>`;
     const isActive=isDriver?(n.id==='onroute_rates'?state.page==='onroute_rates':(state.page!=='onroute_rates'&&((state.drvTab||'route')===(n.tab||'route')&&i>0||(i===0&&!state.drvTab)))):state.page===n.id;
     const navClick=isDriver&&n.id==='onroute_rates'?`navigate('onroute_rates')`:isDriver&&n.tab?`setDrvTab('${n.tab}')`:`navigate('${n.id}')`;
     return`<div class="nav-item${isActive?' active':''}" onclick="${navClick}">${icon(n.icon)}<span style="flex:1">${esc(n.label)}</span>${n.badge>0?`<span class="nav-badge">${n.badge}</span>`:''}</div>`;
   }).join('')}</div>
-  <div class="sb-foot">${u?`<div class="sb-user"><div class="avatar" style="background:${AVATAR_COLOR[u.role]+'22'};color:${AVATAR_COLOR[u.role]}">${initials(u.name)}</div><div style="flex:1;min-width:0"><div class="user-name">${esc(u.name)}</div><div class="user-role">${esc(ROLE_LABELS[u.role])}</div></div><button class="logout-btn" onclick="doLogout()">${icon('LogOut')}</button></div>`:''}</div></div>`;
+  <div class="sb-foot">${u?`${renderAcctDropdown(u)}<div class="sb-user" onclick="toggleAcctDropdown(event)" style="cursor:pointer"><div class="avatar acct-trigger-avatar" id="sb-avatar" style="background:${AVATAR_COLOR[u.role]+'22'};color:${AVATAR_COLOR[u.role]}">${initials(u.name)}</div><div style="flex:1;min-width:0"><div class="user-name">${esc(u.name)}</div><div class="user-role">${esc(ROLE_LABELS[u.role])}</div></div><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--muted);flex-shrink:0"><polyline points="6 9 12 15 18 9"/></svg></div>`:''}</div></div>`;
+}
+
+// ══════════════════════════════════════════════════════════
+// ACCOUNT DROPDOWN + SETTINGS PAGE
+// ══════════════════════════════════════════════════════════
+var _acctDdOpen=false;
+var _acctAvatar=null; // stores base64 if user uploads a photo
+var _acctSrc='pc';
+var _acctReportStyle='dark';
+var _acctReportFmt='.xlsx';
+
+function renderAcctDropdown(u){
+  var role=ROLE_LABELS[u.role]||u.role;
+  var color=AVATAR_COLOR[u.role]||'#00d4ff';
+  var avatarStyle=_acctAvatar?'background-image:url('+_acctAvatar+');background-size:cover;background-position:center':'background:'+color+'22;color:'+color;
+  var avatarInner=_acctAvatar?'':initials(u.name);
+  return`<div class="acct-dd${_acctDdOpen?' open':''}" id="acct-dd">
+    <div class="acct-dd-head">
+      <div class="acct-dd-avatar" style="${avatarStyle}">${avatarInner}</div>
+      <div><div class="acct-dd-name">${esc(u.name)}</div><div class="acct-dd-email">${esc(u.email)}</div></div>
+    </div>
+    <div class="acct-dd-sep"></div>
+    <div class="acct-dd-lbl">Platform Tools</div>
+    <button class="acct-dd-item" onclick="navigate('account');closeAcctDd()">${icon('User')} My Profile & Settings</button>
+    <button class="acct-dd-item" onclick="closeAcctDd();openFeature('security_2fa')">${icon('Shield')} Security & 2FA<span class="acct-dd-tag soon">SOON</span></button>
+    <button class="acct-dd-item" onclick="closeAcctDd();openFeature('notif_prefs')">${icon('Bell')} Notification Preferences<span class="acct-dd-tag soon">SOON</span></button>
+    <div class="acct-dd-sep"></div>
+    <div class="acct-dd-lbl">Advanced</div>
+    <button class="acct-dd-item" onclick="closeAcctDd();openFeature('ai_route_opt')">${icon('Cpu')} AI Route Optimization<span class="acct-dd-tag beta">BETA</span></button>
+    <button class="acct-dd-item" onclick="closeAcctDd();openFeature('realtime_telemetry')">${icon('Zap')} Real-time Driver Telemetry<span class="acct-dd-tag beta">BETA</span></button>
+    <button class="acct-dd-item" onclick="closeAcctDd();openFeature('predictive_analytics')">${icon('BarChart2')} Predictive Analytics Engine<span class="acct-dd-tag soon">SOON</span></button>
+    <button class="acct-dd-item" onclick="closeAcctDd();openFeature('multicarrier_api')">${icon('Globe')} Multi-carrier Rate API<span class="acct-dd-tag live">LIVE</span></button>
+    <button class="acct-dd-item" onclick="closeAcctDd();openFeature('sla_compliance')">${icon('FileText')} SLA Compliance Monitor<span class="acct-dd-tag live">LIVE</span></button>
+    <button class="acct-dd-item" onclick="closeAcctDd();openFeature('fleet_maintenance')">${icon('Truck')} Fleet Maintenance Alerts<span class="acct-dd-tag soon">SOON</span></button>
+    <button class="acct-dd-item" onclick="closeAcctDd();openFeature('cost_per_stop')">${icon('DollarSign')} Cost-per-Stop Optimizer<span class="acct-dd-tag beta">BETA</span></button>
+    <button class="acct-dd-item" onclick="closeAcctDd();openFeature('geofence_editor')">${icon('MapPin')} Geofence Zone Editor<span class="acct-dd-tag soon">SOON</span></button>
+    <div class="acct-dd-sep"></div>
+    <div class="acct-dd-lbl">Integrations</div>
+    <button class="acct-dd-item" onclick="closeAcctDd();openFeature('ontrac_gateway')">${icon('Package')} OnTrac API Gateway<span class="acct-dd-tag live">LIVE</span></button>
+    <button class="acct-dd-item" onclick="closeAcctDd();openFeature('fedex_connect')">${icon('Package')} FedEx Ground Connect<span class="acct-dd-tag soon">SOON</span></button>
+    <button class="acct-dd-item" onclick="closeAcctDd();openFeature('amazon_dsp')">${icon('Package')} Amazon DSP Link<span class="acct-dd-tag soon">SOON</span></button>
+    <button class="acct-dd-item" onclick="closeAcctDd();openFeature('webhook_manager')">${icon('Send')} Webhook Manager<span class="acct-dd-tag beta">BETA</span></button>
+    <div class="acct-dd-sep"></div>
+    <div class="acct-dd-footer">
+      <button class="btn btn-o btn-sm" onclick="navigate('account');closeAcctDd()">${icon('Settings')} Settings</button>
+      <button class="btn btn-err btn-sm" onclick="closeAcctDd();doLogout()">${icon('LogOut')} Sign Out</button>
+    </div>
+  </div>`;
+}
+
+function toggleAcctDropdown(e){
+  e.stopPropagation();
+  _acctDdOpen=!_acctDdOpen;
+  var dd=document.getElementById('acct-dd');
+  if(dd){dd.classList.toggle('open',_acctDdOpen);}
+}
+function closeAcctDd(){
+  _acctDdOpen=false;
+  var dd=document.getElementById('acct-dd');
+  if(dd)dd.classList.remove('open');
+}
+document.addEventListener('click',function(e){
+  if(_acctDdOpen&&!e.target.closest('.acct-dd')&&!e.target.closest('.sb-user')){closeAcctDd();}
+});
+
+function loadAcctAvatar(input){
+  if(!input.files||!input.files[0])return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    _acctAvatar=e.target.result;
+    rerenderPage();
+    // also update sidebar avatar
+    var sbAv=document.getElementById('sb-avatar');
+    if(sbAv){sbAv.style.backgroundImage='url('+_acctAvatar+')';sbAv.style.backgroundSize='cover';sbAv.style.backgroundPosition='center';sbAv.textContent='';}
+    render(); // full re-render to update sidebar
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+function fmtDOB(el){
+  var v=el.value.replace(/\D/g,'');
+  if(v.length>=3)v=v.slice(0,2)+'.'+v.slice(2);
+  if(v.length>=6)v=v.slice(0,5)+'.'+v.slice(5,9);
+  el.value=v;
+}
+function setAcctSrc(mode){
+  _acctSrc=mode;
+  rerenderPage();
+}
+function setAcctStyle(style){
+  _acctReportStyle=style;
+  rerenderPage();
+}
+function setAcctFmt(fmt){
+  _acctReportFmt=fmt;
+  rerenderPage();
+}
+
+function renderAccountSettings(){
+  var u=state.user;
+  if(!u) return '';
+  var color=AVATAR_COLOR[u.role]||'#00d4ff';
+  var avatarStyle=_acctAvatar?'background-image:url('+_acctAvatar+');background-size:cover;background-position:center':'background:'+color+'22;color:'+color;
+  var avatarInner=_acctAvatar?'':'<span id="acct-av-letter" style="font-size:28px">'+initials(u.name)+'</span>';
+  var avatarImg=_acctAvatar?'<img src="'+_acctAvatar+'" style="width:100%;height:100%;object-fit:cover" alt="Profile"/>':'';
+  var parts=u.name.split(' ');
+  var firstName=parts[0]||'';
+  var lastName=parts.slice(1).join(' ')||'';
+
+  var messengers=`
+    <div class="acct-msg-row"><div class="acct-msg-info"><span class="acct-msg-icon">💚</span><div><div class="acct-msg-name">WhatsApp</div><div class="acct-msg-status">Not connected</div></div></div><button class="acct-connect-btn" style="border-color:rgba(37,211,102,.3);color:#4ade80" onclick="openFeature('connect_whatsapp')">Connect</button></div>
+    <div class="acct-msg-row"><div class="acct-msg-info"><span class="acct-msg-icon">✈️</span><div><div class="acct-msg-name">Telegram</div><div class="acct-msg-status">Not connected</div></div></div><button class="acct-connect-btn" style="border-color:rgba(0,136,204,.3);color:#38bdf8" onclick="openFeature('connect_telegram')">Connect</button></div>
+    <div class="acct-msg-row"><div class="acct-msg-info"><span class="acct-msg-icon">💬</span><div><div class="acct-msg-name">Slack</div><div class="acct-msg-status">Not connected</div></div></div><button class="acct-connect-btn" style="border-color:rgba(167,139,250,.3);color:#a78bfa" onclick="openFeature('connect_slack')">Connect</button></div>
+    <div class="acct-msg-row"><div class="acct-msg-info"><span class="acct-msg-icon">📧</span><div><div class="acct-msg-name">E-mail</div><div class="acct-msg-status" style="color:var(--primary)">${esc(u.email)}</div></div></div><button class="acct-connect-btn" style="border-color:rgba(0,212,255,.25);color:var(--primary)">✓ Connected</button></div>`;
+
+  return`<div class="page acct-page">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap">
+      <div><div class="st" style="margin:0">My Account</div><div style="font-size:12px;color:var(--muted)">Profile, preferences & integrations</div></div>
+    </div>
+
+    <div class="acct-avatar-wrap">
+      <div class="acct-avatar-col">
+        <div class="acct-avatar-big" style="${avatarStyle}">${avatarInner}${avatarImg}</div>
+        <label class="acct-upload-label">Upload photo<input type="file" accept="image/*" style="display:none" onchange="loadAcctAvatar(this)"/></label>
+      </div>
+      <div class="acct-fields">
+        <div class="fg"><label>FIRST NAME</label><input class="inp" type="text" value="${esc(firstName)}"/></div>
+        <div class="fg"><label>LAST NAME</label><input class="inp" type="text" value="${esc(lastName)}"/></div>
+        <div class="fg"><label>DATE OF BIRTH (DD.MM.YYYY)</label><input class="inp" type="text" placeholder="dd.mm.yyyy" style="font-family:var(--mono)" maxlength="10" oninput="fmtDOB(this)"/></div>
+        <div class="fg"><label>GENDER</label><select class="inp"><option>Male</option><option>Female</option><option>Prefer not to say</option></select></div>
+        <div class="fg"><label>PHONE</label><input class="inp" type="tel" value="${esc(u.phone||'')}"/></div>
+        <div class="fg"><label>ROLE</label><input class="inp" type="text" value="${esc(ROLE_LABELS[u.role])}" disabled style="opacity:.6"/></div>
+      </div>
+    </div>
+
+    <div class="acct-section">
+      <h3>📁 Reporting Files Source</h3>
+      <div class="desc">Choose where DriveHub reads and saves reporting files</div>
+      <div style="display:flex;gap:8px;margin-bottom:12px">
+        <button class="acct-src-btn${_acctSrc==='pc'?' active':''}" onclick="setAcctSrc('pc')">💻 Local PC path</button>
+        <button class="acct-src-btn${_acctSrc==='gd'?' active':''}" onclick="setAcctSrc('gd')">📂 Google Drive folder</button>
+      </div>
+      ${_acctSrc==='pc'?'<div class="fg"><label style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:1px;margin-bottom:6px">PATH ON PC</label><input class="inp" type="text" placeholder="C:\\\\Users\\\\…\\\\RSP Reports\\\\" style="font-family:var(--mono);font-size:12px"/></div>':'<div class="fg"><label style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:1px;margin-bottom:6px">GOOGLE DRIVE FOLDER URL</label><input class="inp" type="url" placeholder="https://drive.google.com/drive/folders/…" style="font-family:var(--mono);font-size:12px"/></div>'}
+    </div>
+
+    <div class="acct-section">
+      <h3>💬 Corporate Messaging</h3>
+      <div class="desc">Link messaging channels for corporate communications</div>
+      ${messengers}
+    </div>
+
+    <div class="acct-section">
+      <h3>📄 Report Design & Format</h3>
+      <div class="desc">Choose how exported reports look and which file format to use</div>
+      <div style="margin-bottom:14px">
+        <div style="font-size:10px;font-family:var(--mono);letter-spacing:1.5px;color:var(--muted);margin-bottom:8px">STYLE</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="acct-style-btn${_acctReportStyle==='light'?' active':''}" onclick="setAcctStyle('light')">☀ Light</button>
+          <button class="acct-style-btn${_acctReportStyle==='dark'?' active':''}" onclick="setAcctStyle('dark')">✦ In the style of the website</button>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:10px;font-family:var(--mono);letter-spacing:1.5px;color:var(--muted);margin-bottom:8px">FORMAT</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          ${['.xls','.xlsx','.doc','.docx','.pdf'].map(function(f){return'<button class="acct-fmt-btn'+(_acctReportFmt===f?' active':'')+'" onclick="setAcctFmt(\''+f+'\')">'+f+(_acctReportFmt===f?' ✓':'')+'</button>';}).join('')}
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button class="btn btn-p" style="min-width:140px" onclick="toast('Settings saved')">Save changes</button>
+      <button class="btn btn-o" onclick="navigate('dashboard')">← Back to Dashboard</button>
+    </div>
+  </div>`;
+}
+
+// ══════════════════════════════════════════════════════════
+// FEATURE DETAIL PAGES — 1 level of depth for every link
+// ══════════════════════════════════════════════════════════
+var FEATURES={
+  security_2fa:{title:'Security & Two-Factor Authentication',icon:'🔐',ic:'Shield',badge:'soon',color:'var(--warn-bg)',desc:'Multi-layer authentication for all platform users. Protects RSP accounts, driver portals, and financial data from unauthorized access.',
+    metrics:[{v:'256-bit',l:'AES Encryption'},{v:'TOTP',l:'Auth Protocol'},{v:'SOC 2',l:'Compliance Target'},{v:'99.99%',l:'Uptime SLA'}],
+    kvs:[{k:'SMS Verification',v:'Planned — Sprint 9'},{k:'Authenticator App',v:'Google / Microsoft'},{k:'Hardware Keys',v:'YubiKey, FIDO2'},{k:'Session Timeout',v:'30 min idle'},{k:'IP Whitelisting',v:'Per-company rules'},{k:'Login History',v:'90-day rolling log'}],
+    log:['<span class="dim">2026-03-23 08:00</span> Architecture review completed','<span class="dim">2026-03-18</span> TOTP library selected: <span class="ok">otplib v14</span>','<span class="dim">2026-03-12</span> Database schema: sessions table added','<span class="dim">2026-03-05</span> SMS gateway evaluation: Twilio vs MessageBird','<span class="dim">2026-02-28</span> SOC 2 Type I gap analysis <span class="warn">in progress</span>']},
+  notif_prefs:{title:'Notification Preferences',icon:'🔔',ic:'Bell',badge:'soon',color:'var(--info-bg)',desc:'Granular control over every alert channel — push, email, SMS, in-app. Per-role defaults with individual overrides.',
+    metrics:[{v:'6',l:'Alert Channels'},{v:'24',l:'Event Categories'},{v:'3',l:'Priority Levels'},{v:'∞',l:'Custom Rules'}],
+    kvs:[{k:'Push Notifications',v:'Browser + Mobile'},{k:'Email Digest',v:'Real-time / Hourly / Daily'},{k:'SMS Alerts',v:'Critical only'},{k:'Slack Webhook',v:'Channel routing'},{k:'Quiet Hours',v:'Per-user schedule'},{k:'Escalation Rules',v:'Auto-escalate if unread >2h'}],
+    log:['<span class="dim">2026-03-22</span> Notification schema: 24 event types mapped','<span class="dim">2026-03-15</span> Email template engine: <span class="ok">Handlebars</span>','<span class="dim">2026-03-10</span> Push notification service worker: <span class="ok">drafted</span>','<span class="dim">2026-03-01</span> <span class="warn">Waiting on</span> Twilio SMS gateway approval']},
+  ai_route_opt:{title:'AI Route Optimization Engine',icon:'🧠',ic:'Cpu',badge:'beta',color:'var(--pur-bg)',desc:'Machine learning model trained on 2.4M historical delivery records. Optimizes driver routes for minimum drive time, fuel cost, and maximum on-time delivery.',
+    metrics:[{v:'-18%',l:'Avg Drive Time'},{v:'+6.2%',l:'On-Time Improvement'},{v:'2.4M',l:'Training Records'},{v:'<3s',l:'Route Calc Time'}],
+    kvs:[{k:'Algorithm',v:'Hybrid — OR-Tools + LSTM neural net'},{k:'Constraints',v:'Time windows, vehicle capacity, driver breaks'},{k:'Real-time Updates',v:'Re-route on traffic + weather'},{k:'Package Priority',v:'SLA tier weighting'},{k:'Zone Clustering',v:'K-means with geo-density'},{k:'Training Data',v:'OnTrac FasTrak + Google Distance Matrix'}],
+    log:['<span class="dim">2026-03-23 06:14</span> Morning route batch: <span class="ok">142 routes optimized</span> in 2.8s','<span class="dim">2026-03-23 06:14</span> Avg savings: <span class="ok">14 min/route</span>','<span class="dim">2026-03-22 11:30</span> Mid-day re-route: 3 drivers affected by I-405 closure','<span class="dim">2026-03-21</span> Model v2.7 deployed — <span class="ok">+1.3% accuracy</span>','<span class="dim">2026-03-18</span> A/B test results: AI routes <span class="ok">18% faster</span> than manual']},
+  realtime_telemetry:{title:'Real-time Driver Telemetry',icon:'📡',ic:'Zap',badge:'beta',color:'var(--pur-bg)',desc:'Live GPS tracking, speed monitoring, harsh-event detection, and driving behavior scoring. Streams at 5-second intervals per active driver.',
+    metrics:[{v:'5s',l:'Update Interval'},{v:'98.2%',l:'GPS Accuracy'},{v:'12',l:'Active Streams'},{v:'847',l:'Events Today'}],
+    kvs:[{k:'GPS Provider',v:'Google Maps Platform'},{k:'Harsh Braking',v:'Threshold: >0.4g deceleration'},{k:'Speed Alerts',v:'Zone-specific limits'},{k:'Idle Detection',v:'>5 min stationary'},{k:'Geofence Triggers',v:'Enter / Exit events'},{k:'Data Retention',v:'90 days raw, 2 years aggregated'}],
+    log:['<span class="dim">2026-03-23 11:42</span> James Williams: <span class="ok">On route</span> — stop 41/58','<span class="dim">2026-03-23 11:38</span> Miguel Hernandez: <span class="warn">Idle 4m</span> at 1420 S Main','<span class="dim">2026-03-23 11:35</span> Keisha Johnson: <span class="ok">Completed</span> — 46/46 stops','<span class="dim">2026-03-23 11:20</span> <span class="err">Harsh braking</span> event — Driver #1047, W Olympic Blvd','<span class="dim">2026-03-23 10:55</span> Geofence exit: CV-0831 left Phoenix depot']},
+  predictive_analytics:{title:'Predictive Analytics Engine',icon:'📊',ic:'BarChart2',badge:'soon',color:'var(--warn-bg)',desc:'12-week rolling trend analysis with Z-score anomaly detection. Predicts volume surges, driver churn, SLA risk, and revenue variance before they happen.',
+    metrics:[{v:'12wk',l:'Forecast Window'},{v:'94%',l:'Accuracy Rate'},{v:'8',l:'Prediction Models'},{v:'Z>2σ',l:'Anomaly Threshold'}],
+    kvs:[{k:'Volume Forecast',v:'ARIMA + seasonal decomposition'},{k:'Churn Predictor',v:'Random Forest classifier'},{k:'SLA Risk Score',v:'Logistic regression, 7 features'},{k:'Revenue Variance',v:'Monte Carlo simulation'},{k:'Data Required',v:'≥3 months historical FasTrak'},{k:'Refresh Cadence',v:'Daily at 01:00 UTC'}],
+    log:['<span class="dim">2026-03-23</span> <span class="warn">Waiting on</span> 3+ months FasTrak data (have 1 period)','<span class="dim">2026-03-15</span> ARIMA model prototype: <span class="ok">validated</span>','<span class="dim">2026-03-08</span> Feature engineering: 23 variables selected','<span class="dim">2026-02-28</span> Random Forest churn model: AUC <span class="ok">0.91</span>']},
+  multicarrier_api:{title:'Multi-carrier Rate API',icon:'🌐',ic:'Globe',badge:'live',color:'var(--ok-bg)',desc:'Unified API interface pulling live rates from OnTrac, FedEx Ground, LaserShip, and Amazon DSP. Real-time rate comparison across 13 US markets.',
+    metrics:[{v:'4',l:'Carrier Feeds'},{v:'13',l:'US Markets'},{v:'<200ms',l:'API Latency'},{v:'99.7%',l:'Uptime (30d)'}],
+    kvs:[{k:'OnTrac',v:'Connected — real-time'},{k:'FedEx Ground',v:'Connected — 15min delay'},{k:'LaserShip',v:'Connected — daily batch'},{k:'Amazon DSP',v:'Rate table import (manual)'},{k:'Rate Format',v:'$/stop, $/package, $/mile'},{k:'Webhook Events',v:'rate_change, market_alert'}],
+    log:['<span class="dim">2026-03-23 11:45</span> <span class="ok">Rate sync complete</span> — 13 markets updated','<span class="dim">2026-03-23 08:00</span> OnTrac API: <span class="ok">200 OK</span> — 142ms','<span class="dim">2026-03-23 07:55</span> FedEx Ground: NYC rate changed $1.62 → $1.64','<span class="dim">2026-03-22</span> LaserShip batch: <span class="ok">4 markets refreshed</span>','<span class="dim">2026-03-20</span> API uptime: <span class="ok">99.7%</span> over 30 days']},
+  sla_compliance:{title:'SLA Compliance Monitor',icon:'📋',ic:'FileText',badge:'live',color:'var(--ok-bg)',desc:'Continuous monitoring of carrier SLA thresholds — on-time %, LOS rate, customer OTP, exception limits. Auto-alerts when metrics approach red zone.',
+    metrics:[{v:'98.5%',l:'Current LOS'},{v:'88.3%',l:'Customer OTP'},{v:'16',l:'Active SPs'},{v:'3',l:'Alert Triggers'}],
+    kvs:[{k:'LOS Target',v:'≥97% (OnTrac §4.2)'},{k:'Customer OTP Target',v:'≥90% (OnTrac §7.1)'},{k:'Exception Limit',v:'<2% of volume'},{k:'SP Late Threshold',v:'<1% of stops'},{k:'Alert Channel',v:'In-app + Email + SMS'},{k:'Escalation',v:'Auto-notify GM if >2h unresolved'}],
+    log:['<span class="dim">2026-03-23 11:00</span> LOS Rate: <span class="ok">98.5%</span> — within SLA','<span class="dim">2026-03-23 10:30</span> Customer OTP: <span class="warn">88.3%</span> — below 90% target','<span class="dim">2026-03-23 09:15</span> SP 1480 T9: <span class="err">Alert triggered</span> — 84 SP Lates','<span class="dim">2026-03-22</span> Daily compliance report: <span class="ok">generated</span>','<span class="dim">2026-03-21</span> Exception rate: <span class="ok">1.7%</span> within limit']},
+  fleet_maintenance:{title:'Fleet Maintenance Alerts',icon:'🔧',ic:'Truck',badge:'soon',color:'var(--warn-bg)',desc:'Preventive maintenance scheduling based on mileage, engine hours, and DOT inspection cycles. Push alerts to drivers and fleet managers.',
+    metrics:[{v:'47',l:'Vehicles Tracked'},{v:'12',l:'Due This Month'},{v:'3',l:'Overdue'},{v:'$4,200',l:'Avg Monthly Cost'}],
+    kvs:[{k:'Oil Change Interval',v:'Every 5,000 mi / 6 months'},{k:'Tire Rotation',v:'Every 7,500 mi'},{k:'DOT Inspection',v:'Annual — 12-month cycle'},{k:'Brake Inspection',v:'Every 15,000 mi'},{k:'Diagnostic Integration',v:'OBD-II via Samsara / Geotab'},{k:'Work Order System',v:'Planned — Sprint 11'}],
+    log:['<span class="dim">2026-03-23</span> CV-1047: oil change <span class="warn">due in 320 mi</span>','<span class="dim">2026-03-22</span> SP-2231: tire rotation <span class="ok">completed</span>','<span class="dim">2026-03-20</span> CV-0831: DOT inspection <span class="ok">passed</span>','<span class="dim">2026-03-15</span> 3 vehicles <span class="err">overdue</span> for brake inspection']},
+  cost_per_stop:{title:'Cost-per-Stop Optimizer',icon:'💲',ic:'DollarSign',badge:'beta',color:'var(--pur-bg)',desc:'Granular cost analysis per delivery stop — fuel, labor, vehicle depreciation, insurance overhead. Identifies profit leaks by zone, driver, and time of day.',
+    metrics:[{v:'$1.42',l:'Avg Cost/Stop'},{v:'$0.38',l:'Fuel Component'},{v:'$0.82',l:'Labor Component'},{v:'$0.22',l:'Overhead'}],
+    kvs:[{k:'Zone Analysis',v:'9 territories, ZIP-level'},{k:'Driver Efficiency',v:'Ranked by cost/stop'},{k:'Peak vs Off-Peak',v:'27% cost difference'},{k:'Fuel Optimization',v:'Route distance correlation'},{k:'Break-even Calculator',v:'Min stops/day per zone'},{k:'Profit Margin Target',v:'28% gross, 12% net'}],
+    log:['<span class="dim">2026-03-23</span> LA South zone: <span class="ok">$1.42/stop</span> (target: $1.50)','<span class="dim">2026-03-23</span> Phoenix zone: <span class="warn">$1.22/stop</span> — below margin target','<span class="dim">2026-03-22</span> Top driver efficiency: James Williams <span class="ok">$1.31/stop</span>','<span class="dim">2026-03-20</span> Fuel cost spike: <span class="err">+8%</span> this week']},
+  geofence_editor:{title:'Geofence Zone Editor',icon:'📍',ic:'MapPin',badge:'soon',color:'var(--warn-bg)',desc:'Visual drag-and-drop zone editor for delivery territories, depot boundaries, and restricted areas. Powers auto-assignment and zone-based analytics.',
+    metrics:[{v:'9',l:'Active Zones'},{v:'47',l:'Depot Geofences'},{v:'12',l:'Restricted Areas'},{v:'<50m',l:'Boundary Precision'}],
+    kvs:[{k:'Zone Types',v:'Territory, Depot, Restricted, Custom'},{k:'Drawing Tools',v:'Polygon, Circle, Rectangle'},{k:'Import/Export',v:'GeoJSON, KML, Shapefile'},{k:'Auto-assignment',v:'Driver ↔ Zone matching'},{k:'Overlap Detection',v:'Auto-flag conflicts'},{k:'Map Provider',v:'Mapbox GL JS'}],
+    log:['<span class="dim">2026-03-23</span> Zone editor UI: <span class="warn">wireframe approved</span>','<span class="dim">2026-03-18</span> GeoJSON parser: <span class="ok">implemented</span>','<span class="dim">2026-03-12</span> Mapbox GL integration: <span class="ok">prototype working</span>','<span class="dim">2026-03-05</span> Territory data: 9 ZIP zones imported from FasTrak']},
+  ontrac_gateway:{title:'OnTrac API Gateway',icon:'📦',ic:'Package',badge:'live',color:'var(--ok-bg)',desc:'Primary data pipeline from OnTrac FasTrak system. Pulls volume, delivery status, exceptions, and SP performance data in real-time.',
+    metrics:[{v:'27,062',l:'Packages Today'},{v:'142ms',l:'Avg Latency'},{v:'99.8%',l:'Uptime (7d)'},{v:'1,247',l:'API Calls/hr'}],
+    kvs:[{k:'Endpoint',v:'fastrack.ontrac.com/api/v3'},{k:'Auth',v:'OAuth 2.0 + API Key'},{k:'Data Streams',v:'Volume, Status, Exceptions, SP Performance'},{k:'Sync Frequency',v:'Every 60 seconds'},{k:'Retry Policy',v:'3x exponential backoff'},{k:'Rate Limit',v:'5,000 requests/hour'}],
+    log:['<span class="dim">2026-03-23 11:45:02</span> <span class="ok">GET /volume</span> — 200 OK (138ms)','<span class="dim">2026-03-23 11:44:01</span> <span class="ok">GET /exceptions</span> — 200 OK (156ms)','<span class="dim">2026-03-23 11:43:00</span> <span class="ok">GET /sp-performance</span> — 200 OK (142ms)','<span class="dim">2026-03-23 08:12</span> <span class="warn">Timeout</span> on /status — retried OK','<span class="dim">2026-03-22 23:00</span> Daily batch sync: <span class="ok">27,062 records</span>']},
+  fedex_connect:{title:'FedEx Ground Connect',icon:'📦',ic:'Package',badge:'soon',color:'var(--warn-bg)',desc:'Integration with FedEx Ground ISP program APIs. Enables multi-carrier RSP operations — manage OnTrac and FedEx routes from a single dashboard.',
+    metrics:[{v:'Q3 2026',l:'Target Launch'},{v:'12',l:'API Endpoints'},{v:'ISP',l:'Program Type'},{v:'5',l:'Markets Planned'}],
+    kvs:[{k:'Program',v:'FedEx Ground Independent Service Provider (ISP)'},{k:'API Version',v:'FedEx REST API v1 (Developer Portal)'},{k:'Data Available',v:'Package scan, route manifest, settlement'},{k:'Auth Method',v:'OAuth 2.0 Client Credentials'},{k:'Markets First',v:'LA, Phoenix, Dallas, Chicago, Atlanta'},{k:'Compliance',v:'FedEx ISP Operating Agreement §12'}],
+    log:['<span class="dim">2026-03-20</span> FedEx Developer Portal access: <span class="ok">approved</span>','<span class="dim">2026-03-15</span> API sandbox credentials: <span class="ok">received</span>','<span class="dim">2026-03-08</span> Data mapping: FedEx → DriveHub schema <span class="warn">in progress</span>','<span class="dim">2026-02-25</span> Partnership agreement: <span class="ok">signed</span>']},
+  amazon_dsp:{title:'Amazon DSP Link',icon:'📦',ic:'Package',badge:'soon',color:'var(--warn-bg)',desc:'Amazon Delivery Service Partner program integration. Import route assignments, package manifests, and scorecard data directly from Amazon Relay.',
+    metrics:[{v:'Q4 2026',l:'Target Launch'},{v:'Relay',l:'Source System'},{v:'DSP',l:'Program Type'},{v:'8',l:'Data Feeds'}],
+    kvs:[{k:'Program',v:'Amazon Delivery Service Partner (DSP)'},{k:'Source System',v:'Amazon Relay + Cortex'},{k:'Data Feeds',v:'Routes, Packages, Scorecard, FICO, Netradyne'},{k:'Scorecard Metrics',v:'DPMO, DNR, POD, CC, DCR, Mentor'},{k:'Auth',v:'Amazon SP-API OAuth'},{k:'Compliance',v:'Amazon DSP Agreement'}],
+    log:['<span class="dim">2026-03-18</span> Amazon SP-API application: <span class="warn">under review</span>','<span class="dim">2026-03-10</span> DSP scorecard schema mapping: <span class="ok">completed</span>','<span class="dim">2026-02-20</span> Initial feasibility study: <span class="ok">approved</span>']},
+  webhook_manager:{title:'Webhook Manager',icon:'🔗',ic:'Send',badge:'beta',color:'var(--pur-bg)',desc:'Configure outbound webhook endpoints for real-time event streaming. Push delivery events, exceptions, and financial data to your own systems.',
+    metrics:[{v:'3',l:'Active Webhooks'},{v:'847',l:'Events Today'},{v:'99.1%',l:'Delivery Rate'},{v:'<500ms',l:'Avg Delivery Time'}],
+    kvs:[{k:'Events Available',v:'delivery.completed, exception.created, route.started, payment.processed'},{k:'Payload Format',v:'JSON (application/json)'},{k:'Auth Methods',v:'HMAC-SHA256, Bearer Token, Basic Auth'},{k:'Retry Policy',v:'5 attempts, exponential backoff'},{k:'Endpoint Limit',v:'10 per company'},{k:'Event Log',v:'30-day retention'}],
+    log:['<span class="dim">2026-03-23 11:42:18</span> <span class="ok">POST https://api.client.com/hooks</span> → 200 (234ms)','<span class="dim">2026-03-23 11:42:15</span> Event: delivery.completed — Stop #41','<span class="dim">2026-03-23 11:38:00</span> <span class="warn">Retry #1</span> https://erp.company.com/ingest → timeout','<span class="dim">2026-03-23 11:38:05</span> <span class="ok">Retry succeeded</span> → 200 (812ms)','<span class="dim">2026-03-23 11:20:00</span> Event: driver.submission — James Williams']},
+  connect_whatsapp:{title:'WhatsApp Business Integration',icon:'💚',ic:'Send',badge:'soon',color:'var(--ok-bg)',desc:'Send delivery notifications, driver alerts, and customer updates via WhatsApp Business API. Two-way messaging for dispatch coordination.',
+    metrics:[{v:'25B+',l:'Daily Messages (Platform)'},{v:'<2s',l:'Message Delivery'},{v:'98%',l:'Open Rate'},{v:'2-way',l:'Messaging'}],
+    kvs:[{k:'Provider',v:'WhatsApp Business API (Meta)'},{k:'Use Cases',v:'Delivery ETA, Exception alerts, Driver dispatch'},{k:'Template Messages',v:'Pre-approved by Meta'},{k:'Media Support',v:'Photo proof, Location pin, Documents'},{k:'Phone Verification',v:'Company number required'},{k:'Cost',v:'~$0.005–$0.08/message depending on region'}],
+    log:['<span class="dim">2026-03-22</span> Meta Business verification: <span class="warn">submitted</span>','<span class="dim">2026-03-15</span> Message templates: 8 drafted for approval','<span class="dim">2026-03-08</span> WhatsApp Business API sandbox: <span class="ok">active</span>']},
+  connect_telegram:{title:'Telegram Bot Integration',icon:'✈️',ic:'Send',badge:'soon',color:'var(--info-bg)',desc:'Telegram bot for instant driver notifications, group channels for dispatch teams, and inline commands for quick status updates.',
+    metrics:[{v:'800M+',l:'Platform Users'},{v:'Instant',l:'Delivery Speed'},{v:'Bot API',l:'Integration Method'},{v:'Groups',l:'Team Channels'}],
+    kvs:[{k:'Bot Name',v:'@DriveHubBot (reserved)'},{k:'Commands',v:'/status, /route, /earnings, /report'},{k:'Group Channels',v:'Per-company dispatch groups'},{k:'Inline Queries',v:'Quick package lookup'},{k:'Webhook Mode',v:'Real-time push events'},{k:'File Sharing',v:'Route PDF, earnings summary'}],
+    log:['<span class="dim">2026-03-20</span> Bot token: <span class="ok">created via @BotFather</span>','<span class="dim">2026-03-15</span> Command handlers: 4 of 6 implemented','<span class="dim">2026-03-10</span> Webhook endpoint: <span class="ok">tested OK</span>']},
+  connect_slack:{title:'Slack Workspace Integration',icon:'💬',ic:'Send',badge:'soon',color:'var(--pur-bg)',desc:'Post alerts, daily summaries, and exception reports directly to Slack channels. Slash commands for quick lookups from any channel.',
+    metrics:[{v:'#dispatch',l:'Primary Channel'},{v:'/dh',l:'Slash Command'},{v:'OAuth',l:'Auth Method'},{v:'Blocks',l:'Rich Messages'}],
+    kvs:[{k:'OAuth Scopes',v:'chat:write, commands, incoming-webhook'},{k:'Slash Commands',v:'/dh status, /dh driver, /dh exceptions'},{k:'Channel Routing',v:'#dispatch, #finance, #alerts'},{k:'Daily Digest',v:'Auto-post at 6 PM company time'},{k:'Interactive Messages',v:'Approve/reject driver submissions'},{k:'Block Kit',v:'Rich cards with charts + actions'}],
+    log:['<span class="dim">2026-03-22</span> Slack app manifest: <span class="ok">created</span>','<span class="dim">2026-03-18</span> OAuth flow: <span class="ok">tested in sandbox</span>','<span class="dim">2026-03-12</span> Slash command /dh status: <span class="ok">prototype working</span>']}
+};
+
+function renderFeaturePage(fid){
+  var f=FEATURES[fid];
+  if(!f) return '<div class="page"><div class="pt">Feature not found</div><button class="btn btn-o" onclick="history.back?navigate(state._prevPage||\'dashboard\'):0">← Back</button></div>';
+  var badgeCls=f.badge==='live'?'live':(f.badge==='beta'?'beta':'soon');
+  var badgeLabel=f.badge.toUpperCase();
+  var metricsHTML=f.metrics?'<div class="fp-grid">'+f.metrics.map(function(m){return'<div class="fp-metric"><div class="fp-metric-val">'+m.v+'</div><div class="fp-metric-label">'+esc(m.l)+'</div></div>';}).join('')+'</div>':'';
+  var kvsHTML=f.kvs?f.kvs.map(function(r){return'<div class="fp-kv"><span style="color:var(--muted)">'+esc(r.k)+'</span><span style="font-weight:500">'+r.v+'</span></div>';}).join(''):'';
+  var logHTML=f.log?'<div class="fp-log">'+f.log.join('<br>')+'</div>':'';
+  // Capability/readiness bar
+  var readiness=f.badge==='live'?92:(f.badge==='beta'?65:28);
+  var readinessColor=f.badge==='live'?'var(--ok-t)':(f.badge==='beta'?'var(--pur-t)':'var(--warn-t)');
+  return'<div class="page fp">'+
+    '<button class="btn btn-o btn-sm" onclick="navigate(state._prevPage||\'dashboard\')" style="margin-bottom:16px">← Back</button>'+
+    '<div class="fp-hero"><div class="fp-icon" style="background:'+f.color+';font-size:28px">'+f.icon+'</div><div style="flex:1"><div class="pt" style="margin:0;display:flex;align-items:center;gap:10px">'+esc(f.title)+' <span class="fp-badge '+badgeCls+'">'+badgeLabel+'</span></div><div style="font-size:12px;color:var(--muted);margin-top:4px">'+esc(f.desc)+'</div></div></div>'+
+    '<div class="fp-section"><h3>'+icon(f.ic)+'&nbsp;Key Metrics</h3>'+metricsHTML+
+    '<div style="margin-top:14px;display:flex;align-items:center;gap:10px"><span style="font-size:11px;color:var(--muted)">Readiness</span><div style="flex:1"><div class="fp-bar"><div class="fp-bar-fill" style="width:'+readiness+'%;background:'+readinessColor+'"></div></div></div><span style="font-size:11px;font-weight:600;color:'+readinessColor+'">'+readiness+'%</span></div></div>'+
+    '<div class="fp-section"><h3>'+icon('FileText')+'&nbsp;Configuration & Specs</h3>'+kvsHTML+'</div>'+
+    '<div class="fp-section"><h3>'+icon('Clock')+'&nbsp;Activity Log</h3>'+logHTML+'</div>'+
+  '</div>';
+}
+
+window.openFeature=function(fid){
+  state._prevPage=state.page;
+  navigate('feature_'+fid);
+};
+
+// ── Company Detail View ──
+var _detailCoId=null;
+window.showCompanyDetail=function(id){
+  _detailCoId=id;
+  state._prevPage=state.page;
+  navigate('company_detail');
+};
+function renderCompanyDetail(){
+  var c=companies.find(function(co){return co.id===_detailCoId;});
+  if(!c) return '<div class="page"><div class="pt">Company not found</div></div>';
+  var sub=subs.find(function(s){return s.coId===c.id;});
+  var coReqs=requests.filter(function(r){return r.coId===c.id;});
+  var drivers=c.drivers||0;
+  var fleet=c.fleet||0;
+  var utilization=fleet>0?Math.round((drivers/fleet)*100):0;
+  var monthlyRev=sub?sub.price:0;
+  var annualEst=monthlyRev*12;
+  var profitMargin=28;
+  var costPerStop=(1.15+Math.random()*0.4).toFixed(2);
+  var revPerStop=(parseFloat(costPerStop)*1.35).toFixed(2);
+  var avgStopsDay=Math.round(45+Math.random()*30);
+  var otp=(92+Math.random()*6).toFixed(1);
+  var losRate=(97+Math.random()*2.5).toFixed(1);
+  return'<div class="page fp">'+
+    '<button class="btn btn-o btn-sm" onclick="navigate(state._prevPage||\'companies\')" style="margin-bottom:16px">← Back to Companies</button>'+
+    '<div class="fp-hero"><div class="fp-icon" style="background:var(--primary-bg)">'+icon('Building2')+'</div><div style="flex:1"><div class="pt" style="margin:0;display:flex;align-items:center;gap:10px">'+esc(c.name)+' '+statusBadge(c.status)+'</div><div style="font-size:12px;color:var(--muted);margin-top:4px">'+esc([c.city,c.state].filter(Boolean).join(', '))+(c.dot?' · '+esc(c.dot):'')+'</div></div><button class="btn btn-o btn-sm" onclick="event.stopPropagation();openEditCo('+c.id+')">'+icon('Pencil')+' Edit</button></div>'+
+    '<div class="fp-section"><h3>'+icon('BarChart2')+'&nbsp;Performance Overview</h3><div class="fp-grid">'+
+      '<div class="fp-metric"><div class="fp-metric-val">'+otp+'%</div><div class="fp-metric-label">On-Time Performance</div></div>'+
+      '<div class="fp-metric"><div class="fp-metric-val">'+losRate+'%</div><div class="fp-metric-label">LOS Rate</div></div>'+
+      '<div class="fp-metric"><div class="fp-metric-val">'+avgStopsDay+'</div><div class="fp-metric-label">Avg Stops/Day</div></div>'+
+      '<div class="fp-metric"><div class="fp-metric-val">$'+revPerStop+'</div><div class="fp-metric-label">Revenue/Stop</div></div>'+
+    '</div></div>'+
+    '<div class="fp-section"><h3>'+icon('DollarSign')+'&nbsp;Financials</h3>'+
+      '<div class="fp-kv"><span style="color:var(--muted)">Plan</span><span style="font-weight:500">'+planBadge(c.plan)+'</span></div>'+
+      '<div class="fp-kv"><span style="color:var(--muted)">Monthly Revenue</span><span style="font-weight:600;color:var(--primary)">$'+monthlyRev.toLocaleString()+'</span></div>'+
+      '<div class="fp-kv"><span style="color:var(--muted)">Annual Estimate</span><span style="font-weight:500">$'+annualEst.toLocaleString()+'</span></div>'+
+      '<div class="fp-kv"><span style="color:var(--muted)">Cost/Stop</span><span style="font-weight:500">$'+costPerStop+'</span></div>'+
+      '<div class="fp-kv"><span style="color:var(--muted)">Profit Margin</span><span style="font-weight:500;color:var(--ok-t)">'+profitMargin+'%</span></div>'+
+    '</div>'+
+    '<div class="fp-section"><h3>'+icon('Truck')+'&nbsp;Fleet & Operations</h3>'+
+      '<div class="fp-kv"><span style="color:var(--muted)">Fleet Size</span><span style="font-weight:500">'+fleet+' vehicles</span></div>'+
+      '<div class="fp-kv"><span style="color:var(--muted)">Active Drivers</span><span style="font-weight:500">'+drivers+'</span></div>'+
+      '<div class="fp-kv"><span style="color:var(--muted)">Utilization</span><span style="font-weight:500">'+utilization+'%</span></div>'+
+      (c.phone?'<div class="fp-kv"><span style="color:var(--muted)">Phone</span><span style="font-weight:500">'+esc(c.phone)+'</span></div>':'')+
+      (c.specs&&c.specs.length?'<div class="fp-kv"><span style="color:var(--muted)">Specializations</span><span style="font-weight:500">'+c.specs.map(function(s){return'<span class="spec-tag" style="margin-left:4px">'+esc(s)+'</span>';}).join('')+'</span></div>':'')+
+    '</div>'+
+    (coReqs.length>0?'<div class="fp-section"><h3>'+icon('FileText')+'&nbsp;Service Requests ('+coReqs.length+')</h3>'+coReqs.slice(0,5).map(function(r){return'<div class="fp-kv"><span style="color:var(--muted);display:flex;align-items:center;gap:4px">'+(r.priority==='urgent'?'<span style="color:var(--err-t)">'+icon('AlertTriangle')+'</span>':'')+esc(r.title)+'</span><span class="badge '+(r.status==='completed'?'b-active':r.status==='new'?'b-new':'b-pending')+'">'+esc(r.status.replace('_',' '))+'</span></div>';}).join('')+'</div>':'')+
+  '</div>';
 }
 
 function renderPage(){
   const u=state.user;
+  if(state.page&&state.page.indexOf('feature_')===0) return renderFeaturePage(state.page.replace('feature_',''));
+  if(state.page==='company_detail') return renderCompanyDetail();
+  if(state.page==='account') return renderAccountSettings();
   if(u&&u.role==='driver'){
     if(state.page==='onroute_rates') return renderOnRouteRates();
     return renderDriverDashboard();
@@ -2633,6 +3134,10 @@ function renderPage(){
     case'acct_locations':return renderAcctLocations();
     case'reporting':return renderReporting();
     case'kanban_board':return renderKanbanBoard();
+    case'onroute_rates':return renderOnRouteRates();
+    case'admin_data_streams':return renderAdminDataStreams();
+    case'admin_platform':return renderAdminPlatform();
+    case'admin_system':return renderAdminSystem();
     default:return renderDashboard();
   }
 }
@@ -2653,12 +3158,13 @@ function render(){
     return;
   }
   const unread=notifications.filter(n=>!n.read).length;
-  root.innerHTML=`<div class="sb-overlay" id="sb-overlay" onclick="closeSidebar()"></div><div class="app">${renderSidebar()}<div class="main"><div class="topbar"><div class="topbar-left"><button class="sb-toggle" id="sb-toggle" onclick="toggleSidebar()" aria-label="Menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button><div class="sim-timeline" title="Activity timeline">${Array.from({length:24},(_,i)=>`<div class="sim-bar${i<=11?' active':''}" style="height:${4+Math.random()*16}px"></div>`).join('')}</div><span style="font-size:10px;color:var(--dim);font-family:var(--mono);letter-spacing:1px">LIVE SIM</span></div><div class="topbar-right">${renderNotifPanel()}</div></div><div id="page-content">${renderPage()}</div></div></div><div id="toast-container" style="position:fixed;bottom:20px;right:20px;z-index:999;display:flex;flex-direction:column;gap:8px"></div>`;
+  root.innerHTML=`<div id="star-canvas"></div><div class="sb-overlay" id="sb-overlay" onclick="closeSidebar()"></div><div class="app">${renderSidebar()}<div class="main"><div class="topbar"><div class="topbar-left"><button class="sb-toggle" id="sb-toggle" onclick="toggleSidebar()" aria-label="Menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button><div class="sim-timeline" title="Activity timeline">${Array.from({length:24},(_,i)=>`<div class="sim-bar${i<=11?' active':''}" style="height:${4+Math.random()*16}px"></div>`).join('')}</div><span style="font-size:10px;color:var(--dim);font-family:var(--mono);letter-spacing:1px">LIVE SIM</span></div><div class="topbar-right">${renderNotifPanel()}</div></div><div id="page-content">${renderPage()}</div></div></div><div id="toast-container" style="position:fixed;bottom:20px;right:20px;z-index:999;display:flex;flex-direction:column;gap:8px"></div>`;
   toastEl=document.getElementById('toast-container');
   bindPage();
   setTimeout(initMaps,50);
   setTimeout(conReplacePagePins,60);
-  // Show constructor toggle and toolbar
+  setTimeout(initStarField,10);
+  // Show edits toggle and toolbar
   if(tog){tog.classList.add('vis');tog.style.display='';}
   if(conEl&&CON.visible)conEl.classList.add('vis');
 }
@@ -2701,8 +3207,8 @@ function renderLogin(){
     </form>
     <div class="divider"></div>
     <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">${icon('Shield')}<span style="font-size:12px;color:var(--muted)">Demo accounts</span></div>
-    <details class="demo-dropdown" open><summary><span style="color:var(--primary)">Administration Accounts</span></summary><div class="demo-items">${adminAccounts.map(function(d){return'<button class="demo-btn" data-email="'+esc(d.email)+'" data-pw="'+esc(d.pw)+'"><div class="demo-btn-role" style="color:'+d.color+'">'+esc(d.role)+'</div><div class="demo-btn-email">'+esc(d.email)+'</div></button>';}).join('')}</div></details>
-    <details class="demo-dropdown" open><summary><span style="color:#f97316">Drivers Accounts</span></summary><div class="demo-items">${driverAccounts.map(function(d){return'<button class="demo-btn" data-email="'+esc(d.email)+'" data-pw="'+esc(d.pw)+'"><div class="demo-btn-role" style="color:'+d.color+'">'+esc(d.role)+'</div><div class="demo-btn-email">'+esc(d.email)+'</div></button>';}).join('')}</div></details>
+    <details class="demo-dropdown"><summary><span style="color:var(--primary)">Administration Accounts</span></summary><div class="demo-items">${adminAccounts.map(function(d){return'<button class="demo-btn" data-email="'+esc(d.email)+'" data-pw="'+esc(d.pw)+'"><div class="demo-btn-role" style="color:'+d.color+'">'+esc(d.role)+'</div><div class="demo-btn-email">'+esc(d.email)+'</div></button>';}).join('')}</div></details>
+    <details class="demo-dropdown"><summary><span style="color:#f97316">Drivers Accounts</span></summary><div class="demo-items">${driverAccounts.map(function(d){return'<button class="demo-btn" data-email="'+esc(d.email)+'" data-pw="'+esc(d.pw)+'"><div class="demo-btn-role" style="color:'+d.color+'">'+esc(d.role)+'</div><div class="demo-btn-email">'+esc(d.email)+'</div></button>';}).join('')}</div></details>
     </div></div>
     <div class="login-footer">2026 &copy; DriveHub Inc. Made with <em class="heart">&#10084;</em> for people just like us</div>
   </div></div>`;
@@ -2865,7 +3371,227 @@ window.showNotifDetail=function(n){
   document.body.insertAdjacentHTML('beforeend',html);
   document.getElementById('notif-detail-modal').addEventListener('click',function(e){if(e.target.id==='notif-detail-modal')closeModal('notif-detail-modal');});
 };
-window.setTimeRange=(id,range)=>{state.timeRange=range;rerenderPage();};
+window.setTimeRange=(id,range)=>{
+  state.timeRange=range;
+  if(range==='custom'){
+    // Open custom panel — toggle
+    setTimeout(function(){
+      var p=document.getElementById('tr-custom-'+id);
+      if(p)p.classList.toggle('open');
+    },10);
+  } else {
+    // Close any open custom panels
+    document.querySelectorAll('.tr-custom-panel').forEach(function(el){el.classList.remove('open');});
+  }
+  rerenderPage();
+};
+
+// ── Time Range Multipliers ──
+// Base = "month". Everything scales proportionally.
+var TR_MULT={today:1/22,week:5/22,month:1,quarter:3,ytd:3,custom:1};
+var _customFrom='2026-02-02',_customTo='2026-03-02';
+function trMult(){return TR_MULT[state.timeRange]||1;}
+function trVal(base){return Math.round(base*trMult());}
+function trCur(base){return(base*trMult()).toFixed(2);}
+// Slice arrays proportionally for chart data
+function trSliceData(arr){
+  var m=state.timeRange;
+  if(m==='today')return arr.slice(-1);
+  if(m==='week')return arr.slice(-5);
+  if(m==='month')return arr;
+  if(m==='quarter'){
+    // Extend: repeat data 3x with variance
+    var out=[];for(var q=0;q<3;q++){arr.forEach(function(d,i){var obj={};for(var k in d)obj[k]=typeof d[k]==='number'&&k!=='month'?Math.round(d[k]*(0.85+q*0.12+Math.random()*0.06)):d[k];obj.month=(d.month||d.label||d.day||'')+(q>0?' Q'+(q+1):'');out.push(obj);});}return out;
+  }
+  if(m==='ytd')return arr; // same as month for now
+  if(m==='custom'){
+    var d1=new Date(_customFrom),d2=new Date(_customTo);
+    var days=Math.max(1,Math.round((d2-d1)/(86400000)));
+    TR_MULT.custom=days/30;
+    var slice=Math.min(arr.length,Math.max(1,Math.round(arr.length*days/30)));
+    return arr.slice(-slice);
+  }
+  return arr;
+}
+function trLabel(){
+  var m=state.timeRange;
+  if(m==='today')return 'Today';
+  if(m==='week')return 'This Week';
+  if(m==='month')return 'This Month';
+  if(m==='quarter')return 'Quarter (90d)';
+  if(m==='ytd')return 'Year to Date';
+  if(m==='custom')return _customFrom+' → '+_customTo;
+  return '';
+}
+window.setCustomFrom=function(v){_customFrom=v;TR_MULT.custom=Math.max(1,Math.round((new Date(_customTo)-new Date(_customFrom))/86400000))/30;rerenderPage();};
+window.setCustomTo=function(v){_customTo=v;TR_MULT.custom=Math.max(1,Math.round((new Date(_customTo)-new Date(_customFrom))/86400000))/30;rerenderPage();};
+window.setCustomPreset=function(days){
+  var to=new Date();var from=new Date(to.getTime()-days*86400000);
+  _customFrom=from.toISOString().slice(0,10);_customTo=to.toISOString().slice(0,10);
+  TR_MULT.custom=days/30;rerenderPage();
+};
+
+// ── Custom sort state ──
+var _customSort='date_desc';
+var _customGroup='none';
+var _customFilter='all';
+window.setCustomSort=function(v){_customSort=v;rerenderPage();};
+window.setCustomGroup=function(v){_customGroup=v;rerenderPage();};
+window.setCustomFilter=function(v){_customFilter=v;rerenderPage();};
+// Context-aware sort options
+function getCustomSortOptions(pageId){
+  var base=[
+    {v:'date_desc',l:'Date (newest first)'},
+    {v:'date_asc',l:'Date (oldest first)'},
+  ];
+  if(pageId==='dash'||pageId==='fin'){
+    base.push({v:'revenue_desc',l:'Revenue (high → low)'});
+    base.push({v:'revenue_asc',l:'Revenue (low → high)'});
+    base.push({v:'growth_desc',l:'Growth rate (descending)'});
+    base.push({v:'companies_desc',l:'Companies (most active)'});
+  }
+  if(pageId==='earn'||pageId==='perf'){
+    base.push({v:'earnings_desc',l:'Earnings (high → low)'});
+    base.push({v:'stops_desc',l:'Stops (high → low)'});
+    base.push({v:'efficiency_desc',l:'Efficiency (%)'});
+    base.push({v:'otp_desc',l:'On-time rate'});
+  }
+  if(pageId==='rates'){
+    base.push({v:'rate_desc',l:'Rate (high → low)'});
+    base.push({v:'rate_asc',l:'Rate (low → high)'});
+    base.push({v:'yoy_desc',l:'YoY change (%)'});
+    base.push({v:'volume_desc',l:'Volume (descending)'});
+  }
+  if(pageId==='fcst'){
+    base.push({v:'demand_desc',l:'Demand (peak first)'});
+    base.push({v:'projected_desc',l:'Projected earnings'});
+    base.push({v:'confidence_desc',l:'Forecast confidence'});
+  }
+  if(pageId==='bill'||pageId==='md'||pageId==='rep'){
+    base.push({v:'amount_desc',l:'Amount (high → low)'});
+    base.push({v:'status_pending',l:'Status (pending first)'});
+    base.push({v:'driver_az',l:'Driver (A → Z)'});
+    base.push({v:'variance_desc',l:'Variance (largest first)'});
+  }
+  return base;
+}
+function getCustomGroupOptions(pageId){
+  var opts=[{v:'none',l:'No grouping'}];
+  if(pageId==='dash'||pageId==='fin'){
+    opts.push({v:'by_company',l:'By company'},{v:'by_plan',l:'By plan tier'},{v:'by_region',l:'By region'});
+  }
+  if(pageId==='earn'||pageId==='perf'||pageId==='fcst'){
+    opts.push({v:'by_week',l:'By week'},{v:'by_zone',l:'By zone'},{v:'by_day_type',l:'By day type (weekday/weekend)'});
+  }
+  if(pageId==='rates'){
+    opts.push({v:'by_tier',l:'By tier'},{v:'by_state',l:'By state'},{v:'by_carrier',l:'By carrier'});
+  }
+  if(pageId==='bill'||pageId==='md'||pageId==='rep'){
+    opts.push({v:'by_driver',l:'By driver'},{v:'by_status',l:'By status'},{v:'by_territory',l:'By territory'});
+  }
+  return opts;
+}
+function getCustomFilterOptions(pageId){
+  var opts=[{v:'all',l:'All data'}];
+  if(pageId==='dash'||pageId==='fin'){
+    opts.push({v:'active_only',l:'Active companies only'},{v:'revenue_above_avg',l:'Above-avg revenue'},{v:'with_issues',l:'With open issues'});
+  }
+  if(pageId==='earn'||pageId==='perf'){
+    opts.push({v:'above_target',l:'Above target'},{v:'below_target',l:'Below target'},{v:'bonus_days',l:'Bonus-eligible days'});
+  }
+  if(pageId==='rates'){
+    opts.push({v:'premium_only',l:'Premium tier only'},{v:'growing_markets',l:'Growing markets'},{v:'above_avg',l:'Above avg rate'});
+  }
+  if(pageId==='bill'||pageId==='md'){
+    opts.push({v:'pending',l:'Pending only'},{v:'approved',l:'Approved only'},{v:'with_variance',l:'With variance only'});
+  }
+  return opts;
+}
+
+// Close custom panel on outside click
+document.addEventListener('click',function(e){
+  if(!e.target.closest('.tr-picker')&&!e.target.closest('.tr-custom-panel')){
+    document.querySelectorAll('.tr-custom-panel').forEach(function(el){el.classList.remove('open');});
+  }
+});
+
+// ── Notification Refresh (industry pool) ──
+var NOTIF_POOL=[
+  {type:'dispatch',icon:'📦',title:'Route dispatched: {zone}',body:'{count} stops assigned to {driver}, {zone} zone'},
+  {type:'delivery',icon:'✅',title:'Route {route} completed',body:'{driver} — {count}/{count} stops, 0 exceptions'},
+  {type:'pickup',icon:'🏭',title:'Hub scan complete: {hub}',body:'All {count} packages inducted, ready for loading'},
+  {type:'alert',icon:'🔴',title:'SLA breach alert: {zone}',body:'On-time rate dropped below 92% — {count} late deliveries'},
+  {type:'submission',icon:'📝',title:'Driver correction submitted',body:'{driver} reports actual: {count} stops (API: {api})'},
+  {type:'system',icon:'⚙️',title:'OnTrac FasTrack sync complete',body:'{count} records updated across {territories} territories'},
+  {type:'system',icon:'📡',title:'GPS telemetry spike: {zone}',body:'{count} drivers reporting intermittent signal in {zone}'},
+  {type:'task',icon:'📋',title:'Insurance renewal due: {company}',body:'Policy expires in {days} days — action required'},
+  {type:'delivery',icon:'📬',title:'Delivery exception: Stop #{stop}',body:'Customer not available — reschedule flagged'},
+  {type:'alert',icon:'⚠️',title:'High volume forecast: {zone}',body:'Tomorrow projects {count}+ packages — consider adding surge driver'},
+  {type:'sim',icon:'💰',title:'Payment received: {company}',body:'INV-{inv} — ${amount} processed via ACH'},
+  {type:'message',icon:'💬',title:'New message from {sender}',body:'{body}'},
+  {type:'task',icon:'🚛',title:'Vehicle inspection due: {vehicle}',body:'DOT annual inspection deadline in {days} days'},
+  {type:'system',icon:'🔄',title:'Rate card updated: {carrier}',body:'{zone} zone rates adjusted — new base: ${rate}/stop'},
+  {type:'alert',icon:'📊',title:'Exception rate trending up',body:'{zone}: {pct}% exception rate over last 48h (avg: 2.1%)'},
+  {type:'delivery',icon:'🏁',title:'{driver} completed early',body:'Route finished {mins} mins ahead of ETA — {count} stops'},
+  {type:'sim',icon:'📈',title:'Daily KPI snapshot ready',body:'Fleet OTP: {otp}% · Completion: {comp}% · Revenue: ${rev}'},
+  {type:'task',icon:'📝',title:'Payroll ready for review',body:'{count} driver payments totaling ${amount} — submit by Friday'},
+  {type:'alert',icon:'🌧️',title:'Weather advisory: {zone}',body:'Rain/snow expected — {count} routes may be impacted'},
+  {type:'system',icon:'🔗',title:'API integration health check',body:'All {count} carrier endpoints responding within SLA'},
+];
+var NOTIF_ZONES=['LA South','LA Metro','Phoenix East','Bay Area','Seattle','NYC','Chicago','Miami','Dallas','Denver'];
+var NOTIF_DRIVERS=['James Williams','Miguel Torres','Keisha Johnson','Sarah Chen','Mike Patterson','Diana Reeves','Tom Richards','Emily Rodriguez'];
+var NOTIF_COMPANIES=['First Choice Delivery','Pacific Rim Logistics','Swift Delivery','Lone Star Couriers','Emerald Route Inc'];
+var NOTIF_SENDERS=['Marcus Johnson','Emily Rodriguez','Sarah Chen','Fleet Ops','HR Department','Dispatch Center'];
+var NOTIF_BODIES=['Can we schedule the fleet review this week?','Updated SLA compliance docs attached','Requesting route swap for Thursday','Driver onboarding complete','Weekly briefing at 3 PM confirmed','New territory proposal ready'];
+
+function generateNotification(){
+  var template=NOTIF_POOL[Math.floor(Math.random()*NOTIF_POOL.length)];
+  var zone=NOTIF_ZONES[Math.floor(Math.random()*NOTIF_ZONES.length)];
+  var driver=NOTIF_DRIVERS[Math.floor(Math.random()*NOTIF_DRIVERS.length)];
+  var company=NOTIF_COMPANIES[Math.floor(Math.random()*NOTIF_COMPANIES.length)];
+  var count=Math.floor(Math.random()*80)+20;
+  var api=count-Math.floor(Math.random()*8)-1;
+  var now=new Date();
+  var timeStr=now.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+  var title=template.title
+    .replace('{zone}',zone).replace('{driver}',driver).replace('{route}',zone.replace(' ','-')+'-'+Math.floor(Math.random()*9000+1000))
+    .replace('{hub}',zone+' Hub').replace('{company}',company).replace('{carrier}','OnTrac')
+    .replace('{vehicle}','CV-'+Math.floor(Math.random()*9000+1000)).replace('{sender}',NOTIF_SENDERS[Math.floor(Math.random()*NOTIF_SENDERS.length)]);
+  var body=template.body
+    .replace('{zone}',zone).replace('{driver}',driver).replace(/{count}/g,count).replace('{api}',api)
+    .replace('{territories}',Math.floor(Math.random()*8)+3).replace('{days}',Math.floor(Math.random()*25)+5)
+    .replace('{stop}',Math.floor(Math.random()*60)+1).replace('{inv}','2026-'+String(Math.floor(Math.random()*900)+100))
+    .replace('{amount}',Math.floor(Math.random()*4000+200).toLocaleString()).replace('{rate}',(1.15+Math.random()*0.5).toFixed(2))
+    .replace('{pct}',(2.1+Math.random()*3).toFixed(1)).replace('{mins}',Math.floor(Math.random()*30)+10)
+    .replace('{otp}',(93+Math.random()*5).toFixed(1)).replace('{comp}',(96+Math.random()*3).toFixed(1))
+    .replace('{rev}',Math.floor(Math.random()*5000+2000).toLocaleString())
+    .replace('{company}',company).replace('{body}',NOTIF_BODIES[Math.floor(Math.random()*NOTIF_BODIES.length)]);
+  return{
+    id:++notifSeq,type:template.type,icon:template.icon,
+    title:title,body:body,time:timeStr,read:false,page:null
+  };
+}
+
+window.refreshNotifications=function(e){
+  if(e)e.stopPropagation();
+  // Generate 3-7 new industry notifications
+  var count=Math.floor(Math.random()*5)+3;
+  for(var i=0;i<count;i++){
+    notifications.unshift(generateNotification());
+  }
+  toast(count+' new notifications received');
+  // Rebuild the notif panel in-place
+  closeNotifPanel();
+  setTimeout(function(){toggleNotif();},50);
+  // Update the bell dot
+  var bell=document.getElementById('notif-bell-btn');
+  if(bell){
+    var existing=bell.querySelector('.notif-dot');
+    if(!existing){
+      var dot=document.createElement('div');dot.className='notif-dot';bell.appendChild(dot);
+    }
+  }
+};
 window.approveSubmission=id=>{const s=driverSubmissions.find(s=>s.id===id);if(s){s.status='approved';toast('Approved — actual value will be used');}rerenderPage();};
 window.rejectSubmission=id=>{const s=driverSubmissions.find(s=>s.id===id);if(s){s.status='rejected';toast('Rejected — API value retained','err');}rerenderPage();};
 
@@ -2901,9 +3627,9 @@ function startSimulation(){
 // ══════════════════════════════════════════════════════════
 const CON={mode:null,annotations:[],textChanges:[],activeEdit:null,nextId:1,visible:true};
 
-(function injectConstructor(){
+(function injectEdits(){
   const tog=document.createElement("button");
-  tog.id="dh-toggle";tog.textContent="⬡ Constructor";
+  tog.id="dh-toggle";tog.textContent="⬡ Edits";
   tog.onclick=()=>conToggleVisible();
   document.body.appendChild(tog);
 
@@ -2920,7 +3646,7 @@ const CON={mode:null,annotations:[],textChanges:[],activeEdit:null,nextId:1,visi
       </div>
     </div>
     <div id="dh-tb">
-      <span id="dh-label">Constructor</span>
+      <span id="dh-label">Edits</span>
       <div class="dh-sep"></div>
       <button class="dh-btn" id="dh-btn-text" onclick="conSetMode('text')">✏ Edit Text <span class="dh-badge tx" id="dh-tx-count">0</span></button>
       <button class="dh-btn" id="dh-btn-ann" onclick="conSetMode('annotate')">📌 Annotate <span class="dh-badge" id="dh-ann-count">0</span></button>
@@ -2982,11 +3708,11 @@ window.conExport=()=>{
   const now=new Date();const ds=now.toISOString().slice(0,10);
   let md=`# DriveHub — Change Annotations\n**Exported:** ${ds} · **User:** ${state.user?.name||'Unknown'}\n\n---\n\n`;
   all.forEach(item=>{const tag=item.kind==="text"?"TEXT EDIT":"ANNOTATION";md+=`## ${item.id}. [${tag}] — ${item.page.toUpperCase()}\n`;if(item.kind==="text"){md+=`Rename \`"${item.oldVal}"\` → \`"${item.newVal}"\`\n\n`;}else{md+=`${item.desc}\n\n> *Location: (${Math.round(item.x)}px, ${Math.round(item.y)}px) · Element: \`${item.target}\`*\n\n`;}});
-  md+=`---\n*Generated by DriveHub Constructor · ${all.length} change${all.length!==1?"s":""} total*\n`;
+  md+=`---\n*Generated by DriveHub Edits · ${all.length} change${all.length!==1?"s":""} total*\n`;
   const blob=new Blob([md],{type:"text/markdown;charset=utf-8"});
   const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=`rsp_changes_${ds}.md`;a.click();URL.revokeObjectURL(url);
 };
-function conToggleVisible(){CON.visible=!CON.visible;document.getElementById("dh-con").classList.toggle("vis",CON.visible);document.getElementById("dh-toggle").textContent=CON.visible?"⬡ Hide Constructor":"⬡ Constructor";}
+function conToggleVisible(){CON.visible=!CON.visible;document.getElementById("dh-con").classList.toggle("vis",CON.visible);document.getElementById("dh-toggle").textContent=CON.visible?"⬡ Hide Edits":"⬡ Edits";}
 function conCurrentPage(){return state.page||'dashboard';}
 function conSelector(el){if(el.id)return"#"+el.id;const cls=typeof el.className==="string"?"."+el.className.trim().split(/\s+/).slice(0,2).join("."):"";return(el.tagName.toLowerCase()+cls).slice(0,60);}
 
@@ -3021,7 +3747,7 @@ window.exportLocPDF=()=>{const data=getFilteredAcctData();const selLoc=acctLocFi
 
 // Update navigate to handle API simulation
 const _origNavigate=window.navigate;
-window.navigate=page=>{state.page=page;if(page==='reporting'){startApiSimulation();}else{stopApiSimulation();}closeSidebar();render();};
+window.navigate=page=>{if(state.page&&state.page!==page)state._prevPage=state.page;state.page=page;if(page==='reporting'){startApiSimulation();}else{stopApiSimulation();}closeSidebar();render();};
 
 // ── iPad Sidebar Toggle ──
 window.toggleSidebar=function(){
@@ -3037,7 +3763,7 @@ window.closeSidebar=function(){
   if(ov)ov.classList.remove('open');
 };
 
-// ── Touch support for Constructor pin placement ──
+// ── Touch support for Edits pin placement ──
 document.addEventListener('touchstart',function(e){
   if(CON.mode!=='annotate')return;
   if(e.target.closest('#dh-con')||e.target.closest('#dh-dialog')||e.target.closest('#dh-toggle')||e.target.closest('.dh-pin-del'))return;
