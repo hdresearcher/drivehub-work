@@ -332,6 +332,37 @@ tr:hover td{background:rgba(255,255,255,.03)}
 .notif-bell{position:relative;cursor:pointer;padding:4px;border-radius:6px;background:none;border:none;color:var(--muted);display:flex;align-items:center}
 .notif-bell:hover{color:var(--text);background:rgba(255,255,255,.04)}
 .notif-dot{position:absolute;top:2px;right:2px;width:8px;height:8px;border-radius:50%;background:#f87171;border:2px solid var(--bg)}
+
+/* ── Settings menu ── */
+.settings-bell{position:relative;cursor:pointer;padding:4px;border-radius:6px;background:none;border:none;color:var(--muted);display:flex;align-items:center}
+.settings-bell:hover{color:var(--text);background:rgba(255,255,255,.04)}
+.settings-panel{position:fixed;z-index:10010;background:rgba(14,15,24,.99);border:1px solid rgba(0,212,255,.18);border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.8),0 0 0 1px rgba(0,212,255,.06),0 0 40px rgba(0,0,0,.4);width:300px;max-height:80vh;overflow-y:auto;display:none;backdrop-filter:blur(20px);padding:0}
+.settings-panel.open{display:block}
+.settings-panel-scrim{position:fixed;inset:0;z-index:10009;background:transparent}
+.stp-header{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.stp-header h3{font-size:13px;font-weight:700;margin:0;display:flex;align-items:center;gap:6px}
+.stp-section{padding:12px 16px;border-bottom:1px solid var(--border-sub)}
+.stp-section:last-child{border-bottom:none}
+.stp-label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;color:var(--muted);font-family:var(--mono);margin-bottom:8px}
+.stp-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.stp-row:last-child{margin-bottom:0}
+.stp-row-label{font-size:12px;color:var(--text);font-weight:500}
+.stp-toggle{width:40px;height:22px;border-radius:11px;position:relative;cursor:pointer;border:none;transition:background .3s}
+.stp-toggle.off{background:rgba(255,255,255,.12)}
+.stp-toggle.on{background:rgba(0,212,255,.6)}
+.stp-toggle::after{content:'';position:absolute;width:16px;height:16px;border-radius:50%;top:3px;left:3px;background:#fff;transition:transform .3s cubic-bezier(.68,-.55,.27,1.55);box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.stp-toggle.on::after{transform:translateX(18px)}
+.stp-select{padding:5px 24px 5px 8px;border:1px solid var(--border);border-radius:6px;font-size:11px;font-family:var(--mono);background:rgba(15,16,25,.8);color:var(--text);cursor:pointer;letter-spacing:.3px;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.4)' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 5px center}
+.stp-user-card{display:flex;align-items:center;gap:10px;padding:10px;border-radius:8px;background:rgba(255,255,255,.03);border:1px solid var(--border-sub)}
+.stp-user-name{font-size:13px;font-weight:600}
+.stp-user-role{font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:.5px;text-transform:uppercase}
+.stp-user-email{font-size:11px;color:var(--dim);font-family:var(--mono);margin-top:2px}
+.stp-version{text-align:center;padding:10px 16px;font-size:10px;color:var(--dim);font-family:var(--mono);letter-spacing:1px}
+body.light-theme .settings-panel{background:rgba(255,255,255,.99);border-color:rgba(0,0,0,.12);box-shadow:0 20px 60px rgba(0,0,0,.15),0 0 0 1px rgba(0,0,0,.04)}
+body.light-theme .stp-toggle.off{background:rgba(0,0,0,.12)}
+body.light-theme .stp-toggle.on{background:rgba(0,160,210,.6)}
+body.light-theme .stp-select{background:rgba(255,255,255,.9);border-color:rgba(0,0,0,.12);color:var(--text);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='rgba(0,0,0,0.4)' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")}
+body.light-theme .stp-user-card{background:rgba(0,0,0,.02);border-color:rgba(0,0,0,.08)}
 .notif-panel{position:fixed;top:0;right:16px;width:340px;background:#0e0f18;border:1px solid rgba(0,212,255,.18);border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.85),0 0 0 1px rgba(0,212,255,.08),0 0 40px rgba(0,0,0,.5);z-index:10010;max-height:420px;overflow-y:auto;padding-bottom:6px}
 .notif-item{display:flex;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border-sub);font-size:12px;transition:background .12s;cursor:pointer}
 .notif-item:hover{background:rgba(0,212,255,.06)}
@@ -602,7 +633,7 @@ body.dh-ann-mode #page-content{cursor:crosshair!important}
 #page-content,.sb-nav,.notif-panel,.modal,#dh-plist,.comm-channels,.comm-msgs{-webkit-overflow-scrolling:touch;overflow-scrolling:touch}
 
 /* Touch-friendly: prevent 300ms tap delay, enlarge targets */
-a,button,select,.nav-item,.tab-item,.demo-btn,.demo-dropdown summary,.btn,.notif-bell,.chart-switch select,.tz-select,.dh-btn,.tr-opt,.sb-toggle{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+a,button,select,.nav-item,.tab-item,.demo-btn,.demo-dropdown summary,.btn,.notif-bell,.settings-bell,.chart-switch select,.tz-select,.dh-btn,.tr-opt,.sb-toggle{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 
 /* Safe area for notched iPads */
 .page{padding:20px 24px;padding:20px max(24px,env(safe-area-inset-left)) 20px max(24px,env(safe-area-inset-right))}
@@ -1266,6 +1297,7 @@ const SVG={
   Send:`<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>`,
   ClipboardList:`<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></svg>`,
   Calendar:`<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
+  Settings:`<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
 };
 const icon=name=>SVG[name]||'';
 
@@ -2434,6 +2466,8 @@ function render(){
   state.notifOpen=false;
   var _np=document.getElementById('notif-panel');if(_np)_np.remove();
   var _ns=document.getElementById('notif-scrim');if(_ns)_ns.remove();
+  var _sp=document.getElementById('settings-panel');if(_sp)_sp.remove();
+  var _ss=document.getElementById('settings-scrim');if(_ss)_ss.remove();
   const root=document.getElementById('root');
   const tog=document.getElementById('dh-toggle');
   const conEl=document.getElementById('dh-con');
@@ -2444,7 +2478,7 @@ function render(){
     return;
   }
   const unread=notifications.filter(n=>!n.read).length;
-  root.innerHTML=`<div class="app"><div class="sb-overlay" id="sb-overlay" onclick="closeSidebar()"></div>${renderSidebar()}<div class="main"><div class="topbar"><div class="topbar-left"><button class="sb-toggle" id="sb-toggle" onclick="toggleSidebar()" aria-label="Menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button><div class="sim-timeline" title="Activity timeline">${Array.from({length:24},(_,i)=>`<div class="sim-bar${i<=11?' active':''}" style="height:${4+Math.random()*16}px"></div>`).join('')}</div><span style="font-size:10px;color:var(--dim);font-family:var(--mono);letter-spacing:1px">LIVE SIM</span></div><div class="topbar-right">${renderNotifPanel()}</div></div><div id="page-content">${renderPage()}</div></div></div><div id="toast-container" style="position:fixed;bottom:20px;right:20px;z-index:999;display:flex;flex-direction:column;gap:8px"></div>`;
+  root.innerHTML=`<div class="sb-overlay" id="sb-overlay" onclick="closeSidebar()"></div><div class="app">${renderSidebar()}<div class="main"><div class="topbar"><div class="topbar-left"><button class="sb-toggle" id="sb-toggle" onclick="toggleSidebar()" aria-label="Menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button><div class="sim-timeline" title="Activity timeline">${Array.from({length:24},(_,i)=>`<div class="sim-bar${i<=11?' active':''}" style="height:${4+Math.random()*16}px"></div>`).join('')}</div><span style="font-size:10px;color:var(--dim);font-family:var(--mono);letter-spacing:1px">LIVE SIM</span></div><div class="topbar-right">${renderSettingsBtn()}${renderNotifPanel()}</div></div><div id="page-content">${renderPage()}</div></div></div><div id="toast-container" style="position:fixed;bottom:20px;right:20px;z-index:999;display:flex;flex-direction:column;gap:8px"></div>`;
   toastEl=document.getElementById('toast-container');
   bindPage();
   setTimeout(initMaps,50);
@@ -2874,6 +2908,104 @@ function initStarField(){
     canvas.appendChild(star);
   }
 }
+
+// ── Settings Panel ──
+function renderSettingsBtn(){
+  return `<button class="settings-bell" id="settings-bell-btn" onclick="toggleSettings()" title="Settings">${icon('Settings')}</button>`;
+}
+
+window.toggleSettings=function(){
+  var existing=document.getElementById('settings-panel');
+  var scrim=document.getElementById('settings-scrim');
+  if(existing){existing.remove();if(scrim)scrim.remove();return;}
+  var u=state.user;if(!u)return;
+  var isLight=document.body.classList.contains('light-theme');
+  var tz=state.timezone||'America/Los_Angeles';
+  var tzOpts=[
+    {v:'America/New_York',l:'Eastern (ET)'},
+    {v:'America/Chicago',l:'Central (CT)'},
+    {v:'America/Denver',l:'Mountain (MT)'},
+    {v:'America/Los_Angeles',l:'Pacific (PT)'},
+    {v:'America/Phoenix',l:'Arizona (AZ)'},
+    {v:'UTC',l:'UTC'}
+  ];
+  var langOpts=[{v:'en',l:'English'},{v:'es',l:'Español'},{v:'zh',l:'中文'}];
+  var currentLang=state.language||'en';
+  var roleColor=AVATAR_COLOR[u.role]||'var(--primary)';
+  var html=`<div class="settings-panel-scrim" id="settings-scrim" onclick="closeSettingsPanel()"></div>
+  <div class="settings-panel open" id="settings-panel">
+    <div class="stp-header"><h3>${icon('Settings')} Settings</h3><button class="btn-g" onclick="closeSettingsPanel()" style="padding:4px">✕</button></div>
+    <div class="stp-section">
+      <div class="stp-label">Account</div>
+      <div class="stp-user-card">
+        <div class="avatar" style="width:36px;height:36px;font-size:12px;background:${roleColor}22;color:${roleColor}">${initials(u.name)}</div>
+        <div style="flex:1;min-width:0">
+          <div class="stp-user-name">${esc(u.name)}</div>
+          <div class="stp-user-role">${esc(ROLE_LABELS[u.role])}</div>
+          <div class="stp-user-email">${esc(u.email||'')}</div>
+        </div>
+      </div>
+    </div>
+    <div class="stp-section">
+      <div class="stp-label">Appearance</div>
+      <div class="stp-row">
+        <span class="stp-row-label">${isLight?'☀ Light Mode':'🌙 Dark Mode'}</span>
+        <button class="stp-toggle ${isLight?'on':'off'}" id="stp-theme-toggle" onclick="settingsToggleTheme()"></button>
+      </div>
+    </div>
+    <div class="stp-section">
+      <div class="stp-label">Region</div>
+      <div class="stp-row">
+        <span class="stp-row-label">Timezone</span>
+        <select class="stp-select" id="stp-tz" onchange="settingsSetTimezone(this.value)">${tzOpts.map(function(o){return'<option value="'+o.v+'"'+(tz===o.v?' selected':'')+'>'+o.l+'</option>';}).join('')}</select>
+      </div>
+      <div class="stp-row">
+        <span class="stp-row-label">Language</span>
+        <select class="stp-select" id="stp-lang" onchange="settingsSetLanguage(this.value)">${langOpts.map(function(o){return'<option value="'+o.v+'"'+(currentLang===o.v?' selected':'')+'>'+o.l+'</option>';}).join('')}</select>
+      </div>
+    </div>
+    <div class="stp-section">
+      <div class="stp-label">Notifications</div>
+      <div class="stp-row">
+        <span class="stp-row-label">Push Notifications</span>
+        <button class="stp-toggle ${state.pushNotif!==false?'on':'off'}" onclick="settingsTogglePush(this)"></button>
+      </div>
+      <div class="stp-row">
+        <span class="stp-row-label">Sound Alerts</span>
+        <button class="stp-toggle ${state.soundAlerts!==false?'on':'off'}" onclick="settingsToggleSound(this)"></button>
+      </div>
+    </div>
+    <div class="stp-version">DriveHub v2.4.0 · Build 2026.03</div>
+  </div>`;
+  var btn=document.getElementById('settings-bell-btn');
+  var rect=btn?btn.getBoundingClientRect():{right:window.innerWidth-24,bottom:48};
+  document.body.insertAdjacentHTML('beforeend',html);
+  var panel=document.getElementById('settings-panel');
+  panel.style.position='fixed';
+  panel.style.top=(rect.bottom+8)+'px';
+  panel.style.right=Math.max(16,window.innerWidth-rect.right)+'px';
+};
+
+window.closeSettingsPanel=function(){
+  var p=document.getElementById('settings-panel');if(p)p.remove();
+  var s=document.getElementById('settings-scrim');if(s)s.remove();
+};
+
+window.settingsToggleTheme=function(){
+  document.body.classList.toggle('light-theme');
+  var isLight=document.body.classList.contains('light-theme');
+  var tog=document.getElementById('stp-theme-toggle');
+  if(tog){tog.className='stp-toggle '+(isLight?'on':'off');tog.previousElementSibling.textContent=isLight?'☀ Light Mode':'🌙 Dark Mode';}
+  var label=document.querySelector('.theme-toggle-label');
+  var ico=document.querySelector('.theme-icon');
+  if(label)label.textContent=isLight?'Light':'Dark';
+  if(ico)ico.textContent=isLight?'☀':'🌙';
+};
+
+window.settingsSetTimezone=function(tz){state.timezone=tz;toast('Timezone set to '+tz.split('/').pop().replace(/_/g,' '));};
+window.settingsSetLanguage=function(lang){state.language=lang;toast('Language preference saved');};
+window.settingsTogglePush=function(btn){state.pushNotif=btn.classList.contains('off');btn.className='stp-toggle '+(state.pushNotif?'on':'off');};
+window.settingsToggleSound=function(btn){state.soundAlerts=btn.classList.contains('off');btn.className='stp-toggle '+(state.soundAlerts?'on':'off');};
 
 // ── Theme toggle ──
 window.toggleTheme=function(){
