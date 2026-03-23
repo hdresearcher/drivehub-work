@@ -60,7 +60,7 @@ button{cursor:pointer}
 ::-webkit-scrollbar-thumb{background:rgba(0,212,255,.3);border-radius:2px}
 
 .app{display:flex;height:100vh;overflow:hidden;position:relative;z-index:1}
-.sidebar{width:220px;min-width:220px;background:rgba(15,16,25,.92);display:flex;flex-direction:column;border-right:1px solid var(--border);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.sidebar{width:220px;min-width:220px;background:#0f1019;display:flex;flex-direction:column;border-right:1px solid var(--border)}
 .sb-head{padding:16px;border-bottom:1px solid var(--border)}
 .sb-logo{display:flex;align-items:center;gap:10px}
 .sb-logo-icon{width:32px;height:32px;background:linear-gradient(135deg,#00d4ff,#0099cc);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 12px var(--primary-glow)}
@@ -82,7 +82,7 @@ button{cursor:pointer}
 
 /* ── Account Dropdown ── */
 .sb-foot{position:relative}
-.acct-dd{display:none;position:absolute;bottom:calc(100% + 8px);left:8px;right:8px;background:rgba(15,16,25,.97);border:1px solid var(--border);border-radius:14px;padding:6px 0;z-index:500;box-shadow:0 -8px 40px rgba(0,0,0,.7),0 0 0 1px rgba(0,212,255,.04);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);max-height:calc(100vh - 120px);overflow-y:auto;animation:acctSlide .2s cubic-bezier(.16,1,.3,1)}
+.acct-dd{display:none;position:absolute;bottom:calc(100% + 8px);left:8px;right:8px;background:#0e0f18;border:1px solid var(--border);border-radius:14px;padding:6px 0;z-index:500;box-shadow:0 -8px 40px rgba(0,0,0,.7),0 0 0 1px rgba(0,212,255,.04);max-height:calc(100vh - 120px);overflow-y:auto;animation:acctSlide .2s cubic-bezier(.16,1,.3,1)}
 .acct-dd.open{display:block}
 @keyframes acctSlide{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .acct-dd-head{display:flex;align-items:center;gap:10px;padding:14px 14px 10px}
@@ -113,7 +113,7 @@ button{cursor:pointer}
 .acct-fields{flex:1;min-width:260px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .acct-fields .fg{display:flex;flex-direction:column}
 .acct-fields .fg label{font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:1px;margin-bottom:6px}
-.acct-section{background:rgba(15,16,25,.7);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:16px;backdrop-filter:blur(8px)}
+.acct-section{background:#0e0f18;border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:16px}
 .acct-section h3{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px}
 .acct-section .desc{font-size:11px;color:var(--muted);margin-bottom:14px}
 .acct-msg-row{display:flex;align-items:center;justify-content:space-between;padding:12px;border-radius:10px;background:rgba(15,16,25,.5);border:1px solid var(--border);margin-bottom:8px}
@@ -138,7 +138,7 @@ button{cursor:pointer}
 .fp-badge.live{background:var(--ok-bg);color:var(--ok-t)}
 .fp-badge.beta{background:var(--pur-bg);color:var(--pur-t)}
 .fp-badge.soon{background:var(--warn-bg);color:var(--warn-t)}
-.fp-section{background:rgba(15,16,25,.7);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:16px;backdrop-filter:blur(8px)}
+.fp-section{background:#0e0f18;border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:16px}
 .fp-section h3{font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px;display:flex;align-items:center;gap:8px}
 .fp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
 .fp-metric{background:rgba(15,16,25,.5);border:1px solid var(--border);border-radius:10px;padding:14px}
@@ -152,7 +152,7 @@ button{cursor:pointer}
 .fp-bar-fill{height:100%;border-radius:4px;transition:width .3s}
 
 .main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
-.topbar{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;border-bottom:1px solid var(--border);background:rgba(10,10,15,.9);backdrop-filter:blur(20px);flex-shrink:0;gap:8px}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;border-bottom:1px solid var(--border);background:#0a0a0f;flex-shrink:0;gap:8px}
 .topbar-left{display:flex;align-items:center;gap:8px}
 .topbar-right{display:flex;align-items:center;gap:6px}
 #page-content{flex:1;overflow-y:auto;min-height:0;position:relative}
@@ -202,11 +202,56 @@ select.inp{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns
 @media(max-width:600px){.g3,.g2,.gc{grid-template-columns:1fr}}
 
 .kpi-val{font-size:26px;font-weight:700;line-height:1;margin:6px 0 4px;letter-spacing:-.03em}
-.kpi-label{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;color:var(--muted);font-family:var(--mono)}
+.kpi-label{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;color:var(--muted);font-family:var(--mono);display:flex;align-items:center;gap:5px}
 .kpi-sub{font-size:12px;color:var(--muted)}
 .kpi-trend{font-size:11px;color:var(--ok-t);font-weight:500;display:flex;align-items:center;gap:3px;margin-top:6px}
 .kpi-trend.neg{color:var(--err-t)}
-.kpi-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.kpi-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s,background .3s}
+.kpi-icon:hover{transform:scale(1.15) rotate(-4deg);box-shadow:0 0 16px rgba(0,212,255,.2)}
+.kpi-icon svg{transition:transform .3s}
+.kpi-icon:hover svg{animation:iconPulse .6s ease}
+
+/* KPI info tooltip */
+.kpi-info{position:relative;display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,.06);color:var(--dim);font-size:8px;font-weight:700;cursor:help;transition:all .2s;font-family:var(--mono);line-height:1;flex-shrink:0;-webkit-tap-highlight-color:transparent}
+.kpi-info:hover,.kpi-info:focus{background:var(--primary-bg);color:var(--primary);transform:scale(1.15)}
+.kpi-info .kpi-tip{visibility:hidden;opacity:0;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%) translateY(4px);background:#0e0f18;border:1px solid rgba(0,212,255,.18);border-radius:8px;padding:8px 10px;font-size:11px;font-weight:400;line-height:1.5;color:var(--text);white-space:normal;width:200px;z-index:600;box-shadow:0 8px 24px rgba(0,0,0,.6);pointer-events:none;transition:opacity .2s,transform .2s,visibility .2s;text-transform:none;letter-spacing:0;font-family:'Outfit',sans-serif}
+.kpi-info .kpi-tip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:rgba(0,212,255,.18)}
+.kpi-info:hover .kpi-tip,.kpi-info:focus .kpi-tip{visibility:visible;opacity:1;transform:translateX(-50%) translateY(0)}
+@media(max-width:768px){.kpi-info .kpi-tip{left:0;transform:translateX(-10%) translateY(4px);width:180px}.kpi-info:hover .kpi-tip,.kpi-info:focus .kpi-tip{transform:translateX(-10%) translateY(0)}}
+
+/* KPI card entrance animation */
+@keyframes kpiEnter{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.g4 .card,.g3 .card,.g21 .card,.g2 .card{animation:kpiEnter .45s cubic-bezier(.16,1,.3,1) both}
+.g4 .card:nth-child(1){animation-delay:.04s}.g4 .card:nth-child(2){animation-delay:.08s}.g4 .card:nth-child(3){animation-delay:.12s}.g4 .card:nth-child(4){animation-delay:.16s}
+.g3 .card:nth-child(1){animation-delay:.04s}.g3 .card:nth-child(2){animation-delay:.08s}.g3 .card:nth-child(3){animation-delay:.12s}
+
+/* Icon pulse animation */
+@keyframes iconPulse{0%{transform:scale(1)}30%{transform:scale(1.2)}60%{transform:scale(.95)}100%{transform:scale(1)}}
+@keyframes iconGlow{0%{box-shadow:0 0 0 0 rgba(0,212,255,.3)}70%{box-shadow:0 0 0 8px rgba(0,212,255,0)}100%{box-shadow:0 0 0 0 rgba(0,212,255,0)}}
+
+/* KPI value count-up flash */
+@keyframes valFlash{0%{opacity:.4;transform:translateY(3px)}100%{opacity:1;transform:translateY(0)}}
+.kpi-val{animation:valFlash .5s ease-out both}
+
+/* Trend arrow bounce */
+@keyframes trendBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+.kpi-trend svg{animation:trendBounce 2s ease-in-out infinite}
+
+/* Chart SVG draw animation */
+@keyframes chartDraw{from{stroke-dashoffset:2000}to{stroke-dashoffset:0}}
+@keyframes chartFadeIn{from{opacity:0}to{opacity:1}}
+.chart-line{stroke-dasharray:2000;stroke-dashoffset:2000;animation:chartDraw 1.2s ease-out .2s forwards}
+.chart-area{opacity:0;animation:chartFadeIn .8s ease-out .6s forwards}
+.chart-dot{opacity:0;animation:chartFadeIn .3s ease-out forwards}
+.chart-dot:nth-child(1){animation-delay:.3s}.chart-dot:nth-child(2){animation-delay:.4s}.chart-dot:nth-child(3){animation-delay:.5s}.chart-dot:nth-child(4){animation-delay:.6s}.chart-dot:nth-child(5){animation-delay:.7s}.chart-dot:nth-child(6){animation-delay:.8s}
+
+/* Donut chart spin-in */
+@keyframes donutSpin{from{stroke-dashoffset:var(--donut-len,200)}to{stroke-dashoffset:0}}
+@keyframes ringFill{from{stroke-dasharray:0 999}}
+
+/* Card hover lift */
+.card.cb{transition:transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow .2s,border-color .3s}
+.card.cb:hover{transform:translateY(-2px);box-shadow:var(--sh2);border-color:rgba(0,212,255,.12)}
 
 table{width:100%;border-collapse:collapse;font-size:12px}
 th{text-align:left;padding:8px 4px;color:var(--muted);font-weight:500;border-bottom:1px solid var(--border);font-size:11px}
@@ -214,7 +259,7 @@ td{padding:9px 4px;border-bottom:1px solid var(--border-sub);vertical-align:midd
 tr:last-child td{border-bottom:none}
 tr:hover td{background:rgba(255,255,255,.03)}
 
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(8px)}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;display:flex;align-items:center;justify-content:center;padding:16px}
 .modal{background:var(--surface);border:1px solid var(--border);border-radius:20px;box-shadow:0 32px 80px rgba(0,0,0,.7);width:100%;max-width:560px;max-height:92vh;overflow-y:auto;padding:24px}
 .modal-title{font-size:16px;font-weight:600;margin-bottom:16px}
 .modal-foot{display:flex;justify-content:flex-end;gap:8px;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
@@ -401,7 +446,7 @@ tr:hover td{background:rgba(255,255,255,.03)}
 .tr-opt.active{background:rgba(0,212,255,.12);color:var(--primary)}
 
 /* Custom date range panel */
-.tr-custom-panel{position:absolute;top:calc(100% + 6px);right:0;z-index:200;background:rgba(14,15,24,.97);border:1px solid rgba(0,212,255,.18);border-radius:12px;padding:14px;min-width:320px;box-shadow:0 16px 48px rgba(0,0,0,.7),0 0 0 1px rgba(0,212,255,.04);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);animation:trSlide .2s cubic-bezier(.16,1,.3,1)}
+.tr-custom-panel{position:absolute;top:calc(100% + 6px);right:0;z-index:200;background:#0e0f18;border:1px solid rgba(0,212,255,.18);border-radius:12px;padding:14px;min-width:320px;box-shadow:0 16px 48px rgba(0,0,0,.7),0 0 0 1px rgba(0,212,255,.04);animation:trSlide .2s cubic-bezier(.16,1,.3,1)}
 .tr-custom-row{display:flex;gap:8px;margin-bottom:10px}
 .tr-custom-row .fg{flex:1}
 .tr-custom-row .fg label{font-size:9px;color:var(--muted);font-family:var(--mono);letter-spacing:1px;display:block;margin-bottom:4px}
@@ -536,7 +581,7 @@ body.light-theme .theme-toggle-label{color:rgba(26,26,46,.45)}
 body.light-theme .btn::after,body.light-theme .demo-btn::after,body.light-theme .demo-dropdown summary::after{background:rgba(0,180,220,.1)}
 
 /* ── Annotation 5: Card contrast + glow hover ── */
-.card{background:rgba(18,19,30,.96);border:1px solid rgba(255,255,255,.08);border-radius:var(--r);box-shadow:var(--sh);backdrop-filter:blur(12px);transition:border-color .3s,box-shadow .3s,background .3s}
+.card{background:#12131e;border:1px solid rgba(255,255,255,.08);border-radius:var(--r);box-shadow:var(--sh);transition:border-color .3s,box-shadow .3s,background .3s}
 .card:hover{border-color:rgba(0,212,255,.18);box-shadow:0 4px 24px rgba(0,0,0,.5),0 0 20px rgba(0,212,255,.07)}
 .ch{padding:14px 16px 0;font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px;letter-spacing:-.01em;color:var(--text)}
 body.light-theme .card{background:rgba(255,255,255,.97);border-color:rgba(0,0,0,.1);box-shadow:0 1px 4px rgba(0,0,0,.06)}
@@ -683,7 +728,7 @@ body.dh-ann-mode #page-content{cursor:crosshair!important}
 .sb-toggle svg{pointer-events:none}
 
 /* Sidebar overlay backdrop */
-.sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99;backdrop-filter:blur(4px);-webkit-tap-highlight-color:transparent}
+.sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:99;-webkit-tap-highlight-color:transparent}
 .sb-overlay.open{display:block}
 
 /* GPU-optimized stars */
@@ -1408,6 +1453,12 @@ function toast(msg,type='ok'){
 const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 const badge=(cls,txt)=>`<span class="badge ${cls}">${esc(txt)}</span>`;
 const statusBadge=s=>badge(`b-${s}`,s.replace('_',' '));
+// Global KPI card renderer with info tooltip
+function kpiCard(k){
+  var tip=k.d?'<span class="kpi-info" tabindex="0">ℹ<span class="kpi-tip">'+esc(k.d)+'</span></span>':'';
+  var trend=k.tr?'<div class="kpi-trend">'+icon('ArrowUpRight')+' '+esc(k.tr)+'</div>':'';
+  return '<div class="card cb"><div style="display:flex;align-items:flex-start;justify-content:space-between"><div><div class="kpi-label">'+esc(k.t)+tip+'</div><div class="kpi-val">'+esc(String(k.v))+'</div><div class="kpi-sub">'+esc(k.s)+'</div>'+trend+'</div><div class="kpi-icon" style="background:'+k.bg+'">'+icon(k.ic)+'</div></div></div>';
+}
 const planBadge=p=>badge(`b-${p}`,p);
 const prioBadge=p=>badge({urgent:'b-urgent',high:'b-high',medium:'b-medium',low:'b-low'}[p]||'b-secondary',p);
 const stars=v=>{const n=Math.round((v||0)/10);return`<div style="display:flex;gap:2px">${[1,2,3,4,5].map(i=>`<svg width="11" height="11" viewBox="0 0 24 24" fill="${i<=n?'#fbbf24':'none'}" stroke="${i<=n?'#fbbf24':'rgba(255,255,255,.15)'}" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`).join('')}</div>`;};
@@ -1466,11 +1517,11 @@ function lineChart(data,key,color='#00d4ff',forcedId){
   var body='';
   if(type==='line'){
     var pts=xs.map(function(x,i){return x+','+ys[i];}).join(' ');
-    body='<polyline points="'+pts+'" fill="none" stroke="'+color+'" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>'+xs.map(function(x,i){return '<circle cx="'+x+'" cy="'+ys[i]+'" r="3.5" fill="'+color+'" stroke="var(--surface)" stroke-width="2"/>';}).join('');
+    body='<polyline class="chart-line" points="'+pts+'" fill="none" stroke="'+color+'" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>'+xs.map(function(x,i){return '<circle class="chart-dot" cx="'+x+'" cy="'+ys[i]+'" r="3.5" fill="'+color+'" stroke="var(--surface)" stroke-width="2" style="animation-delay:'+(0.3+i*0.06)+'s"/>';}).join('');
   }else if(type==='area'){
     var pts2=xs.map(function(x,i){return x+','+ys[i];}).join(' ');
     var area='M'+xs[0]+','+(H-PB)+' '+xs.map(function(x,i){return 'L'+x+','+ys[i];}).join(' ')+' L'+xs[xs.length-1]+','+(H-PB)+' Z';
-    body='<path d="'+area+'" fill="url(#'+gid+')"/><polyline points="'+pts2+'" fill="none" stroke="'+color+'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+    body='<path class="chart-area" d="'+area+'" fill="url(#'+gid+')"/><polyline class="chart-line" points="'+pts2+'" fill="none" stroke="'+color+'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
   }else if(type==='bars'){
     var bw=Math.max(6,Math.min(28,(W-PL-PR)/data.length-4));
     body=xs.map(function(x,i){var h=H-PB-ys[i];return '<rect x="'+(x-bw/2)+'" y="'+ys[i]+'" width="'+bw+'" height="'+h+'" rx="3" fill="'+color+'" opacity="0.75"/>';}).join('');
@@ -1512,8 +1563,8 @@ function ringChart(pct,color='#00d4ff',label='',sub=''){
   return `<svg viewBox="0 0 112 112" style="width:112px;height:112px;display:block;flex-shrink:0;margin:0 auto">
     <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--border)" stroke-width="10"/>
     <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="10" stroke-linecap="round"
-      stroke-dasharray="${fill} ${gap}" stroke-dashoffset="${circ*0.25}" transform="rotate(-90 ${cx} ${cy}) rotate(90 ${cx} ${cy})"/>
-    <text x="${cx}" y="${cy-6}" text-anchor="middle" font-size="18" font-weight="700" fill="var(--text)">${label}</text>
+      stroke-dasharray="${fill} ${gap}" stroke-dashoffset="${circ*0.25}" transform="rotate(-90 ${cx} ${cy}) rotate(90 ${cx} ${cy})" style="animation:ringFill .8s cubic-bezier(.34,1.56,.64,1) both"/>
+    <text x="${cx}" y="${cy-6}" text-anchor="middle" font-size="18" font-weight="700" fill="var(--text)" style="animation:valFlash .5s ease-out .4s both">${label}</text>
     <text x="${cx}" y="${cy+12}" text-anchor="middle" font-size="10" fill="var(--muted)">${sub}</text>
   </svg>`;
 }
@@ -1577,15 +1628,15 @@ function renderDashboard(){
   const topCo=companies.filter(c=>c.status==='active').sort((a,b)=>b.rev-a.rev).slice(0,5);
   const SC={new:'var(--info-t)',in_progress:'var(--warn-t)',completed:'var(--ok-t)',cancelled:'var(--muted)'};
   const pendSubs=driverSubmissions.filter(s=>s.status==='pending').length;
-  const kpi=(title,val,sub,ic,trend,bg='var(--primary-bg)',negTrend=false)=>`
+  const kpi=(title,val,sub,ic,trend,bg='var(--primary-bg)',negTrend=false,desc='')=>`
     <div class="card cb"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
-      <div style="flex:1;min-width:0"><div class="kpi-label">${esc(title)}</div><div class="kpi-val">${esc(val)}</div><div class="kpi-sub">${esc(sub)}</div></div>
+      <div style="flex:1;min-width:0"><div class="kpi-label">${esc(title)}${desc?`<span class="kpi-info" tabindex="0">ℹ<span class="kpi-tip">${esc(desc)}</span></span>`:''}</div><div class="kpi-val">${esc(val)}</div><div class="kpi-sub">${esc(sub)}</div></div>
       <div class="kpi-icon" style="background:${bg}">${icon(ic)}</div>
     </div>${trend?`<div class="kpi-trend${negTrend?' neg':''}">${icon('ArrowUpRight')} ${esc(trend)}</div>`:''}</div>`;
   return `<div class="page">
     <div class="ph"><div><div class="pt">Overview</div><div class="ps">Platform performance at a glance</div></div><div style="display:flex;align-items:center;gap:10px">${timeRangePicker('dash',state.timeRange)}${liveTimeBadge()}</div></div>
-    <div class="g4 mb4">${kpi('Active Companies',activeC,`${pendingC} pending`,'Building2',periodChange(curMonth.companies,prevMonth.companies))}${kpi('Monthly Revenue','$'+rev.toLocaleString(),'from active subscriptions','DollarSign',revChange+' vs last month','var(--ok-bg)')}${kpi('Open Requests',openR,`${urgR} urgent`,'FileText','',urgR>0?'var(--err-bg)':'var(--primary-bg)')}${kpi('Driver Reports',pendSubs+' pending',`${driverSubmissions.length} total`,'ClipboardList','Needs review','var(--warn-bg)')}</div>
-    <div class="g4 mb4">${kpi('Total Fleet',fleet+' vehicles',drivers+' active drivers','Truck','+'+curMonth.newCompanies+' new','var(--primary-bg)')}${kpi('Platform Churn',curMonth.churnRate+'%','companies/month','ArrowUpRight','',curMonth.churnRate<3?'var(--ok-bg)':'var(--warn-bg)',curMonth.churnRate>=3)}${kpi('Avg On-Time',curMonth?Math.round(93+curMonth.companies*0.1)+'%':'—','platform average','Clock','',true?'var(--ok-bg)':'var(--warn-bg)')}${kpi('Plan Revenue','$'+curMonth.mrr.toLocaleString()+'/mo','all plans combined','DollarSign',revChange,'var(--primary-bg)')}</div>
+    <div class="g4 mb4">${kpi('Active Companies',activeC,`${pendingC} pending`,'Building2',periodChange(curMonth.companies,prevMonth.companies),'var(--primary-bg)',false,'Companies with active subscriptions currently on the platform')}${kpi('Monthly Revenue','$'+rev.toLocaleString(),'from active subscriptions','DollarSign',revChange+' vs last month','var(--ok-bg)',false,'Total monthly recurring revenue from all active subscription plans')}${kpi('Open Requests',openR,`${urgR} urgent`,'FileText','',urgR>0?'var(--err-bg)':'var(--primary-bg)',false,'Service requests currently in New or In Progress status')}${kpi('Driver Reports',pendSubs+' pending',`${driverSubmissions.length} total`,'ClipboardList','Needs review','var(--warn-bg)',false,'Driver-submitted data corrections awaiting accountant review')}</div>
+    <div class="g4 mb4">${kpi('Total Fleet',fleet+' vehicles',drivers+' active drivers','Truck','+'+curMonth.newCompanies+' new','var(--primary-bg)',false,'Combined fleet size across all registered companies')}${kpi('Platform Churn',curMonth.churnRate+'%','companies/month','ArrowUpRight','',curMonth.churnRate<3?'var(--ok-bg)':'var(--warn-bg)',curMonth.churnRate>=3,'Percentage of companies that cancel their subscription per month')}${kpi('Avg On-Time',curMonth?Math.round(93+curMonth.companies*0.1)+'%':'—','platform average','Clock','','var(--ok-bg)',false,'Average on-time delivery rate across all active drivers')}${kpi('Plan Revenue','$'+curMonth.mrr.toLocaleString()+'/mo','all plans combined','DollarSign',revChange,'var(--primary-bg)',false,'Combined MRR from Starter, Professional and Enterprise plans')}</div>
     <div class="g21 mb4">
       <div class="card"><div class="ch">${icon('TrendingUp')}&nbsp;Revenue Trend</div><div class="cb">${lineChart(revTrend,'revenue')}</div></div>
       <div class="card"><div class="ch">Company Status</div><div class="cb">${donutChart(statusDist)}</div></div>
@@ -1680,7 +1731,7 @@ function renderBilling(){
     <div class="ph"><div><div class="pt">Billing & Subscriptions</div><div class="ps">Manage plans and payments</div></div>${timeRangePicker('bill',state.timeRange)}</div>
     ${tabs}
     <div class="g4 mb4">
-      ${[{t:'Monthly Recurring',v:'$'+activeRev.toLocaleString(),s:mrrChange+' vs last month',ic:'DollarSign',bg:'var(--primary-bg)'},{t:'Active Plans',v:subs.filter(s=>s.active).length,s:`of ${subs.length} total subscriptions`,ic:'Users',bg:'var(--ok-bg)'},{t:'Collection Rate',v:collectionRate+'%',s:paidCount+' paid · '+overdueCount+' overdue',ic:'CheckCircle',bg:collectionRate>=90?'var(--ok-bg)':'var(--warn-bg)'},{t:'Driver Reports',v:pendingSubs+' pending',s:'needs accountant review',ic:'ClipboardList',bg:pendingSubs>0?'var(--warn-bg)':'var(--border-sub)'}].map(k=>`<div class="card cb"><div style="display:flex;align-items:flex-start;justify-content:space-between"><div><div class="kpi-label">${esc(k.t)}</div><div class="kpi-val">${esc(k.v)}</div><div class="kpi-sub">${esc(k.s)}</div></div><div class="kpi-icon" style="background:${k.bg}">${icon(k.ic)}</div></div></div>`).join('')}
+      ${[{t:'Monthly Recurring',v:'$'+activeRev.toLocaleString(),s:mrrChange+' vs last month',ic:'DollarSign',bg:'var(--primary-bg)',d:'Total monthly recurring revenue from all active subscription plans'},{t:'Active Plans',v:subs.filter(s=>s.active).length,s:`of ${subs.length} total subscriptions`,ic:'Users',bg:'var(--ok-bg)',d:'Number of companies with a currently active and non-suspended subscription'},{t:'Collection Rate',v:collectionRate+'%',s:paidCount+' paid · '+overdueCount+' overdue',ic:'CheckCircle',bg:collectionRate>=90?'var(--ok-bg)':'var(--warn-bg)',d:'Percentage of all subscriptions that have been successfully paid this cycle'},{t:'Driver Reports',v:pendingSubs+' pending',s:'needs accountant review',ic:'ClipboardList',bg:pendingSubs>0?'var(--warn-bg)':'var(--border-sub)',d:'Driver-submitted data corrections that are awaiting accountant verification'}].map(kpiCard).join('')}
     </div>
     <div class="g21 mb4">
       <div class="card"><div class="ch">${icon('TrendingUp')}&nbsp;MRR Trend</div><div class="cb">${lineChart(mrrTrend,'revenue','#00d4ff')}</div></div>
@@ -1730,7 +1781,7 @@ function renderReports(){
     <div class="ph"><div><div class="pt">Financial Reports</div><div class="ps">Generate finalized reports with verified data</div></div>${timeRangePicker('rep',state.timeRange)}</div>
     <div class="tab-bar" style="max-width:500px">${[{id:'overview',label:'Overview'},{id:'manual_data',label:'Manual Data Entry'},{id:'reports',label:'Reports'}].map(t=>`<div class="tab-item${state.accTab===t.id?' active':''}" onclick="state.accTab='${t.id}';rerenderPage()">${t.label}</div>`).join('')}</div>
     <div class="g3 mb4">
-      ${[{t:'Verified Records',v:driverSubmissions.filter(s=>s.status==='approved'||s.status==='matched').length,s:'data points confirmed',ic:'CheckCircle',bg:'var(--ok-bg)'},{t:'Data Corrections',v:driverSubmissions.filter(s=>s.status==='approved').length,s:'driver overrides applied',ic:'Pencil',bg:'var(--warn-bg)'},{t:'Pending Review',v:driverSubmissions.filter(s=>s.status==='pending').length,s:'awaiting verification',ic:'Clock',bg:'var(--err-bg)'}].map(k=>`<div class="card cb"><div style="display:flex;align-items:flex-start;justify-content:space-between"><div><div class="kpi-label">${esc(k.t)}</div><div class="kpi-val">${esc(k.v)}</div><div class="kpi-sub">${esc(k.s)}</div></div><div class="kpi-icon" style="background:${k.bg}">${icon(k.ic)}</div></div></div>`).join('')}
+      ${[{t:'Verified Records',v:driverSubmissions.filter(s=>s.status==='approved'||s.status==='matched').length,s:'data points confirmed',ic:'CheckCircle',bg:'var(--ok-bg)',d:'Total number of driver data submissions that have been verified or auto-matched'},{t:'Data Corrections',v:driverSubmissions.filter(s=>s.status==='approved').length,s:'driver overrides applied',ic:'Pencil',bg:'var(--warn-bg)',d:'Cases where driver-reported actual values replaced API data after review'},{t:'Pending Review',v:driverSubmissions.filter(s=>s.status==='pending').length,s:'awaiting verification',ic:'Clock',bg:'var(--err-bg)',d:'Submissions waiting for accountant to approve or reject the correction'}].map(kpiCard).join('')}
     </div>
     <div class="card cb">
       <div style="font-weight:600;font-size:13px;margin-bottom:12px">${icon('FileText')}&nbsp;Reconciliation Summary</div>
@@ -1788,7 +1839,7 @@ function renderOwnerCommandCenter(){
         </div>
       </div>
     </div>
-    <div class="g4 mb4">${[{l:'On-Time Perf.',v:ops.otpRate+'%',s:'target: 95%',ic:'Clock',bg:parseFloat(ops.otpRate)>=95?'var(--ok-bg)':'var(--warn-bg)'},{l:'Customer Sat.',v:ops.custSat+'★',s:'from reviews',ic:'Star',bg:'var(--amber-bg)'},{l:'Loss Rate',v:ops.losRate+'%',s:'packages handled',ic:'Package',bg:'var(--ok-bg)'},{l:'Exceptions',v:ops.exceptions,s:(ops.exceptions/ops.totalPkgs*100).toFixed(2)+'%',ic:'AlertTriangle',bg:ops.exceptions>5?'var(--err-bg)':'var(--warn-bg)'}].map(k=>`<div class="card cb owner-kpi-card"><div style="display:flex;align-items:flex-start;justify-content:space-between"><div><div class="kpi-label">${esc(k.l)}</div><div class="kpi-val">${esc(k.v)}</div><div class="kpi-sub">${esc(k.s)}</div></div><div class="kpi-icon" style="background:${k.bg}">${icon(k.ic)}</div></div></div>`).join('')}</div>
+    <div class="g4 mb4">${[{t:'On-Time Perf.',v:ops.otpRate+'%',s:'target: 95%',ic:'Clock',bg:parseFloat(ops.otpRate)>=95?'var(--ok-bg)':'var(--warn-bg)',d:'Percentage of deliveries completed within the scheduled time window'},{t:'Customer Sat.',v:ops.custSat+'★',s:'from reviews',ic:'Star',bg:'var(--amber-bg)',d:'Average customer satisfaction rating from post-delivery surveys'},{t:'Loss Rate',v:ops.losRate+'%',s:'packages handled',ic:'Package',bg:'var(--ok-bg)',d:'Level of Service rate — percentage of packages successfully delivered on first attempt'},{t:'Exceptions',v:ops.exceptions,s:(ops.exceptions/ops.totalPkgs*100).toFixed(2)+'%',ic:'AlertTriangle',bg:ops.exceptions>5?'var(--err-bg)':'var(--warn-bg)',d:'Packages that could not be delivered due to access issues, damage or wrong address'}].map(kpiCard).join('')}</div>
     <div class="g21 mb4">
       <div class="card"><div class="ch">${icon('TrendingUp')}&nbsp;Revenue — 30 Days</div><div class="cb">${lineChart(ops.revTrend30.filter((_,i)=>i%3===0).map(d=>({month:'D'+d.day,revenue:d.revenue})),'revenue','#00d4ff')}</div></div>
       <div class="card cb"><div style="font-weight:600;font-size:13px;margin-bottom:10px">${icon('AlertTriangle')}&nbsp;Live Alerts</div>${ops.alerts.map(a=>{const ac={warning:'var(--warn-t)',error:'var(--err-t)',info:'var(--info-t)',success:'var(--ok-t)'};const ab={warning:'var(--warn-bg)',error:'var(--err-bg)',info:'var(--info-bg)',success:'var(--ok-bg)'};return`<div style="background:${ab[a.type]};border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:12px;color:${ac[a.type]};display:flex;align-items:flex-start;gap:8px"><span style="flex-shrink:0;margin-top:1px">${icon('AlertTriangle')}</span><div>${esc(a.text)}<div style="font-size:10px;opacity:.6;margin-top:2px">${esc(a.time)}</div></div></div>`;}).join('')}</div>
@@ -1808,7 +1859,7 @@ function renderOwnerFleet(){
   const avgOtp=(ops.driverMatrix.reduce((a,d)=>a+d.otp,0)/ops.driverMatrix.length).toFixed(1);
   return`<div class="page">
     <div class="ph"><div><div class="pt">${icon('Truck')}&nbsp;Fleet Command</div><div class="ps">${ops.driverCount} drivers · ${ops.co.fleet} vehicles</div></div><span class="badge b-active">${active} active · ${completed} done</span></div>
-    <div class="g4 mb4">${[{l:'On Shift',v:ops.driversOnShift,s:`of ${ops.driverCount}`,ic:'Users',bg:'var(--primary-bg)'},{l:'Stops Done',v:totalStops.toLocaleString(),s:'all routes',ic:'CheckCircle',bg:'var(--ok-bg)'},{l:'Avg OTP',v:avgOtp+'%',s:'target 95%',ic:'Clock',bg:parseFloat(avgOtp)>=95?'var(--ok-bg)':'var(--warn-bg)'},{l:'Earnings',v:'$'+totalEarnings.toLocaleString(),s:'driver pay today',ic:'DollarSign',bg:'var(--primary-bg)'}].map(k=>`<div class="card cb"><div style="display:flex;align-items:flex-start;justify-content:space-between"><div><div class="kpi-label">${esc(k.l)}</div><div class="kpi-val">${esc(k.v)}</div><div class="kpi-sub">${esc(k.s)}</div></div><div class="kpi-icon" style="background:${k.bg}">${icon(k.ic)}</div></div></div>`).join('')}</div>
+    <div class="g4 mb4">${[{t:'On Shift',v:ops.driversOnShift,s:`of ${ops.driverCount}`,ic:'Users',bg:'var(--primary-bg)',d:'Drivers currently on active delivery routes right now'},{t:'Stops Done',v:totalStops.toLocaleString(),s:'all routes',ic:'CheckCircle',bg:'var(--ok-bg)',d:'Total delivery stops completed across all active drivers today'},{t:'Avg OTP',v:avgOtp+'%',s:'target 95%',ic:'Clock',bg:parseFloat(avgOtp)>=95?'var(--ok-bg)':'var(--warn-bg)',d:'Average on-time performance across all drivers — target is 95%+'},{t:'Earnings',v:'$'+totalEarnings.toLocaleString(),s:'driver pay today',ic:'DollarSign',bg:'var(--primary-bg)',d:'Total driver compensation earned today based on per-stop rates'}].map(kpiCard).join('')}</div>
     <div class="filters"><div class="inp-w" style="flex:1;min-width:180px"><span class="inp-ic">${icon('Search')}</span><input class="inp has-ic" id="fleet-search" placeholder="Search driver, zone…" value="${esc(search)}" oninput="rerenderPage()"/></div><select class="inp" id="fleet-status" style="width:140px" onchange="rerenderPage()"><option value="all"${statusF==='all'?' selected':''}>All</option><option value="active"${statusF==='active'?' selected':''}>Active</option><option value="completed"${statusF==='completed'?' selected':''}>Completed</option><option value="idle"${statusF==='idle'?' selected':''}>Idle</option></select></div>
     <div class="card cb"><table><thead><tr><th></th><th>Driver</th><th>Zone</th><th>Vehicle</th><th>Stops</th><th>Progress</th><th style="text-align:right">OTP</th><th style="text-align:right">Rating</th><th style="text-align:right">Earned</th><th>Status</th></tr></thead><tbody>${drivers.map((d,i)=>`<tr><td style="font-size:11px;color:var(--dim);width:28px">${i+1}</td><td style="font-weight:500">${esc(d.name)}</td><td><span class="spec-tag">${esc(d.zone)}</span></td><td style="font-family:var(--mono);font-size:11px;color:var(--muted)">${esc(d.vehicle)}</td><td>${d.done}/${d.stops}</td><td style="min-width:80px"><div style="display:flex;align-items:center;gap:6px"><div style="flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden"><div style="height:100%;width:${d.stops>0?Math.round(d.done/d.stops*100):0}%;background:${d.done>=d.stops?'var(--ok-t)':'var(--primary)'};border-radius:3px"></div></div><span style="font-size:10px;font-weight:600;color:var(--muted)">${d.stops>0?Math.round(d.done/d.stops*100):0}%</span></div></td><td style="text-align:right;font-weight:500;color:${d.otp>=95?'var(--ok-t)':d.otp>=90?'var(--warn-t)':'var(--err-t)'}">${d.otp}%</td><td style="text-align:right">${d.rating}★</td><td style="text-align:right;font-weight:600">$${d.earnings}</td><td>${statusBadge(d.status)}</td></tr>`).join('')}</tbody></table></div>
   </div>`;
@@ -1818,7 +1869,7 @@ function renderOwnerFinancials(){
   const monthlyProfit=ops.monthlyRev-Math.round(ops.monthlyRev*0.72);
   return`<div class="page">
     <div class="ph"><div><div class="pt">${icon('DollarSign')}&nbsp;Financial Intelligence</div><div class="ps">${esc(ops.co.name)} · Revenue & Cost Analytics</div></div>${timeRangePicker('fin',state.timeRange)}</div>
-    <div class="g4 mb4">${[{l:'Monthly Revenue',v:'$'+ops.monthlyRev.toLocaleString(),s:'22 working days',ic:'DollarSign',bg:'var(--primary-bg)',t:'+8.4%'},{l:'Monthly Costs',v:'$'+Math.round(ops.monthlyRev*0.72).toLocaleString(),s:'operational',ic:'TrendingUp',bg:'var(--err-bg)'},{l:'Monthly Profit',v:'$'+monthlyProfit.toLocaleString(),s:ops.profitMargin+'% margin',ic:'TrendingUp',bg:'var(--ok-bg)',t:'+$'+Math.round(monthlyProfit*0.084).toLocaleString()},{l:'Rev/Stop',v:'$'+ops.revPerStop.toFixed(2),s:'avg: $1.35',ic:'Package',bg:'var(--pur-bg)'}].map(k=>`<div class="card cb"><div style="display:flex;align-items:flex-start;justify-content:space-between"><div><div class="kpi-label">${esc(k.l)}</div><div class="kpi-val">${esc(k.v)}</div><div class="kpi-sub">${esc(k.s)}</div>${k.t?`<div class="kpi-trend">${icon('ArrowUpRight')} ${esc(k.t)}</div>`:''}</div><div class="kpi-icon" style="background:${k.bg}">${icon(k.ic)}</div></div></div>`).join('')}</div>
+    <div class="g4 mb4">${[{t:'Monthly Revenue',v:'$'+ops.monthlyRev.toLocaleString(),s:'22 working days',ic:'DollarSign',bg:'var(--primary-bg)',tr:'+8.4%',d:'Projected monthly revenue based on daily delivery volume and per-stop rate'},{t:'Monthly Costs',v:'$'+Math.round(ops.monthlyRev*0.72).toLocaleString(),s:'operational',ic:'TrendingUp',bg:'var(--err-bg)',d:'Total operational costs including driver payroll, fuel, vehicle and insurance'},{t:'Monthly Profit',v:'$'+monthlyProfit.toLocaleString(),s:ops.profitMargin+'% margin',ic:'TrendingUp',bg:'var(--ok-bg)',tr:'+$'+Math.round(monthlyProfit*0.084).toLocaleString(),d:'Net profit after all operational expenses — target margin is 25-30%'},{t:'Rev/Stop',v:'$'+ops.revPerStop.toFixed(2),s:'avg: $1.35',ic:'Package',bg:'var(--pur-bg)',d:'Revenue earned per delivery stop — varies by zone and carrier contract'}].map(kpiCard).join('')}</div>
     <div class="g21 mb4">
       <div class="card"><div class="ch">${icon('TrendingUp')}&nbsp;Revenue — 30 Days</div><div class="cb">${lineChart(ops.revTrend30.filter((_,i)=>i%3===0).map(d=>({month:'D'+d.day,revenue:d.revenue})),'revenue','#00d4ff')}</div></div>
       <div class="card cb"><div style="font-weight:600;font-size:13px;margin-bottom:14px">${icon('BarChart2')}&nbsp;Cost Breakdown</div>${donutChart(ops.costBreak.map(c=>({name:c.name,value:c.pct,color:c.color})))}<div style="margin-top:12px">${ops.costBreak.map(c=>`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border-sub);font-size:12px"><span style="color:var(--muted)">${esc(c.name)}</span><div><span style="font-weight:600">$${c.amount.toLocaleString()}</span> <span style="font-size:11px;color:var(--muted)">${c.pct}%</span></div></div>`).join('')}</div></div>
