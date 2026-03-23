@@ -566,7 +566,7 @@ body.light-theme .chart-switch select{background:rgba(255,255,255,.9);border-col
 .dh-pin-del:hover{transform:scale(1.15);background:#ef4444}
 body.dh-ann-mode .dh-pin-del{display:flex}
 
-/* Constructor styles */
+/* Edits styles */
 #dh-con{position:fixed;bottom:24px;right:24px;z-index:10001;display:none;flex-direction:column;align-items:flex-end;gap:8px}
 #dh-con.vis{display:flex}
 #dh-tb{display:flex;align-items:center;gap:6px;background:rgba(18,19,30,.96);border:1px solid rgba(167,139,250,.40);border-radius:14px;padding:8px 10px;box-shadow:0 8px 40px rgba(0,0,0,.6),0 0 30px rgba(167,139,250,.16);backdrop-filter:blur(16px)}
@@ -748,7 +748,7 @@ a,button,select,.nav-item,.tab-item,.demo-btn,.demo-dropdown summary,.btn,.notif
   select.inp{padding-right:32px}
   label{font-size:11px;margin-bottom:6px}
 
-  /* Constructor toolbar */
+  /* Edits toolbar */
   #dh-con{bottom:16px;right:16px}
   #dh-tb{padding:6px 8px;gap:4px;border-radius:12px}
   .dh-btn{padding:8px 10px;min-height:36px;font-size:11px}
@@ -2363,6 +2363,198 @@ function renderOwnerValuation(){
 }
 
 // ══════════════════════════════════════════════════════════
+// ADMIN — DATA STREAMS
+// ══════════════════════════════════════════════════════════
+var _dsTab='active';
+function renderAdminDataStreams(){
+  var streams=[
+    {id:'ontrac_api',name:'OnTrac FasTrak API',type:'REST API',status:'connected',latency:'142ms',uptime:99.8,lastSync:'2 min ago',records:'27,062/day',icon:'📦',color:'var(--ok-t)'},
+    {id:'fedex_ground',name:'FedEx Ground ISP',type:'REST API',status:'pending',latency:'—',uptime:0,lastSync:'Never',records:'—',icon:'📦',color:'var(--warn-t)'},
+    {id:'amazon_dsp',name:'Amazon DSP Relay',type:'Batch Import',status:'planned',latency:'—',uptime:0,lastSync:'Never',records:'—',icon:'📦',color:'var(--muted)'},
+    {id:'lasership',name:'LaserShip Connect',type:'SFTP Batch',status:'connected',latency:'—',uptime:98.2,lastSync:'6 hrs ago',records:'8,440/day',icon:'📦',color:'var(--ok-t)'},
+    {id:'google_maps',name:'Google Maps Platform',type:'REST API',status:'connected',latency:'89ms',uptime:99.97,lastSync:'Live',records:'~5,000 req/hr',icon:'🌐',color:'var(--ok-t)'},
+    {id:'weather_api',name:'OpenWeather API',type:'REST API',status:'connected',latency:'210ms',uptime:99.5,lastSync:'15 min ago',records:'96 req/day',icon:'🌤️',color:'var(--ok-t)'},
+    {id:'twilio_sms',name:'Twilio SMS Gateway',type:'REST API',status:'connected',latency:'320ms',uptime:99.9,lastSync:'Live',records:'~200 msg/day',icon:'💬',color:'var(--ok-t)'},
+    {id:'stripe',name:'Stripe Payments',type:'REST API + Webhooks',status:'connected',latency:'180ms',uptime:99.99,lastSync:'Live',records:'~50 txn/day',icon:'💳',color:'var(--ok-t)'},
+    {id:'samsara',name:'Samsara Fleet Telematics',type:'REST API',status:'beta',latency:'250ms',uptime:97.1,lastSync:'5 min ago',records:'~12,000 events/day',icon:'📡',color:'var(--pur-t)'},
+    {id:'geotab',name:'Geotab GO Devices',type:'SDK',status:'planned',latency:'—',uptime:0,lastSync:'Never',records:'—',icon:'📡',color:'var(--muted)'},
+    {id:'quickbooks',name:'QuickBooks Online',type:'REST API',status:'beta',latency:'410ms',uptime:98.8,lastSync:'1 hr ago',records:'~30 sync/day',icon:'📊',color:'var(--pur-t)'},
+    {id:'slack_webhook',name:'Slack Notifications',type:'Webhook',status:'connected',latency:'120ms',uptime:99.7,lastSync:'Live',records:'~80 msg/day',icon:'💬',color:'var(--ok-t)'},
+  ];
+  var statusMap={connected:{label:'Connected',cls:'b-active'},beta:{label:'Beta',cls:'b-new'},pending:{label:'Pending',cls:'b-pending'},planned:{label:'Planned',cls:'b-suspended'}};
+  var tab=_dsTab;
+  var filtered=tab==='all'?streams:streams.filter(function(s){return tab==='active'?(s.status==='connected'||s.status==='beta'):s.status===tab;});
+  var connectedCount=streams.filter(function(s){return s.status==='connected';}).length;
+  var betaCount=streams.filter(function(s){return s.status==='beta';}).length;
+  return'<div class="page">'+
+    '<div class="ph"><div><div class="pt">'+icon('Zap')+'&nbsp;Data Streams</div><div class="ps">'+streams.length+' integrations · '+connectedCount+' connected · '+betaCount+' beta</div></div></div>'+
+    '<div class="g4 mb4">'+
+      '<div class="card cb"><div class="kpi-label">Connected</div><div class="kpi-val" style="color:var(--ok-t)">'+connectedCount+'</div><div class="kpi-sub">active streams</div></div>'+
+      '<div class="card cb"><div class="kpi-label">Avg Latency</div><div class="kpi-val">187ms</div><div class="kpi-sub">across all APIs</div></div>'+
+      '<div class="card cb"><div class="kpi-label">Uptime (30d)</div><div class="kpi-val" style="color:var(--ok-t)">99.6%</div><div class="kpi-sub">platform-wide</div></div>'+
+      '<div class="card cb"><div class="kpi-label">Daily Records</div><div class="kpi-val">47K+</div><div class="kpi-sub">ingested today</div></div>'+
+    '</div>'+
+    '<div class="tab-bar mb4" style="max-width:450px">'+['active','all','pending','planned'].map(function(t){var labels={active:'Active ('+streams.filter(function(s){return s.status==='connected'||s.status==='beta';}).length+')',all:'All ('+streams.length+')',pending:'Pending',planned:'Planned'};return'<div class="tab-item'+(tab===t?' active':'')+'" onclick="_dsTab=\''+t+'\';rerenderPage()">'+labels[t]+'</div>';}).join('')+'</div>'+
+    '<div class="gc">'+filtered.map(function(s){
+      var st=statusMap[s.status]||statusMap.planned;
+      return'<div class="card cb" style="cursor:pointer" onclick="openFeature(\''+s.id+'\')">'+
+        '<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px"><div style="display:flex;align-items:center;gap:10px"><span style="font-size:20px">'+s.icon+'</span><div><div style="font-weight:600;font-size:13px">'+esc(s.name)+'</div><div style="font-size:11px;color:var(--muted);font-family:var(--mono)">'+esc(s.type)+'</div></div></div><span class="badge '+st.cls+'">'+st.label+'</span></div>'+
+        (s.status==='connected'||s.status==='beta'?
+          '<div style="display:flex;flex-wrap:wrap;gap:12px;font-size:11px;margin-bottom:8px">'+
+            '<div><span style="color:var(--muted)">Latency</span> <strong>'+s.latency+'</strong></div>'+
+            '<div><span style="color:var(--muted)">Uptime</span> <strong style="color:'+s.color+'">'+s.uptime+'%</strong></div>'+
+            '<div><span style="color:var(--muted)">Last sync</span> <strong>'+s.lastSync+'</strong></div>'+
+          '</div>'+
+          '<div style="font-size:11px;color:var(--muted)">Throughput: <strong style="color:var(--text)">'+s.records+'</strong></div>'+
+          '<div style="height:4px;border-radius:2px;background:var(--border);margin-top:8px;overflow:hidden"><div style="height:100%;width:'+s.uptime+'%;background:'+s.color+';border-radius:2px"></div></div>'
+          :'<div style="font-size:12px;color:var(--muted);padding:10px 0">Integration not yet configured</div><button class="btn btn-o btn-sm" onclick="event.stopPropagation();openFeature(\''+s.id+'\')">Configure →</button>')+
+      '</div>';
+    }).join('')+'</div>'+
+  '</div>';
+}
+
+// ══════════════════════════════════════════════════════════
+// ADMIN — PLATFORM SETTINGS
+// ══════════════════════════════════════════════════════════
+var _psTab='general';
+function renderAdminPlatform(){
+  var u=state.user;
+  var tab=_psTab;
+  var tabBar='<div class="tab-bar mb4" style="max-width:600px">'+[
+    {id:'general',label:'General'},{id:'auth',label:'Auth & Security'},{id:'billing_cfg',label:'Billing Config'},
+    {id:'notifications_cfg',label:'Notifications'},{id:'appearance',label:'Appearance'},{id:'api_keys',label:'API Keys'}
+  ].map(function(t){return'<div class="tab-item'+(tab===t.id?' active':'')+'" onclick="_psTab=\''+t.id+'\';rerenderPage()">'+t.label+'</div>';}).join('')+'</div>';
+
+  var content='';
+  if(tab==='general'){
+    content='<div class="fp-section"><h3>'+icon('Building2')+'&nbsp;Platform Identity</h3>'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">'+
+        '<div class="fg"><label style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:1px;margin-bottom:6px">PLATFORM NAME</label><input class="inp" value="DriveHub"/></div>'+
+        '<div class="fg"><label style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:1px;margin-bottom:6px">TAGLINE</label><input class="inp" value="DSP Management System"/></div>'+
+        '<div class="fg"><label style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:1px;margin-bottom:6px">SUPPORT EMAIL</label><input class="inp" value="support@drivehub.work"/></div>'+
+        '<div class="fg"><label style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:1px;margin-bottom:6px">PRIMARY DOMAIN</label><input class="inp" value="drivehub.work" disabled style="opacity:.6"/></div>'+
+        '<div class="fg"><label style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:1px;margin-bottom:6px">DEFAULT TIMEZONE</label><select class="inp">'+US_TZ.map(function(z){return'<option value="'+z.v+'"'+(z.v==='America/New_York'?' selected':'')+'>'+z.l+'</option>';}).join('')+'</select></div>'+
+        '<div class="fg"><label style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:1px;margin-bottom:6px">DEFAULT CURRENCY</label><select class="inp"><option selected>USD ($)</option><option>EUR (€)</option><option>GBP (£)</option><option>CAD (C$)</option></select></div>'+
+      '</div></div>'+
+      '<div class="fp-section"><h3>'+icon('Users')+'&nbsp;Role Permissions Matrix</h3>'+
+        '<table><thead><tr><th>Permission</th><th>Admin</th><th>Owner</th><th>GM</th><th>Accountant</th><th>Manager</th><th>Driver</th></tr></thead><tbody>'+
+        [{p:'Dashboard',a:1,o:1,g:1,c:0,m:1,d:0},{p:'Companies',a:1,o:1,g:1,c:0,m:1,d:0},{p:'Billing & Finance',a:1,o:1,g:0,c:1,m:0,d:0},{p:'Driver Tracking',a:1,o:0,g:1,c:0,m:1,d:0},{p:'Analytics & Reports',a:1,o:1,g:1,c:1,m:0,d:0},{p:'Team Management',a:1,o:1,g:1,c:0,m:0,d:0},{p:'Driver Portal',a:0,o:0,g:0,c:0,m:0,d:1},{p:'Data Streams',a:1,o:0,g:0,c:0,m:0,d:0},{p:'Platform Settings',a:1,o:0,g:0,c:0,m:0,d:0},{p:'System Config',a:1,o:0,g:0,c:0,m:0,d:0}].map(function(r){
+          var chk=function(v){return v?'<span style="color:var(--ok-t)">✓</span>':'<span style="color:var(--dim)">—</span>';};
+          return'<tr><td style="font-weight:500">'+r.p+'</td><td style="text-align:center">'+chk(r.a)+'</td><td style="text-align:center">'+chk(r.o)+'</td><td style="text-align:center">'+chk(r.g)+'</td><td style="text-align:center">'+chk(r.c)+'</td><td style="text-align:center">'+chk(r.m)+'</td><td style="text-align:center">'+chk(r.d)+'</td></tr>';
+        }).join('')+
+        '</tbody></table></div>';
+  } else if(tab==='auth'){
+    content='<div class="fp-section"><h3>'+icon('Shield')+'&nbsp;Authentication Settings</h3>'+
+      ['Session timeout','Password policy','Two-factor auth','IP Whitelisting','SSO / SAML','Login attempts lockout'].map(function(s,i){
+        var vals=['30 min idle','Min 8 chars, 1 uppercase, 1 number','Optional (TOTP)','Disabled','Not configured','5 attempts → 15 min lock'];
+        var statuses=['var(--ok-t)','var(--ok-t)','var(--warn-t)','var(--muted)','var(--muted)','var(--ok-t)'];
+        return'<div class="fp-kv"><span style="color:var(--muted)">'+s+'</span><span style="font-weight:500;color:'+statuses[i]+'">'+vals[i]+'</span></div>';
+      }).join('')+'</div>'+
+      '<div class="fp-section"><h3>'+icon('Clock')+'&nbsp;Active Sessions</h3>'+
+        '<div class="fp-log">'+ 
+        '<span class="dim">admin@rspplatform.com</span> · Chrome 122 · Windows · <span class="ok">Current session</span><br>'+
+        '<span class="dim">owner@firstchoice.com</span> · Safari 17 · macOS · Last active 2h ago<br>'+
+        '<span class="dim">driver@firstchoice.com</span> · Mobile App · iOS 17 · Last active 24m ago<br>'+
+        '<span class="dim">accountant@swiftdel.com</span> · Firefox 124 · Windows · Last active 4h ago'+
+        '</div></div>';
+  } else if(tab==='billing_cfg'){
+    content='<div class="fp-section"><h3>'+icon('CreditCard')+'&nbsp;Billing Configuration</h3>'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">'+
+        '<div class="fg"><label style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:1px;margin-bottom:6px">PAYMENT PROCESSOR</label><select class="inp"><option selected>Stripe</option><option>Square</option><option>Manual / ACH</option></select></div>'+
+        '<div class="fg"><label style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:1px;margin-bottom:6px">BILLING CYCLE</label><select class="inp"><option selected>Monthly</option><option>Quarterly</option><option>Annual</option></select></div>'+
+        '<div class="fg"><label style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:1px;margin-bottom:6px">INVOICE PREFIX</label><input class="inp" value="INV-2025-"/></div>'+
+        '<div class="fg"><label style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:1px;margin-bottom:6px">TAX RATE (%)</label><input class="inp" type="number" value="0" step="0.1"/></div>'+
+      '</div></div>'+
+      '<div class="fp-section"><h3>'+icon('DollarSign')+'&nbsp;Subscription Plans</h3>'+
+        '<table><thead><tr><th>Plan</th><th style="text-align:right">Price</th><th>Vehicles</th><th>Features</th><th>Status</th></tr></thead><tbody>'+
+        '<tr><td style="font-weight:600">Starter</td><td style="text-align:right;font-weight:600;color:var(--primary)">$99/mo</td><td>Up to 20</td><td>Basic analytics, Email support</td><td><span class="badge b-active">Active</span></td></tr>'+
+        '<tr><td style="font-weight:600">Professional</td><td style="text-align:right;font-weight:600;color:var(--primary)">$299/mo</td><td>Up to 100</td><td>Advanced analytics, Priority support, CRM</td><td><span class="badge b-active">Active</span></td></tr>'+
+        '<tr><td style="font-weight:600">Enterprise</td><td style="text-align:right;font-weight:600;color:var(--primary)">$799/mo</td><td>Unlimited</td><td>Full suite, Dedicated AM, API access</td><td><span class="badge b-active">Active</span></td></tr>'+
+        '</tbody></table></div>';
+  } else if(tab==='notifications_cfg'){
+    content='<div class="fp-section"><h3>'+icon('Bell')+'&nbsp;Notification Channels</h3>'+
+      [{ch:'In-app Notifications',st:'Enabled',c:'var(--ok-t)'},{ch:'Email Alerts',st:'Enabled — SMTP via SendGrid',c:'var(--ok-t)'},{ch:'SMS (Twilio)',st:'Connected',c:'var(--ok-t)'},{ch:'Slack Webhook',st:'Connected — #dispatch',c:'var(--ok-t)'},{ch:'Push Notifications',st:'Planned — Sprint 9',c:'var(--warn-t)'},{ch:'Telegram Bot',st:'Planned — Sprint 10',c:'var(--warn-t)'}].map(function(n){return'<div class="fp-kv"><span style="color:var(--muted)">'+n.ch+'</span><span style="font-weight:500;color:'+n.c+'">'+n.st+'</span></div>';}).join('')+'</div>'+
+      '<div class="fp-section"><h3>'+icon('FileText')+'&nbsp;Event Categories</h3>'+
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px">'+
+        ['Route dispatched','Package delivered','Delivery exception','Driver submission','Payment received','Invoice overdue','SLA breach','API downtime','New company signup','Compliance deadline','Fleet maintenance due','Driver onboarding'].map(function(e){
+          return'<div style="display:flex;align-items:center;gap:8px;padding:6px 0"><span style="color:var(--ok-t)">✓</span><span>'+e+'</span></div>';
+        }).join('')+'</div></div>';
+  } else if(tab==='appearance'){
+    content='<div class="fp-section"><h3>'+icon('Star')+'&nbsp;Theme & Branding</h3>'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">'+
+        '<div class="fg"><label style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:1px;margin-bottom:6px">PRIMARY COLOR</label><div style="display:flex;gap:8px;align-items:center"><input class="inp" value="#00d4ff" style="flex:1"/><div style="width:32px;height:32px;border-radius:8px;background:#00d4ff;flex-shrink:0;border:1px solid var(--border)"></div></div></div>'+
+        '<div class="fg"><label style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:1px;margin-bottom:6px">DARK BG COLOR</label><div style="display:flex;gap:8px;align-items:center"><input class="inp" value="#0a0a0f" style="flex:1"/><div style="width:32px;height:32px;border-radius:8px;background:#0a0a0f;flex-shrink:0;border:1px solid var(--border)"></div></div></div>'+
+        '<div class="fg"><label style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:1px;margin-bottom:6px">FONT FAMILY</label><select class="inp"><option selected>Outfit</option><option>Inter</option><option>DM Sans</option><option>General Sans</option></select></div>'+
+        '<div class="fg"><label style="font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:1px;margin-bottom:6px">BORDER RADIUS</label><select class="inp"><option>8px (compact)</option><option selected>14px (default)</option><option>20px (round)</option></select></div>'+
+      '</div></div>'+
+      '<div class="fp-section"><h3>'+icon('LayoutDashboard')+'&nbsp;Login Page</h3>'+
+        '<div class="fp-kv"><span style="color:var(--muted)">Star field animation</span><span style="font-weight:500;color:var(--ok-t)">Enabled — 120 particles</span></div>'+
+        '<div class="fp-kv"><span style="color:var(--muted)">Demo account dropdowns</span><span style="font-weight:500">Collapsed by default</span></div>'+
+        '<div class="fp-kv"><span style="color:var(--muted)">Light/Dark toggle</span><span style="font-weight:500;color:var(--ok-t)">Enabled</span></div>'+
+        '<div class="fp-kv"><span style="color:var(--muted)">Footer text</span><span style="font-weight:500">2026 © DriveHub Inc.</span></div>'+
+      '</div>';
+  } else if(tab==='api_keys'){
+    content='<div class="fp-section"><h3>'+icon('Shield')+'&nbsp;API Keys & Tokens</h3>'+
+      '<div style="font-size:12px;color:var(--muted);margin-bottom:14px">Manage API access tokens for external integrations. Keys shown are masked for security.</div>'+
+      [{name:'OnTrac FasTrak',key:'otk_live_****…7f2a',created:'2026-01-15',status:'Active',scope:'read:volume, read:exceptions, read:sp'},{name:'Google Maps',key:'AIza****…X9dQ',created:'2025-11-20',status:'Active',scope:'maps, geocode, directions'},{name:'Stripe',key:'sk_live_****…mK0p',created:'2025-12-01',status:'Active',scope:'payments, invoices, subscriptions'},{name:'Twilio',key:'AC****…8e3d',created:'2026-02-10',status:'Active',scope:'sms:send, sms:read'},{name:'Samsara',key:'samsara_****…b1c2',created:'2026-03-01',status:'Beta',scope:'fleet:read, events:read'},{name:'Webhook Secret',key:'whsec_****…4d9f',created:'2026-03-15',status:'Active',scope:'outbound events HMAC'}].map(function(k){
+        return'<div style="display:flex;align-items:center;justify-content:space-between;padding:12px;border-radius:10px;background:rgba(15,16,25,.5);border:1px solid var(--border);margin-bottom:8px">'+
+          '<div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12px">'+esc(k.name)+'</div><div style="font-size:11px;font-family:var(--mono);color:var(--muted);margin-top:2px">'+esc(k.key)+'</div><div style="font-size:10px;color:var(--dim);margin-top:2px">Scope: '+esc(k.scope)+'</div></div>'+
+          '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><span class="badge '+(k.status==='Active'?'b-active':'b-new')+'">'+k.status+'</span><span style="font-size:10px;color:var(--dim);font-family:var(--mono)">'+esc(k.created)+'</span></div></div>';
+      }).join('')+
+      '<button class="btn btn-p btn-sm" style="margin-top:8px" onclick="toast(\'API key generation coming in Sprint 10\')">'+icon('Plus')+' Generate New Key</button></div>';
+  }
+  return'<div class="page"><div class="ph"><div><div class="pt">'+icon('Settings')+'&nbsp;Platform Settings</div><div class="ps">Administration · Configuration · Security</div></div><button class="btn btn-p" onclick="toast(\'Settings saved\')">Save All Changes</button></div>'+tabBar+content+'</div>';
+}
+
+// ══════════════════════════════════════════════════════════
+// ADMIN — SYSTEM CONFIG
+// ══════════════════════════════════════════════════════════
+function renderAdminSystem(){
+  var env=[
+    {k:'Environment',v:'Production',c:'var(--ok-t)'},{k:'Build',v:'v2.4.1-beta (Mar 23 2026)',c:'var(--text)'},
+    {k:'Hosting',v:'GitHub Pages + Cloudflare CDN',c:'var(--text)'},{k:'Database',v:'PostgreSQL 16 (planned)',c:'var(--warn-t)'},
+    {k:'Cache',v:'Redis 7 (planned)',c:'var(--warn-t)'},{k:'Queue',v:'BullMQ (planned)',c:'var(--warn-t)'},
+    {k:'File Storage',v:'AWS S3 (planned)',c:'var(--warn-t)'},{k:'Search',v:'Elasticsearch 8 (planned)',c:'var(--warn-t)'},
+    {k:'Auth Provider',v:'In-memory (demo) → Auth.js planned',c:'var(--warn-t)'},{k:'Monitoring',v:'Console + Sentry (planned)',c:'var(--warn-t)'},
+  ];
+  var health=[
+    {k:'CPU Usage',v:'12%',pct:12,c:'var(--ok-t)'},{k:'Memory',v:'284 MB / 2 GB',pct:14,c:'var(--ok-t)'},
+    {k:'Storage',v:'1.2 GB / 50 GB',pct:2,c:'var(--ok-t)'},{k:'Network I/O',v:'2.4 Mbps avg',pct:18,c:'var(--primary)'},
+    {k:'API Rate',v:'1,247 req/hr',pct:25,c:'var(--primary)'},{k:'Disk IOPS',v:'340 ops/s',pct:8,c:'var(--ok-t)'},
+  ];
+  var jobs=[
+    {name:'OnTrac API Sync',schedule:'Every 60s',last:'2 min ago',status:'ok',next:'58s'},
+    {name:'Daily Compliance Check',schedule:'01:00 UTC',last:'7 hrs ago',status:'ok',next:'17 hrs'},
+    {name:'Invoice Generation',schedule:'1st of month',last:'22 days ago',status:'ok',next:'8 days'},
+    {name:'Analytics Aggregation',schedule:'Every 15 min',last:'8 min ago',status:'ok',next:'7 min'},
+    {name:'Driver Telemetry Ingest',schedule:'Every 5s',last:'Just now',status:'ok',next:'5s'},
+    {name:'Backup — Database',schedule:'Daily 03:00 UTC',last:'5 hrs ago',status:'ok',next:'19 hrs'},
+    {name:'Backup — File Storage',schedule:'Weekly Sun 04:00',last:'6 days ago',status:'ok',next:'1 day'},
+    {name:'SSL Certificate Renewal',schedule:'Auto (Let\'s Encrypt)',last:'45 days ago',status:'ok',next:'45 days'},
+  ];
+  return'<div class="page"><div class="ph"><div><div class="pt">'+icon('Cpu')+'&nbsp;System Configuration</div><div class="ps">Infrastructure · Health · Scheduled Jobs · Maintenance</div></div></div>'+
+    '<div class="fp-section"><h3>'+icon('Zap')+'&nbsp;System Health</h3><div class="g3">'+health.map(function(h){
+      return'<div style="padding:10px 0"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="color:var(--muted)">'+h.k+'</span><span style="font-weight:600;color:'+h.c+'">'+h.v+'</span></div><div style="height:6px;border-radius:3px;background:var(--border);overflow:hidden"><div style="height:100%;width:'+h.pct+'%;background:'+h.c+';border-radius:3px"></div></div></div>';
+    }).join('')+'</div></div>'+
+    '<div class="fp-section"><h3>'+icon('Settings')+'&nbsp;Environment</h3>'+env.map(function(e){
+      return'<div class="fp-kv"><span style="color:var(--muted)">'+e.k+'</span><span style="font-weight:500;color:'+e.c+'">'+e.v+'</span></div>';
+    }).join('')+'</div>'+
+    '<div class="fp-section"><h3>'+icon('Clock')+'&nbsp;Scheduled Jobs ('+jobs.length+')</h3>'+
+      '<table><thead><tr><th>Job</th><th>Schedule</th><th>Last Run</th><th>Next</th><th>Status</th></tr></thead><tbody>'+
+      jobs.map(function(j){return'<tr><td style="font-weight:500">'+esc(j.name)+'</td><td style="font-size:11px;font-family:var(--mono);color:var(--muted)">'+esc(j.schedule)+'</td><td style="font-size:11px;color:var(--muted)">'+esc(j.last)+'</td><td style="font-size:11px;color:var(--text)">'+esc(j.next)+'</td><td><span class="badge b-active">OK</span></td></tr>';}).join('')+
+      '</tbody></table></div>'+
+    '<div class="fp-section"><h3>'+icon('AlertTriangle')+'&nbsp;Maintenance Actions</h3>'+
+      '<div style="display:flex;flex-wrap:wrap;gap:8px">'+
+        '<button class="btn btn-o btn-sm" onclick="toast(\'Cache cleared\')">'+icon('Trash2')+' Clear Cache</button>'+
+        '<button class="btn btn-o btn-sm" onclick="toast(\'Reindex started\')">'+icon('Search')+' Reindex Search</button>'+
+        '<button class="btn btn-o btn-sm" onclick="toast(\'Backup initiated\')">'+icon('Package')+' Manual Backup</button>'+
+        '<button class="btn btn-o btn-sm" onclick="toast(\'Logs exported\')">'+icon('FileText')+' Export Logs</button>'+
+        '<button class="btn btn-warn btn-sm" onclick="toast(\'Simulation restarted\')">'+icon('Zap')+' Restart Simulation</button>'+
+      '</div></div>'+
+  '</div>';
+}
+
+// ══════════════════════════════════════════════════════════
 // ONROUTE RATES — Rate Bidding Platform
 // ══════════════════════════════════════════════════════════
 function renderOnRouteRates(){
@@ -2425,9 +2617,15 @@ function renderSidebar(){
     {id:'team',label:'Team',icon:'Users',res:'users'},
     {id:'tracking',label:'Driver Tracking',icon:'MapPin',res:'tracking'},
     {id:'kanban_board',label:'Project Board',icon:'ClipboardList',res:'analytics',badge:kbTasks.filter(function(t){return t.pendingEdit&&!t.editApproved;}).length},
+    {id:'_sec',label:'Analytics'},
     {id:'driver_stats',label:'Driver Statistics',icon:'BarChart2',res:'driver_stats'},
     {id:'acct_locations',label:'Location Reports',icon:'Globe',res:'locations'},
     {id:'reporting',label:'Analytics & Reports',icon:'FileText',res:'reporting'},
+    {id:'onroute_rates',label:'OnRouteRates',icon:'Globe',res:'analytics'},
+    {id:'_sec',label:'Platform Admin'},
+    {id:'admin_data_streams',label:'Data Streams',icon:'Zap',res:'analytics'},
+    {id:'admin_platform',label:'Platform Settings',icon:'Settings',res:'analytics'},
+    {id:'admin_system',label:'System Config',icon:'Cpu',res:'analytics'},
   ];
   const OWNER_NAV=[
     {id:'owner_command',label:'Command Center',icon:'LayoutDashboard',res:'analytics'},
@@ -2473,9 +2671,10 @@ function renderSidebar(){
     {id:'onroute_rates',label:'OnRouteRates',icon:'Globe',res:'driver'},
   ];
   const NAV=isDriver?DRIVER_NAV:(u&&u.role==='owner'?OWNER_NAV:(u&&u.role==='accountant'?ACCT_NAV:(u&&u.role==='general_manager'?GM_NAV:(u&&u.role==='manager'?MGR_NAV:ADMIN_NAV))));
-  const visible=NAV.filter(n=>!u||hasPerm(u.role,n.res)||n.id==='dashboard'||n.id.startsWith('owner_'));
+  const visible=NAV.filter(n=>n.id==='_sec'||!u||hasPerm(u.role,n.res)||n.id==='dashboard'||n.id.startsWith('owner_'));
   return`<div class="sidebar"><div class="sb-head"><div class="sb-logo"><div class="sb-logo-icon"><span style="font-size:11px;font-weight:800;letter-spacing:-0.5px;color:#fff;line-height:1;font-family:'Outfit',sans-serif">DH</span></div><div><div class="sb-logo-name">DriveHub</div><div class="sb-logo-sub">${isDriver?'Driver Portal':u&&u.role==='owner'?'Owner Console':isAcc?'Finance Console':u&&u.role==='general_manager'?'Operations':u&&u.role==='manager'?'Manager':'Admin Console'}</div></div></div></div>
   <div class="sb-nav"><div class="sb-section">${isDriver?'Driver':'Navigation'}</div>${visible.map((n,i)=>{
+    if(n.id==='_sec') return`<div class="sb-section" style="margin-top:14px">${esc(n.label)}</div>`;
     const isActive=isDriver?(n.id==='onroute_rates'?state.page==='onroute_rates':(state.page!=='onroute_rates'&&((state.drvTab||'route')===(n.tab||'route')&&i>0||(i===0&&!state.drvTab)))):state.page===n.id;
     const navClick=isDriver&&n.id==='onroute_rates'?`navigate('onroute_rates')`:isDriver&&n.tab?`setDrvTab('${n.tab}')`:`navigate('${n.id}')`;
     return`<div class="nav-item${isActive?' active':''}" onclick="${navClick}">${icon(n.icon)}<span style="flex:1">${esc(n.label)}</span>${n.badge>0?`<span class="nav-badge">${n.badge}</span>`:''}</div>`;
@@ -2844,6 +3043,10 @@ function renderPage(){
     case'acct_locations':return renderAcctLocations();
     case'reporting':return renderReporting();
     case'kanban_board':return renderKanbanBoard();
+    case'onroute_rates':return renderOnRouteRates();
+    case'admin_data_streams':return renderAdminDataStreams();
+    case'admin_platform':return renderAdminPlatform();
+    case'admin_system':return renderAdminSystem();
     default:return renderDashboard();
   }
 }
@@ -2870,7 +3073,7 @@ function render(){
   setTimeout(initMaps,50);
   setTimeout(conReplacePagePins,60);
   setTimeout(initStarField,10);
-  // Show constructor toggle and toolbar
+  // Show edits toggle and toolbar
   if(tog){tog.classList.add('vis');tog.style.display='';}
   if(conEl&&CON.visible)conEl.classList.add('vis');
 }
@@ -3333,9 +3536,9 @@ function startSimulation(){
 // ══════════════════════════════════════════════════════════
 const CON={mode:null,annotations:[],textChanges:[],activeEdit:null,nextId:1,visible:true};
 
-(function injectConstructor(){
+(function injectEdits(){
   const tog=document.createElement("button");
-  tog.id="dh-toggle";tog.textContent="⬡ Constructor";
+  tog.id="dh-toggle";tog.textContent="⬡ Edits";
   tog.onclick=()=>conToggleVisible();
   document.body.appendChild(tog);
 
@@ -3352,7 +3555,7 @@ const CON={mode:null,annotations:[],textChanges:[],activeEdit:null,nextId:1,visi
       </div>
     </div>
     <div id="dh-tb">
-      <span id="dh-label">Constructor</span>
+      <span id="dh-label">Edits</span>
       <div class="dh-sep"></div>
       <button class="dh-btn" id="dh-btn-text" onclick="conSetMode('text')">✏ Edit Text <span class="dh-badge tx" id="dh-tx-count">0</span></button>
       <button class="dh-btn" id="dh-btn-ann" onclick="conSetMode('annotate')">📌 Annotate <span class="dh-badge" id="dh-ann-count">0</span></button>
@@ -3414,11 +3617,11 @@ window.conExport=()=>{
   const now=new Date();const ds=now.toISOString().slice(0,10);
   let md=`# DriveHub — Change Annotations\n**Exported:** ${ds} · **User:** ${state.user?.name||'Unknown'}\n\n---\n\n`;
   all.forEach(item=>{const tag=item.kind==="text"?"TEXT EDIT":"ANNOTATION";md+=`## ${item.id}. [${tag}] — ${item.page.toUpperCase()}\n`;if(item.kind==="text"){md+=`Rename \`"${item.oldVal}"\` → \`"${item.newVal}"\`\n\n`;}else{md+=`${item.desc}\n\n> *Location: (${Math.round(item.x)}px, ${Math.round(item.y)}px) · Element: \`${item.target}\`*\n\n`;}});
-  md+=`---\n*Generated by DriveHub Constructor · ${all.length} change${all.length!==1?"s":""} total*\n`;
+  md+=`---\n*Generated by DriveHub Edits · ${all.length} change${all.length!==1?"s":""} total*\n`;
   const blob=new Blob([md],{type:"text/markdown;charset=utf-8"});
   const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=`rsp_changes_${ds}.md`;a.click();URL.revokeObjectURL(url);
 };
-function conToggleVisible(){CON.visible=!CON.visible;document.getElementById("dh-con").classList.toggle("vis",CON.visible);document.getElementById("dh-toggle").textContent=CON.visible?"⬡ Hide Constructor":"⬡ Constructor";}
+function conToggleVisible(){CON.visible=!CON.visible;document.getElementById("dh-con").classList.toggle("vis",CON.visible);document.getElementById("dh-toggle").textContent=CON.visible?"⬡ Hide Edits":"⬡ Edits";}
 function conCurrentPage(){return state.page||'dashboard';}
 function conSelector(el){if(el.id)return"#"+el.id;const cls=typeof el.className==="string"?"."+el.className.trim().split(/\s+/).slice(0,2).join("."):"";return(el.tagName.toLowerCase()+cls).slice(0,60);}
 
@@ -3469,7 +3672,7 @@ window.closeSidebar=function(){
   if(ov)ov.classList.remove('open');
 };
 
-// ── Touch support for Constructor pin placement ──
+// ── Touch support for Edits pin placement ──
 document.addEventListener('touchstart',function(e){
   if(CON.mode!=='annotate')return;
   if(e.target.closest('#dh-con')||e.target.closest('#dh-dialog')||e.target.closest('#dh-toggle')||e.target.closest('.dh-pin-del'))return;
