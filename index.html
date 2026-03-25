@@ -918,6 +918,30 @@ a,button,select,.nav-item,.tab-item,.demo-btn,.demo-dropdown summary,.btn,.notif
   .dh-pin-dot{width:30px;height:30px;font-size:12px}
   .dh-pin-del{width:22px;height:22px;font-size:11px;top:-10px;right:-10px}
 }
+
+/* ── Driver License Card ── */
+.drv-lic-card{background:linear-gradient(135deg,#101528 0%,#0c1020 100%);border:1px solid rgba(0,212,255,.22);border-radius:10px;padding:11px 12px;margin-bottom:10px;position:relative;overflow:hidden;cursor:pointer;transition:border-color .18s,box-shadow .18s}
+.drv-lic-card:hover{border-color:rgba(0,212,255,.55);box-shadow:0 4px 18px rgba(0,212,255,.13)}
+.drv-lic-card::before{content:'DRIVER LICENSE';position:absolute;top:7px;right:10px;font-size:7px;letter-spacing:2.5px;font-weight:700;color:rgba(0,212,255,.45);font-family:var(--mono);pointer-events:none}
+.drv-lic-card::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,212,255,.03) 0%,transparent 60%);pointer-events:none}
+.drv-lic-photo{width:48px;height:60px;border-radius:5px;background:rgba(0,212,255,.1);border:2px solid rgba(0,212,255,.28);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;flex-shrink:0;color:var(--primary);position:relative;overflow:hidden}
+.drv-lic-photo-stripe{position:absolute;bottom:0;left:0;right:0;height:12px;background:linear-gradient(0deg,rgba(0,212,255,.25) 0%,transparent 100%)}
+.drv-lic-name{font-size:12px;font-weight:700;color:var(--text);letter-spacing:.4px;line-height:1.2;margin-bottom:2px}
+.drv-lic-num{font-family:var(--mono);font-size:9px;color:var(--primary);font-weight:600;letter-spacing:1px;margin-bottom:3px}
+.drv-lic-meta{font-size:9.5px;color:var(--muted);line-height:1.7}
+.drv-lic-bar{height:3px;border-radius:2px;background:var(--border);overflow:hidden;margin-top:8px}
+.drv-lic-bar-fill{height:100%;background:linear-gradient(90deg,var(--ok-t),#34d399);border-radius:2px;transition:width .6s}
+
+/* ── Facility Card ── */
+.facility-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:0;cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .15s;overflow:hidden;position:relative}
+.facility-card:hover{border-color:var(--primary);box-shadow:var(--sh2);transform:translateY(-2px)}
+.facility-card.active{border-color:var(--primary);background:rgba(0,212,255,.06)}
+.facility-card-stripe{width:100%;height:4px;flex-shrink:0}
+.facility-card-body{padding:14px 16px}
+.facility-card-stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+.facility-card-stat-val{font-size:15px;font-weight:700;line-height:1.1}
+.facility-card-stat-lbl{font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.facility-card-footer{display:flex;gap:10px;flex-wrap:wrap;padding-top:8px;border-top:1px solid var(--border-sub);font-size:11px;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -1853,7 +1877,9 @@ function renderTeam(){
   const grouped={};USERS.forEach(u=>{if(!grouped[u.role])grouped[u.role]=[];grouped[u.role].push(u);});
   return `<div class="page">
     <div class="ph"><div><div class="pt">Team</div><div class="ps">${USERS.length} platform users</div></div></div>
-    ${ROLE_ORDER.filter(r=>grouped[r]).map(role=>`<div class="mb6"><div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><div class="st" style="margin:0">${esc(ROLE_LABELS[role])}</div><span class="badge b-secondary">${grouped[role].length}</span></div><div class="gc" style="gap:12px">${grouped[role].map(u=>{const cn=u.co?companies.find(c=>c.id===u.co)?.name:null;const dd=u.role==='driver'?DRIVER_DATA[u.id]:null;return`<div class="card cb" style="padding:14px"><div class="user-card"><div class="av-lg" style="background:${AVB[role]};color:${AVATAR_COLOR[role]}">${initials(u.name)}</div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:3px"><div style="font-weight:600;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(u.name)}</div><span class="badge ${u.active?'b-active':'b-inactive'}">${u.active?'Active':'Inactive'}</span></div><span class="badge b-${role}" style="margin-bottom:5px">${esc(ROLE_LABELS[role])}</span><br/>${u.phone?`<div class="icon-row" style="margin-top:5px">${icon('Phone')}&nbsp;${esc(u.phone)}</div>`:''}<div class="icon-row">${icon('Mail')}&nbsp;<span style="font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(u.email)}</span></div>${cn?`<div class="icon-row">${icon('Building2')}&nbsp;${esc(cn)}</div>`:''}</div></div></div>`;}).join('')}</div></div>`).join('')}
+    ${ROLE_ORDER.filter(r=>grouped[r]).map(role=>`<div class="mb6"><div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><div class="st" style="margin:0">${esc(ROLE_LABELS[role])}</div><span class="badge b-secondary">${grouped[role].length}</span></div><div class="gc" style="gap:12px">${grouped[role].map(u=>{const co=u.co?companies.find(c=>c.id===u.co):null;const cn=co?.name||null;const dd=u.role==='driver'?DRIVER_DATA[u.id]:null;const gps=u.role==='driver'?DRIVER_GPS[u.id]:null;const pct=dd?Math.round(dd.currentRoute.completed/dd.currentRoute.totalStops*100):0;return`<div class="card cb" style="padding:14px;cursor:pointer" onclick="toast('${esc(u.name)} · ${esc(ROLE_LABELS[role])}')">
+              ${u.role==='driver'&&dd?driverLicenseCard(u,dd,gps,co,pct):`<div class="user-card" style="margin-bottom:0"><div class="av-lg" style="background:${AVB[role]};color:${AVATAR_COLOR[role]}">${initials(u.name)}</div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:3px"><div style="font-weight:600;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(u.name)}</div><span class="badge ${u.active?'b-active':'b-inactive'}">${u.active?'Active':'Inactive'}</span></div><span class="badge b-${role}" style="margin-bottom:5px">${esc(ROLE_LABELS[role])}</span><br/>${u.phone?`<div class="icon-row" style="margin-top:5px">${icon('Phone')}&nbsp;${esc(u.phone)}</div>`:''}<div class="icon-row">${icon('Mail')}&nbsp;<span style="font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(u.email)}</span></div>${cn?`<div class="icon-row">${icon('Building2')}&nbsp;${esc(cn)}</div>`:''}</div></div>`}
+              ${u.role==='driver'&&dd?`<div style="display:flex;gap:8px;margin-top:2px;font-size:11px"><span class="badge b-${role}">${esc(ROLE_LABELS[role])}</span>${u.phone?'<span style="color:var(--muted)">'+esc(u.phone)+'</span>':''}</div>`:''}</div>`;}).join('')}</div></div>`).join('')}
   </div>`;
 }
 
@@ -1911,7 +1937,29 @@ function renderOwnerFleet(){
     <div class="ph"><div><div class="pt">${icon('Truck')}&nbsp;Fleet Command</div><div class="ps">${ops.driverCount} drivers · ${ops.co.fleet} vehicles</div></div><span class="badge b-active">${active} active · ${completed} done</span></div>
     <div class="g4 mb4">${[{t:'On Shift',v:ops.driversOnShift,s:`of ${ops.driverCount}`,ic:'Users',bg:'var(--primary-bg)',d:'Drivers currently on active delivery routes right now'},{t:'Stops Done',v:totalStops.toLocaleString(),s:'all routes',ic:'CheckCircle',bg:'var(--ok-bg)',d:'Total delivery stops completed across all active drivers today'},{t:'Avg OTP',v:avgOtp+'%',s:'target 95%',ic:'Clock',bg:parseFloat(avgOtp)>=95?'var(--ok-bg)':'var(--warn-bg)',d:'Average on-time performance across all drivers — target is 95%+'},{t:'Earnings',v:'$'+totalEarnings.toLocaleString(),s:'driver pay today',ic:'DollarSign',bg:'var(--primary-bg)',d:'Total driver compensation earned today based on per-stop rates'}].map(kpiCard).join('')}</div>
     <div class="filters"><div class="inp-w" style="flex:1;min-width:180px"><span class="inp-ic">${icon('Search')}</span><input class="inp has-ic" id="fleet-search" placeholder="Search driver, zone…" value="${esc(search)}" oninput="rerenderPage()"/></div><select class="inp" id="fleet-status" style="width:140px" onchange="rerenderPage()"><option value="all"${statusF==='all'?' selected':''}>All</option><option value="active"${statusF==='active'?' selected':''}>Active</option><option value="completed"${statusF==='completed'?' selected':''}>Completed</option><option value="idle"${statusF==='idle'?' selected':''}>Idle</option></select></div>
-    <div class="card cb"><table><thead><tr><th></th><th>Driver</th><th>Zone</th><th>Vehicle</th><th>Stops</th><th>Progress</th><th style="text-align:right">OTP</th><th style="text-align:right">Rating</th><th style="text-align:right">Earned</th><th>Status</th></tr></thead><tbody>${drivers.map((d,i)=>`<tr><td style="font-size:11px;color:var(--dim);width:28px">${i+1}</td><td style="font-weight:500">${esc(d.name)}</td><td><span class="spec-tag">${esc(d.zone)}</span></td><td style="font-family:var(--mono);font-size:11px;color:var(--muted)">${esc(d.vehicle)}</td><td>${d.done}/${d.stops}</td><td style="min-width:80px"><div style="display:flex;align-items:center;gap:6px"><div style="flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden"><div style="height:100%;width:${d.stops>0?Math.round(d.done/d.stops*100):0}%;background:${d.done>=d.stops?'var(--ok-t)':'var(--primary)'};border-radius:3px"></div></div><span style="font-size:10px;font-weight:600;color:var(--muted)">${d.stops>0?Math.round(d.done/d.stops*100):0}%</span></div></td><td style="text-align:right;font-weight:500;color:${d.otp>=95?'var(--ok-t)':d.otp>=90?'var(--warn-t)':'var(--err-t)'}">${d.otp}%</td><td style="text-align:right">${d.rating}★</td><td style="text-align:right;font-weight:600">$${d.earnings}</td><td>${statusBadge(d.status)}</td></tr>`).join('')}</tbody></table></div>
+    <div class="st">Driver Cards</div>
+    <div class="driver-card-row mb4">${drivers.slice(0,12).map(d=>{const pct=d.stops>0?Math.round(d.done/d.stops*100):0;const licNum='DL-CA-'+String(1000000+d.id*137891%9000000).padStart(7,'0');const dob=DRV_LIC_DOBS[d.id%DRV_LIC_DOBS.length];const expYear=2026+(d.id%4);return`<div class="card cb" style="cursor:pointer" onclick="toast('${esc(d.name)} · ${esc(d.zone)} · ${pct}% complete')">
+      <div class="drv-lic-card" style="margin-bottom:10px">
+        <div style="display:flex;gap:10px;align-items:flex-start">
+          <div class="drv-lic-photo">${d.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase()}<div class="drv-lic-photo-stripe"></div></div>
+          <div style="flex:1;min-width:0;padding-right:60px">
+            <div class="drv-lic-name">${esc(d.name)}</div>
+            <div class="drv-lic-num">${esc(licNum)}</div>
+            <div class="drv-lic-meta">DOB: ${dob} &nbsp; EXP: 12/${expYear}<br/>${esc(ops.co.name)} · ${esc(d.zone)}</div>
+          </div>
+        </div>
+        <div class="drv-lic-bar"><div class="drv-lic-bar-fill" style="width:${pct}%"></div></div>
+        <div style="font-size:9px;color:var(--muted);margin-top:3px">${pct}% route · ${d.done}/${d.stops} stops</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;font-size:11px">
+        <span style="color:var(--muted)">OTP</span><span style="font-weight:600;color:${d.otp>=95?'var(--ok-t)':d.otp>=90?'var(--warn-t)':'var(--err-t)'}">${d.otp}%</span>
+        <span style="color:var(--muted)">Rating</span><span style="font-weight:600;color:var(--warn-t)">${d.rating}★</span>
+        <span style="color:var(--muted)">Earned</span><span style="font-weight:600;color:var(--ok-t)">$${d.earnings}</span>
+        <span style="margin-left:auto">${statusBadge(d.status)}</span>
+      </div>
+    </div>`;}).join('')}</div>
+    <div class="st">Driver Performance Table</div>
+    <div class="card cb"><table><thead><tr><th></th><th>Driver</th><th>Zone</th><th>Vehicle</th><th>Stops</th><th>Progress</th><th style="text-align:right">OTP</th><th style="text-align:right">Rating</th><th style="text-align:right">Earned</th><th>Status</th></tr></thead><tbody>${drivers.map((d,i)=>`<tr style="cursor:pointer" onclick="toast('${esc(d.name)} · ${esc(d.zone)}')"><td style="font-size:11px;color:var(--dim);width:28px">${i+1}</td><td style="font-weight:500">${esc(d.name)}</td><td><span class="spec-tag">${esc(d.zone)}</span></td><td style="font-family:var(--mono);font-size:11px;color:var(--muted)">${esc(d.vehicle)}</td><td>${d.done}/${d.stops}</td><td style="min-width:80px"><div style="display:flex;align-items:center;gap:6px"><div style="flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden"><div style="height:100%;width:${d.stops>0?Math.round(d.done/d.stops*100):0}%;background:${d.done>=d.stops?'var(--ok-t)':'var(--primary)'};border-radius:3px"></div></div><span style="font-size:10px;font-weight:600;color:var(--muted)">${d.stops>0?Math.round(d.done/d.stops*100):0}%</span></div></td><td style="text-align:right;font-weight:500;color:${d.otp>=95?'var(--ok-t)':d.otp>=90?'var(--warn-t)':'var(--err-t)'}">${d.otp}%</td><td style="text-align:right">${d.rating}★</td><td style="text-align:right;font-weight:600">$${d.earnings}</td><td>${statusBadge(d.status)}</td></tr>`).join('')}</tbody></table></div>
   </div>`;
 }
 function renderOwnerFinancials(){
@@ -2191,6 +2239,68 @@ function renderDriverReport(dd,u){
 
 
 // ══════════════════════════════════════════════════════════
+// DRIVER LICENSE CARD HELPER
+// ══════════════════════════════════════════════════════════
+const DRV_LIC_DOBS=['05/12/1988','03/24/1991','11/08/1985','07/19/1993','02/28/1990','09/14/1987','12/01/1995','07/30/1982'];
+const DRV_LIC_STATES={1:'CA',2:'CA',3:'AZ',4:'CA',6:'CA',7:'CA',8:'AZ'};
+function driverLicenseCard(u,dd,gps,co,pct){
+  const stateCode=DRV_LIC_STATES[u.id]||'CA';
+  const licNum='DL-'+stateCode+'-'+String(1000000+u.id*137891%9000000).padStart(7,'0');
+  const expYear=2026+((u.id*3)%4);
+  const dob=DRV_LIC_DOBS[u.id%DRV_LIC_DOBS.length];
+  const liveDot=gps?'<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--ok-t);margin-right:4px;vertical-align:middle"></span>':''
+  const speedStr=gps?' · '+gps.speed+' mph':'';
+  const routeStr=dd?' · '+dd.zone:'';
+  const barPct=pct!=null?pct:0;
+  return`<div class="drv-lic-card" onclick="toast('Driver: ${esc(u.name)} — License ${esc(licNum)}')">
+    <div style="display:flex;gap:10px;align-items:flex-start">
+      <div class="drv-lic-photo">${initials(u.name)}<div class="drv-lic-photo-stripe"></div></div>
+      <div style="flex:1;min-width:0;padding-right:60px">
+        <div class="drv-lic-name">${esc(u.name)}</div>
+        <div class="drv-lic-num">${esc(licNum)}</div>
+        <div class="drv-lic-meta">DOB: ${dob} &nbsp; EXP: 12/${expYear}<br/>
+        ${esc(stateCode)} LICENSE${co?' · '+esc(co.name):''}${routeStr}<br/>
+        ${liveDot}${gps?'<span style="color:var(--ok-t)">Live</span>'+speedStr:'Offline'}</div>
+      </div>
+    </div>
+    ${dd?`<div class="drv-lic-bar"><div class="drv-lic-bar-fill" style="width:${barPct}%"></div></div><div style="font-size:9px;color:var(--muted);margin-top:3px">${barPct}% route · ${dd.currentRoute.completed}/${dd.currentRoute.totalStops} stops</div>`:''}
+  </div>`;
+}
+
+// ══════════════════════════════════════════════════════════
+// FACILITY CARD HELPER
+// ══════════════════════════════════════════════════════════
+function facilityCard(loc,isActive,onClickFn){
+  const s=loc.summary;
+  const losColor=s.losRate>=98?'var(--ok-t)':s.losRate>=96?'var(--warn-t)':'var(--err-t)';
+  const otpColor=s.custOTP>=90?'var(--ok-t)':s.custOTP>=85?'var(--warn-t)':'var(--err-t)';
+  const click=onClickFn||("acctFilterLoc('"+loc.id+"')");
+  return`<div class="facility-card${isActive?' active':''}" onclick="${click}">
+    <div class="facility-card-stripe" style="background:${loc.color}"></div>
+    <div class="facility-card-body">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px">
+        <div>
+          <div style="font-weight:700;font-size:14px;line-height:1.2">${esc(loc.name)}</div>
+          <div style="font-size:10px;color:var(--muted);font-family:var(--mono);margin-top:1px">${esc(loc.facility)} · ${esc(loc.region)}</div>
+        </div>
+        <span class="badge b-active" style="flex-shrink:0">${esc(loc.state)}</span>
+      </div>
+      <div class="facility-card-stat-grid">
+        <div><div class="facility-card-stat-lbl">LOS Rate</div><div class="facility-card-stat-val" style="color:${losColor}">${s.losRate}%</div></div>
+        <div><div class="facility-card-stat-lbl">Cust OTP</div><div class="facility-card-stat-val" style="color:${otpColor}">${s.custOTP}%</div></div>
+        <div><div class="facility-card-stat-lbl">Volume</div><div class="facility-card-stat-val">${(s.volume/1000).toFixed(1)}K</div></div>
+      </div>
+      <div class="facility-card-footer">
+        <span>${icon('Users')}&nbsp;${loc.drivers} drivers</span>
+        <span>${icon('Truck')}&nbsp;${loc.fleet} vehicles</span>
+        <span>${icon('Building2')}&nbsp;${loc.spCount} SPs</span>
+        <span style="margin-left:auto;font-size:10px;color:var(--primary)">View →</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ══════════════════════════════════════════════════════════
 // DRIVER TRACKING
 // ══════════════════════════════════════════════════════════
 function renderTracking(){
@@ -2200,17 +2310,16 @@ function renderTracking(){
     <div class="driver-card-row">${driverUsers.map(u=>{
       const dd=DRIVER_DATA[u.id];const gps=DRIVER_GPS[u.id];const co=companies.find(c=>c.id===u.co);
       if(!dd||!gps)return'';const rt=dd.currentRoute;const pct=Math.round(rt.completed/rt.totalStops*100);
-      return`<div class="card cb">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-          <div class="avatar" style="background:rgba(249,115,22,.15);color:#f97316;width:36px;height:36px">${initials(u.name)}</div>
-          <div style="flex:1;min-width:0"><div style="font-weight:600;font-size:13px">${esc(u.name)}</div><div style="font-size:11px;color:var(--muted)">${esc(co?.name||'')} · ${esc(dd.zone)}</div></div>
-          <span class="badge b-active" style="font-size:10px"><span class="drv-status-dot"></span>&nbsp;Active</span>
-        </div>
+      return`<div class="card cb" style="cursor:pointer" onclick="toast('${esc(u.name)} · ${esc(dd.zone)} · Route ${esc(rt.routeId)}')">
+        ${driverLicenseCard(u,dd,gps,co,pct)}
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
-          ${[{l:'Stops',v:rt.completed+'/'+rt.totalStops},{l:'Speed',v:gps.speed+' mph'},{l:'Updated',v:gps.lastUpdate}].map(s=>'<div style="background:var(--border-sub);padding:4px 8px;border-radius:6px;font-size:11px"><span style="color:var(--muted)">'+s.l+':</span> <span style="font-weight:600">'+s.v+'</span></div>').join('')}
+          ${[{l:'Speed',v:gps.speed+' mph'},{l:'Updated',v:gps.lastUpdate},{l:'Vehicle',v:dd.vehicleType+' '+dd.vehicleId}].map(s=>'<div style="background:var(--border-sub);padding:4px 8px;border-radius:6px;font-size:11px"><span style="color:var(--muted)">'+s.l+':</span> <span style="font-weight:600">'+s.v+'</span></div>').join('')}
         </div>
-        <div class="progress" style="height:6px;border-radius:3px;background:var(--border);margin:0"><div style="height:100%;width:${pct}%;background:var(--ok-t);border-radius:3px"></div></div>
-        <div style="font-size:10px;color:var(--muted);margin-top:3px">${pct}% route complete · ${esc(dd.vehicleType)} ${esc(dd.vehicleId)}</div>
+        <div style="display:flex;gap:8px;font-size:11px;margin-top:4px">
+          <span style="color:var(--muted)">OTP</span><span style="font-weight:600;color:var(--ok-t)">${dd.onTimeRate}%</span>
+          <span style="color:var(--muted);margin-left:8px">Rating</span><span style="font-weight:600;color:var(--warn-t)">${dd.customerRating}★</span>
+          <span class="badge b-active" style="font-size:10px;margin-left:auto"><span class="drv-status-dot"></span>&nbsp;Active</span>
+        </div>
       </div>`;
     }).join('')}</div>
     <div class="card mb4" style="overflow:hidden"><div class="ch">${icon('MapPin')}&nbsp;Live Driver Locations</div><div class="cb" style="padding:0"><div id="tracking-map" class="tracking-map"></div></div></div>
@@ -2266,8 +2375,13 @@ function renderDriverStats(){
   const alertBanner=alertSPs.length>0?`<div class="card cb mb4" style="border-left:3px solid var(--err-t);background:var(--err-bg)"><div style="display:flex;align-items:flex-start;gap:10px"><span style="color:var(--err-t);flex-shrink:0;margin-top:2px">${icon('AlertTriangle')}</span><div style="flex:1"><div style="font-weight:600;font-size:13px;color:var(--err-t);margin-bottom:4px">Action Required — SP ${alertSPs[0].sp} / ${alertSPs[0].territory} (ZIP ${alertSPs[0].zip})</div><div style="font-size:12px;color:var(--muted)">${alertSPs[0].lates} SP Lates · ${alertSPs[0].d1Fail} Incomplete D1 · ${alertSPs[0].d2Fail} Incomplete D2 · Customer OTP ${alertSPs[0].otp}%</div></div></div></div>`:'';
   const exceptions=[{label:'OD Not Delivered',val:d.odNotDelivered,color:'var(--err-t)'},{label:'Incomplete D1',val:382,color:'var(--warn-t)'},{label:'Incomplete D2',val:362,color:'var(--amber-t)'},{label:'Lost (SP + Delivery)',val:d.lostSP+30,color:'var(--err-t)'},{label:'Bad Weather',val:d.badWeather,color:'var(--info-t)'},{label:'SP Lates',val:d.spLates,color:'var(--warn-t)'},{label:'Before Cutoff',val:d.beforeCutoff,color:'var(--muted)'},{label:'Signature Missing',val:d.signatureMissing,color:'var(--pur-t)'}];
   const maxExc=Math.max(...exceptions.map(e=>e.val));
+  const pitLoc=LOCATIONS.find(l=>l.id==='LOC-PIT')||LOCATIONS[0];
   return `<div class="page">
     <div class="ph"><div><div class="pt">Driver Statistics</div><div class="ps">DSP performance metrics · ${esc(d.facility)} (code ${esc(d.code)}) · ${esc(d.period)}</div></div><span class="badge b-info-t">${d.spPerformance.length} SPs · 9 Territories</span></div>
+    <div class="st">Active Facility</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px">${facilityCard(pitLoc,true,"toast('Facility: "+esc(pitLoc.name)+"')")}
+    <div class="card" style="grid-column:span 2"><div class="ch">${icon('BarChart2')}&nbsp;Facility Overview · ${esc(pitLoc.name)}</div><div class="cb"><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">${[{l:'Net OTP',v:pitLoc.summary.netOTP+'%',c:'var(--ok-t)'},{l:'Branch OTP',v:pitLoc.summary.branchOTP+'%',c:'var(--ok-t)'},{l:'Lost SP',v:pitLoc.summary.lostSP,c:'var(--err-t)'},{l:'Bad Weather',v:pitLoc.summary.badWeather,c:'var(--info-t)'},{l:'Inc D1',v:pitLoc.summary.incD1,c:'var(--warn-t)'},{l:'Inc D2',v:pitLoc.summary.incD2,c:'var(--warn-t)'},{l:'Before Cutoff',v:pitLoc.summary.beforeCutoff,c:'var(--muted)'},{l:'OD%',v:pitLoc.summary.odPct+'%',c:'var(--ok-t)'}].map(s=>'<div><div style="font-size:10px;color:var(--muted)">'+s.l+'</div><div style="font-size:16px;font-weight:700;color:'+s.c+'">'+s.v+'</div></div>').join('')}</div></div></div>
+    </div>
     ${alertBanner}
     <div class="ds-kpi-row">
       <div class="ds-kpi"><div class="ds-kpi-label">${icon('Package')}&nbsp;Total Volume</div><div class="ds-kpi-val">${d.totalVolume.toLocaleString()}</div><div class="ds-kpi-sub">packages inducted</div></div>
@@ -2303,7 +2417,7 @@ function renderAcctLocations(){
       <div class="ds-kpi"><div class="ds-kpi-label">${icon('Truck')}&nbsp;Fleet</div><div class="ds-kpi-val">${LOCATIONS.reduce((a,l)=>a+l.drivers,0)}</div><div class="ds-kpi-sub">drivers · ${LOCATIONS.reduce((a,l)=>a+l.fleet,0)} vehicles</div></div>
     </div>
     <div class="st">Location Summary — ${locLabel}</div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">${locSummary.map(l=>{const isActive=acctLocFilter===l.id;return'<div class="card cb" style="cursor:pointer;'+(isActive?'border-color:var(--primary);background:var(--primary-bg)':'')+'" onclick="acctFilterLoc(\''+l.id+'\')"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><div style="display:flex;align-items:center;gap:6px"><div style="width:10px;height:10px;border-radius:50%;background:'+l.color+'"></div><span style="font-weight:600;font-size:13px">'+esc(l.name)+'</span></div><span class="badge b-active">'+esc(l.state)+'</span></div><div style="font-size:11px;color:var(--muted);margin-bottom:8px">'+esc(l.facility)+' · '+l.spCount+' SPs · '+l.drivers+' drivers</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px"><div><div style="font-size:10px;color:var(--muted)">Volume</div><div style="font-size:14px;font-weight:700">'+l.totVol.toLocaleString()+'</div></div><div><div style="font-size:10px;color:var(--muted)">Avg LOS</div><div style="font-size:14px;font-weight:700;color:'+(l.avgLOS>=98?'var(--ok-t)':'var(--warn-t)')+'">'+l.avgLOS+'%</div></div></div></div>';}).join('')}</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px">${LOCATIONS.map(loc=>{const isActive=acctLocFilter===loc.id;return facilityCard(loc,isActive);}).join('')}</div>
     <div class="card mb4"><div class="ch" style="justify-content:space-between"><span>${icon('FileText')}&nbsp;Daily Detail — ${data.length} rows</span>${acctLocFilter!=='all'?'<button class="btn btn-sm btn-o" onclick="acctFilterLoc(\'all\')">Show All</button>':''}</div>
     <div class="cb" style="overflow-x:auto"><table><thead><tr><th ${thS} onclick="acctSort('day')">Day ${sIc('day')}</th><th>Date</th><th>Dow</th><th>Location</th><th ${thS} onclick="acctSort('volume')" style="text-align:right">Volume ${sIc('volume')}</th><th style="text-align:right">Stops</th><th style="text-align:right">Delivered</th><th ${thS} onclick="acctSort('losRate')" style="text-align:right">LOS% ${sIc('losRate')}</th><th ${thS} onclick="acctSort('custOTP')" style="text-align:right">Cust OTP% ${sIc('custOTP')}</th><th style="text-align:right">Bad W</th><th style="text-align:right">Inc D1</th><th style="text-align:right">Lost SP</th><th style="text-align:right">Drivers</th></tr></thead>
     <tbody>${data.slice(0,100).map(d=>'<tr><td>'+d.day+'</td><td style="font-family:monospace;font-size:11px">'+d.date+'</td><td>'+d.dow+'</td><td style="font-weight:500">'+esc(d.location)+'</td><td style="text-align:right">'+d.volume.toLocaleString()+'</td><td style="text-align:right">'+d.stops.toLocaleString()+'</td><td style="text-align:right">'+d.delivered.toLocaleString()+'</td><td style="text-align:right;font-weight:600;color:'+(parseFloat(d.losRate)>=98?'var(--ok-t)':'var(--warn-t)')+'">'+d.losRate+'%</td><td style="text-align:right;color:'+(parseFloat(d.custOTP)>=90?'var(--ok-t)':'var(--warn-t)')+'">'+d.custOTP+'%</td><td style="text-align:right">'+d.badWeather+'</td><td style="text-align:right">'+d.incD1+'</td><td style="text-align:right">'+d.lostSP+'</td><td style="text-align:right">'+d.driversActive+'</td></tr>').join('')}</tbody></table></div></div>
