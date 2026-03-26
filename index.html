@@ -1956,8 +1956,8 @@ function renderOwnerFleet(){
     <div class="g4 mb4">${[{t:'On Shift',v:ops.driversOnShift,s:`of ${ops.driverCount}`,ic:'Users',bg:'var(--primary-bg)',d:'Drivers currently on active delivery routes right now'},{t:'Stops Done',v:totalStops.toLocaleString(),s:'all routes',ic:'CheckCircle',bg:'var(--ok-bg)',d:'Total delivery stops completed across all active drivers today'},{t:'Avg OTP',v:avgOtp+'%',s:'target 95%',ic:'Clock',bg:parseFloat(avgOtp)>=95?'var(--ok-bg)':'var(--warn-bg)',d:'Average on-time performance across all drivers — target is 95%+'},{t:'Earnings',v:'$'+totalEarnings.toLocaleString(),s:'driver pay today',ic:'DollarSign',bg:'var(--primary-bg)',d:'Total driver compensation earned today based on per-stop rates'}].map(kpiCard).join('')}</div>
     <div class="filters"><div class="inp-w" style="flex:1;min-width:180px"><span class="inp-ic">${icon('Search')}</span><input class="inp has-ic" id="fleet-search" placeholder="Search driver, zone…" value="${esc(search)}" oninput="rerenderPage()"/></div><select class="inp" id="fleet-status" style="width:140px" onchange="rerenderPage()"><option value="all"${statusF==='all'?' selected':''}>All</option><option value="active"${statusF==='active'?' selected':''}>Active</option><option value="completed"${statusF==='completed'?' selected':''}>Completed</option><option value="idle"${statusF==='idle'?' selected':''}>Idle</option></select></div>
     <div class="st">Driver Cards</div>
-    <div class="driver-card-row mb4">${drivers.slice(0,12).map(d=>{const pct=d.stops>0?Math.round(d.done/d.stops*100):0;const licNum='DL-CA-'+String(1000000+d.id*137891%9000000).padStart(7,'0');const dob=DRV_LIC_DOBS[d.id%DRV_LIC_DOBS.length];const expYear=2026+(d.id%4);return`<div class="card cb" style="cursor:pointer" onclick="toast('${esc(d.name)} · ${esc(d.zone)} · ${pct}% complete')">
-      <div class="drv-lic-card" style="margin-bottom:10px" onclick="event.stopPropagation()">
+    <div class="driver-card-row mb4">${drivers.slice(0,12).map(d=>{const pct=d.stops>0?Math.round(d.done/d.stops*100):0;const licNum='DL-CA-'+String(1000000+d.id*137891%9000000).padStart(7,'0');const dob=DRV_LIC_DOBS[d.id%DRV_LIC_DOBS.length];const expYear=2026+(d.id%4);const cardInfo=drvModalInfo({key:'fleet-'+d.name,name:d.name,initials:d.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase(),stateCode:'CA',uid:d.id,pct,otp:d.otp,rating:d.rating,earnings:d.earnings,done:d.done,stops:d.stops,zone:d.zone,vehicle:d.vehicle,status:d.status,coName:ops.co.name});return`<div class="card cb" style="cursor:pointer" onclick="openDriverModal('${cardInfo}')">
+      <div class="drv-lic-card" style="margin-bottom:10px;cursor:pointer" onclick="event.stopPropagation();openDriverModal('${cardInfo}')">
         <div style="display:flex;gap:10px;align-items:flex-start">
           ${photoEl('fleet-'+d.name,d.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase(),48,60,5)}
           <div style="flex:1;min-width:0;padding-right:60px">
@@ -2361,7 +2361,7 @@ function driverLicenseCard(u,dd,gps,co,pct){
   const barPct=pct!=null?pct:0;
   const key='user-'+u.id;
   const modalInfo=drvModalInfo({key,uid:u.id,name:u.name,initials:initials(u.name),stateCode,pct:barPct,otp:dd?dd.onTimeRate:null,rating:dd?dd.customerRating:null,earnings:dd?dd.todayPay:null,done:dd?dd.currentRoute.completed:null,stops:dd?dd.currentRoute.totalStops:null,speed:gps?gps.speed:null,lastUpdate:gps?gps.lastUpdate:null,zone:dd?dd.zone:null,vehicleType:dd?dd.vehicleType:null,vehicleId:dd?dd.vehicleId:null,streak:dd?dd.streak:null,totalDeliveries:dd?dd.totalDeliveries:null,routeId:dd?dd.currentRoute.routeId:null,coName:co?co.name:null,email:u.email,phone:u.phone,role:u.role,status:u.active?'active':'inactive'});
-  return`<div class="drv-lic-card" onclick="openDriverModal('${modalInfo}')">
+  return`<div class="drv-lic-card" onclick="event.stopPropagation();openDriverModal('${modalInfo}')" style="cursor:pointer">
     <div style="display:flex;gap:10px;align-items:flex-start">
       ${photoEl(key,initials(u.name),48,60,5)}
       <div style="flex:1;min-width:0;padding-right:60px">
@@ -2419,17 +2419,7 @@ function renderTracking(){
     <div class="driver-card-row">${driverUsers.map(u=>{
       const dd=DRIVER_DATA[u.id];const gps=DRIVER_GPS[u.id];const co=companies.find(c=>c.id===u.co);
       if(!dd||!gps)return'';const rt=dd.currentRoute;const pct=Math.round(rt.completed/rt.totalStops*100);
-      return`<div class="card cb" style="cursor:pointer" onclick="toast('${esc(u.name)} · ${esc(dd.zone)} · Route ${esc(rt.routeId)}')">
-        ${driverLicenseCard(u,dd,gps,co,pct)}
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
-          ${[{l:'Speed',v:gps.speed+' mph'},{l:'Updated',v:gps.lastUpdate},{l:'Vehicle',v:dd.vehicleType+' '+dd.vehicleId}].map(s=>'<div style="background:var(--border-sub);padding:4px 8px;border-radius:6px;font-size:11px"><span style="color:var(--muted)">'+s.l+':</span> <span style="font-weight:600">'+s.v+'</span></div>').join('')}
-        </div>
-        <div style="display:flex;gap:8px;font-size:11px;margin-top:4px">
-          <span style="color:var(--muted)">OTP</span><span style="font-weight:600;color:var(--ok-t)">${dd.onTimeRate}%</span>
-          <span style="color:var(--muted);margin-left:8px">Rating</span><span style="font-weight:600;color:var(--warn-t)">${dd.customerRating}★</span>
-          <span class="badge b-active" style="font-size:10px;margin-left:auto"><span class="drv-status-dot"></span>&nbsp;Active</span>
-        </div>
-      </div>`;
+      return driverLicenseCard(u,dd,gps,co,pct);
     }).join('')}</div>
     <div class="card mb4" style="overflow:hidden"><div class="ch">${icon('MapPin')}&nbsp;Live Driver Locations</div><div class="cb" style="padding:0"><div id="tracking-map" class="tracking-map"></div></div></div>
   </div>`;
