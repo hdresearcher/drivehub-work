@@ -155,7 +155,7 @@ button{cursor:pointer}
 .topbar{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;border-bottom:1px solid var(--border);background:#0a0a0f;flex-shrink:0;gap:8px}
 .topbar-left{display:flex;align-items:center;gap:8px}
 .topbar-right{display:flex;align-items:center;gap:6px}
-#page-content{flex:1;overflow-y:auto;min-height:0;position:relative}
+#page-content{flex:1;overflow-y:auto;min-height:0;position:relative;z-index:0}
 .page{padding:20px 24px}
 
 .cb{padding:14px 16px}
@@ -728,7 +728,8 @@ body.dh-ann-mode #page-content{cursor:crosshair!important}
 .sb-toggle svg{pointer-events:none}
 
 /* Sidebar overlay backdrop */
-.sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:99;-webkit-tap-highlight-color:transparent}
+/* z-index must beat Leaflet controls (1000), tiles (200), markers (600) */
+.sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:1001;-webkit-tap-highlight-color:transparent}
 .sb-overlay.open{display:block}
 
 /* GPU-optimized stars */
@@ -752,7 +753,7 @@ a,button,select,.nav-item,.tab-item,.demo-btn,.demo-dropdown summary,.btn,.notif
   #star-canvas{display:none}
   /* Show hamburger, sidebar becomes overlay */
   .sb-toggle{display:flex}
-  .sidebar{position:fixed;left:0;top:0;bottom:0;z-index:100;transform:translateX(-100%);transition:transform .28s cubic-bezier(.4,0,.2,1);box-shadow:none;will-change:transform}
+  .sidebar{position:fixed;left:0;top:0;bottom:0;z-index:1002;transform:translateX(-100%);transition:transform .28s cubic-bezier(.4,0,.2,1);box-shadow:none;will-change:transform}
   .sidebar.open{transform:translateX(0);box-shadow:8px 0 40px rgba(0,0,0,.5)}
   .app{display:flex}
 
