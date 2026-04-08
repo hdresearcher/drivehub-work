@@ -1136,10 +1136,10 @@ a,button,select,.nav-item,.tab-item,.demo-btn,.demo-dropdown summary,.btn,.notif
 // ══════════════════════════════════════════════════════════
 const USERS=[
   {id:1,name:"Alex Reynolds",email:"admin@rspplatform.com",pw:"admin123",role:"admin",co:null,phone:"+1 (555) 000-0001",active:true},
-  {id:2,name:"Marcus Johnson",email:"owner@firstchoice.com",pw:"owner123",role:"owner",co:1,phone:"+1 (310) 555-0100",active:true},
-  {id:3,name:"Sarah Chen",email:"gm@ontrac-la.com",pw:"gm123",role:"general_manager",co:2,phone:"+1 (415) 555-0200",active:true},
-  {id:4,name:"David Torres",email:"accountant@swiftdel.com",pw:"acc123",role:"accountant",co:3,phone:"+1 (602) 555-0300",active:true},
-  {id:5,name:"Emily Rodriguez",email:"manager@pacrim.com",pw:"mgr123",role:"manager",co:4,phone:"+1 (323) 555-0400",active:true},
+  {id:2,name:"Marcus Johnson",email:"owner@firstchoice.com",pw:"owner123",role:"owner",co:100,phone:"+1 (310) 555-0100",active:true},
+  {id:3,name:"Sarah Chen",email:"gm@ontrac-la.com",pw:"gm123",role:"ontrac_manager",co:null,phone:"+1 (415) 555-0200",active:true},
+  {id:4,name:"David Torres",email:"accountant@swiftdel.com",pw:"acc123",role:"accountant",co:100,phone:"+1 (602) 555-0300",active:true},
+  {id:5,name:"Emily Rodriguez",email:"manager@pacrim.com",pw:"mgr123",role:"manager",co:100,phone:"+1 (323) 555-0400",active:true},
   {id:6,name:"James Williams",email:"driver@firstchoice.com",pw:"drv123",role:"driver",co:1,phone:"+1 (555) 500-0001",active:true},
   {id:7,name:"Miguel Hernandez",email:"driver2@ontrac-la.com",pw:"drv456",role:"driver",co:4,phone:"+1 (323) 500-0007",active:true},
   {id:8,name:"Keisha Brown",email:"driver3@swiftdel.com",pw:"drv789",role:"driver",co:3,phone:"+1 (602) 500-0008",active:true},
@@ -1391,6 +1391,236 @@ const REGION_RATES=[
   {region:"Atlanta / Southeast",state:"GA",rate:1.20,stops_avg:58,monthly:3120,change:+6.8,color:"#22c55e",tier:"growing"},
 ];
 
+// ══════════════════════════════════════════════════════════
+// NATIONWIDE DELIVERY PARTNERS — 11-State RSP Simulation
+// 550 drivers · 11 warehouses · co_id:100
+// ══════════════════════════════════════════════════════════
+const NDP_COMPANY={id:100,name:'NationWide Delivery Partners',dot:'US DOT-2847193',mc:'MC-491820',plan:'enterprise',
+  status:'active',city:'Columbus',state:'OH',area:'Multi-State',fleet:620,drivers:550,
+  phone:'+1 (614) 555-0100',rev:284000,specs:['Amazon RSP','OnTrac Partner','11 States','550 Drivers']};
+companies.push(NDP_COMPANY);
+
+// 11 state operations
+const NDP_STATES=[
+  {code:'OH',name:'Ohio',hub:'Columbus, OH',lat:39.9612,lng:-82.9988,color:'#00d4ff',rate:1.32,drivers:50,whCapacity:92,pkg:3420},
+  {code:'PA',name:'Pennsylvania',hub:'Pittsburgh, PA',lat:40.4406,lng:-79.9959,color:'#a78bfa',rate:1.38,drivers:50,whCapacity:88,pkg:3180},
+  {code:'MI',name:'Michigan',hub:'Detroit, MI',lat:42.3314,lng:-83.0458,color:'#f97316',rate:1.28,drivers:50,whCapacity:76,pkg:2940},
+  {code:'IN',name:'Indiana',hub:'Indianapolis, IN',lat:39.7684,lng:-86.1581,color:'#4ade80',rate:1.24,drivers:50,whCapacity:81,pkg:2760},
+  {code:'IL',name:'Illinois',hub:'Chicago, IL',lat:41.8781,lng:-87.6298,color:'#fbbf24',rate:1.42,drivers:50,whCapacity:94,pkg:3640},
+  {code:'WI',name:'Wisconsin',hub:'Milwaukee, WI',lat:43.0389,lng:-87.9065,color:'#2dd4bf',rate:1.19,drivers:50,whCapacity:68,pkg:2480},
+  {code:'KY',name:'Kentucky',hub:'Louisville, KY',lat:38.2527,lng:-85.7585,color:'#f87171',rate:1.22,drivers:50,whCapacity:73,pkg:2620},
+  {code:'WV',name:'West Virginia',hub:'Charleston, WV',lat:38.3498,lng:-81.6326,color:'#c084fc',rate:1.18,drivers:50,whCapacity:65,pkg:2280},
+  {code:'VA',name:'Virginia',hub:'Richmond, VA',lat:37.5407,lng:-77.4360,color:'#34d399',rate:1.35,drivers:50,whCapacity:85,pkg:3080},
+  {code:'NY',name:'New York',hub:'Buffalo, NY',lat:42.8864,lng:-78.8784,color:'#60a5fa',rate:1.55,drivers:50,whCapacity:97,pkg:4120},
+  {code:'NJ',name:'New Jersey',hub:'Newark, NJ',lat:40.7357,lng:-74.1724,color:'#fb923c',rate:1.62,drivers:50,whCapacity:96,pkg:4380},
+];
+
+// 11 warehouse nodes (one per state)
+const NDP_WAREHOUSES=NDP_STATES.map(function(s,i){
+  return{id:'WH-NDP-'+s.code,name:s.name+' Hub ('+s.hub+')',lat:s.lat+0.01,lng:s.lng+0.01,
+    asnOk:(i%5!==3),load:s.whCapacity,queue:Math.round(s.pkg/80),pkg:s.pkg,color:s.color,state:s.code};
+});
+
+// Algorithmically generate driver stats for a state (no hardcoding)
+var _ndpRngCache={};
+function _ndpRng(seed){
+  if(!_ndpRngCache[seed])_ndpRngCache[seed]=seededRng(seed);
+  return _ndpRngCache[seed]();
+}
+var NDP_FIRST_NAMES=['James','Maria','Robert','Jennifer','Michael','Linda','David','Patricia','William','Barbara','Richard','Susan','Joseph','Karen','Thomas','Nancy','Charles','Lisa','Christopher','Margaret','Daniel','Betty','Matthew','Dorothy','Anthony','Sandra','Mark','Ashley','Donald','Dorothy','Steven','Kimberly','Paul','Emily','Andrew','Donna','Kenneth','Michelle','Joshua','Carol','Kevin','Amanda','Brian','Melissa','George','Deborah','Timothy','Stephanie','Ronald','Rebecca'];
+var NDP_LAST_NAMES=['Williams','Johnson','Brown','Davis','Miller','Wilson','Moore','Taylor','Anderson','Thomas','Jackson','White','Harris','Martin','Thompson','Garcia','Martinez','Robinson','Clark','Rodriguez','Lewis','Lee','Walker','Hall','Allen','Young','Hernandez','King','Wright','Lopez','Hill','Scott','Green','Adams','Baker','Gonzalez','Nelson','Carter','Mitchell','Perez','Roberts','Turner','Phillips','Campbell','Parker','Evans','Edwards','Collins','Stewart'];
+var NDP_VEHICLES=['Cargo Van','Sprinter Van','Box Truck','Cargo Van','Cargo Van','Sprinter Van'];
+var NDP_ZONES=['North','South','East','West','Central','NE District','SW Zone','Metro A','Metro B','Suburban'];
+
+function ndpGetDriver(stateIdx,driverIdx){
+  // Deterministic generation via seeded RNG
+  var seed=stateIdx*1000+driverIdx+19937;
+  var r=function(){return _ndpRng(seed++);};
+  var st=NDP_STATES[stateIdx];
+  var firstName=NDP_FIRST_NAMES[Math.floor(r()*NDP_FIRST_NAMES.length)];
+  var lastName=NDP_LAST_NAMES[Math.floor(r()*NDP_LAST_NAMES.length)];
+  var name=firstName+' '+lastName;
+  var stops=Math.round(38+r()*44);
+  var now=new Date();var hour=now.getHours();
+  var donePct=hour<9?0.12:hour<12?0.42:hour<15?0.68:hour<18?0.88:0.95;
+  var done=Math.round(stops*(donePct+r()*0.1-0.05));done=Math.max(0,Math.min(stops,done));
+  var otp=+(90+r()*9.5).toFixed(1);
+  var vehicleType=NDP_VEHICLES[Math.floor(r()*NDP_VEHICLES.length)];
+  var vehicleId=(vehicleType==='Box Truck'?'BT':'CV')+'-'+(1000+stateIdx*50+driverIdx);
+  var zone=st.code+'-'+NDP_ZONES[Math.floor(r()*NDP_ZONES.length)];
+  var status=done>=stops?'completed':done>0?'active':'idle';
+  var rating=+(4.1+r()*0.85).toFixed(1);
+  var earnings=Math.round(done*st.rate);
+  var asnOk=(r()>0.08);
+  var cppu=+(4.8+r()*0.9).toFixed(2);
+  var losRate=+(97.2+r()*2.5).toFixed(1);
+  var totalDeliveries=Math.round(800+r()*2200);
+  var streak=Math.round(r()*25)|0;
+  return{id:'NDP-'+stateIdx+'-'+driverIdx,name,state:st.code,hub:st.hub,stops,done,
+    remaining:stops-done,otp,status,vehicleType,vehicleId,zone,rating,earnings,
+    asnOk,cppu,losRate,totalDeliveries,streak,rate:st.rate,
+    lat:st.lat+(r()-0.5)*0.12,lng:st.lng+(r()-0.5)*0.14,
+    speed:Math.round(r()*38)|0,heading:Math.round(r()*360)|0};
+}
+
+// Pre-computed state summaries (recalculated lazily)
+var _ndpStateSummaryCache={};
+function ndpGetStateSummary(stateIdx){
+  if(_ndpStateSummaryCache[stateIdx])return _ndpStateSummaryCache[stateIdx];
+  var drvs=[];for(var i=0;i<50;i++)drvs.push(ndpGetDriver(stateIdx,i));
+  var totalStops=drvs.reduce(function(a,d){return a+d.stops;},0);
+  var totalDone=drvs.reduce(function(a,d){return a+d.done;},0);
+  var totalEarn=drvs.reduce(function(a,d){return a+d.earnings;},0);
+  var avgOtp=+(drvs.reduce(function(a,d){return a+d.otp;},0)/50).toFixed(1);
+  var avgRating=+(drvs.reduce(function(a,d){return a+d.rating;},0)/50).toFixed(1);
+  var active=drvs.filter(function(d){return d.status==='active';}).length;
+  var completed=drvs.filter(function(d){return d.status==='completed';}).length;
+  var asnFail=drvs.filter(function(d){return!d.asnOk;}).length;
+  var s=NDP_STATES[stateIdx];
+  var summary={stateIdx,drvs,totalStops,totalDone,totalEarn,avgOtp,avgRating,active,completed,asnFail,
+    pct:Math.round(totalDone/totalStops*100),dailyRev:Math.round(totalDone*s.rate),
+    exceptions:Math.round(totalStops*0.012),state:s};
+  _ndpStateSummaryCache[stateIdx]=summary;
+  return summary;
+}
+
+// ══════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
+// ONTRAC GM ENGINE — 35 RSP Companies × 250 Drivers
+// Sarah Chen · OnTrac Manager · gm@ontrac-la.com / gm123
+// Deterministic seeded RNG — stable across re-renders
+// ══════════════════════════════════════════════════════════
+function _gmrng(seed){
+  // xorshift32 — no Math.sin drift
+  var x=(seed^(seed<<13))>>>0;x=(x^(x>>>17))>>>0;x=(x^(x<<5))>>>0;
+  return x/4294967296;
+}
+function _gmr(ci,n){return _gmrng(ci*10007+n*97+1337);}
+
+var ONTRAC_RSP_NAMES=[
+  'Pacific Rim Logistics','TriState Parcel Group','Lone Star Couriers','Emerald Route Inc',
+  'Capital Region DSP','Metro Express LLC','ProRoute Solutions','FastDrop Partners',
+  'ClearPath Logistics','NovaDel Services','Apex Route Partners','BlueStar Delivery',
+  'CoreFreight LLC','DirectShip Pro','FlexRoute Partners','HyperRoute Inc',
+  'MegaDrop Logistics','NextDay Solutions','OptiRoute Co','PeakDrop LLC',
+  'PrimeParcel Group','QuickShip Partners','RouteMax LLC','SkyLine Delivery',
+  'SpeedLine Logistics','StarShip Co','SureShip LLC','SwiftDrop Inc',
+  'TrueTrack Co','UrbanDel Partners','VelocityDSP','WestCoast Routes',
+  'XPress Couriers','ZoneDel Inc','Heartland Delivery'
+];
+var ONTRAC_HUBS=[
+  {city:'Los Angeles',state:'CA',lat:34.0522,lng:-118.2437,rate:1.52},
+  {city:'Pittsburgh',state:'PA',lat:40.4406,lng:-79.9959,rate:1.38},
+  {city:'Dallas',state:'TX',lat:32.7767,lng:-96.7970,rate:1.28},
+  {city:'Miami',state:'FL',lat:25.7617,lng:-80.1918,rate:1.32},
+  {city:'Chicago',state:'IL',lat:41.8781,lng:-87.6298,rate:1.42},
+  {city:'Philadelphia',state:'PA',lat:39.9526,lng:-75.1652,rate:1.44},
+  {city:'Columbus',state:'OH',lat:39.9612,lng:-82.9988,rate:1.32},
+  {city:'Atlanta',state:'GA',lat:33.7490,lng:-84.3880,rate:1.24},
+  {city:'Charlotte',state:'NC',lat:35.2271,lng:-80.8431,rate:1.22},
+  {city:'Detroit',state:'MI',lat:42.3314,lng:-83.0458,rate:1.28},
+  {city:'Newark',state:'NJ',lat:40.7357,lng:-74.1724,rate:1.62},
+  {city:'Richmond',state:'VA',lat:37.5407,lng:-77.4360,rate:1.35},
+  {city:'Seattle',state:'WA',lat:47.6062,lng:-122.3321,rate:1.45},
+  {city:'Phoenix',state:'AZ',lat:33.4484,lng:-112.0740,rate:1.22},
+  {city:'Boston',state:'MA',lat:42.3601,lng:-71.0589,rate:1.55},
+  {city:'Memphis',state:'TN',lat:35.1495,lng:-90.0490,rate:1.18},
+  {city:'Indianapolis',state:'IN',lat:39.7684,lng:-86.1581,rate:1.24},
+  {city:'Kansas City',state:'MO',lat:39.0997,lng:-94.5786,rate:1.20},
+  {city:'Baltimore',state:'MD',lat:39.2904,lng:-76.6122,rate:1.40},
+  {city:'Milwaukee',state:'WI',lat:43.0389,lng:-87.9065,rate:1.19},
+  {city:'Denver',state:'CO',lat:39.7392,lng:-104.9903,rate:1.18},
+  {city:'Minneapolis',state:'MN',lat:44.9778,lng:-93.2650,rate:1.25},
+  {city:'Columbia',state:'SC',lat:34.0007,lng:-81.0348,rate:1.16},
+  {city:'Birmingham',state:'AL',lat:33.5186,lng:-86.8104,rate:1.15},
+  {city:'New Orleans',state:'LA',lat:29.9511,lng:-90.0715,rate:1.20},
+  {city:'Louisville',state:'KY',lat:38.2527,lng:-85.7585,rate:1.22},
+  {city:'Portland',state:'OR',lat:45.5051,lng:-122.6750,rate:1.38},
+  {city:'Oklahoma City',state:'OK',lat:35.4676,lng:-97.5164,rate:1.14},
+  {city:'Hartford',state:'CT',lat:41.7658,lng:-72.6851,rate:1.48},
+  {city:'Salt Lake City',state:'UT',lat:40.7608,lng:-111.8910,rate:1.15},
+  {city:'Las Vegas',state:'NV',lat:36.1699,lng:-115.1398,rate:1.15},
+  {city:'Little Rock',state:'AR',lat:34.7465,lng:-92.2896,rate:1.12},
+  {city:'Jackson',state:'MS',lat:32.2988,lng:-90.1848,rate:1.10},
+  {city:'Wichita',state:'KS',lat:37.6872,lng:-97.3301,rate:1.14},
+  {city:'Omaha',state:'NE',lat:41.2565,lng:-95.9345,rate:1.16}
+];
+var OTC_FIRST=['James','Maria','Robert','Jennifer','Michael','Linda','David','Patricia','William','Barbara','Richard','Susan','Joseph','Karen','Thomas','Nancy','Charles','Lisa','Christopher','Margaret','Daniel','Betty','Matthew','Dorothy','Anthony','Sandra','Mark','Ashley','Donald','Carol','Steven','Kimberly','Paul','Emily','Andrew','Donna','Kenneth','Michelle','Joshua','Rebecca','Kevin','Laura','Brian','Sharon','George','Cynthia','Timothy','Angela','Ronald','Melissa','Edward','Brenda','Jason','Amy','Jeffrey','Anna','Ryan','Virginia','Jacob','Kathleen','Gary','Pamela','Nicholas','Emma','Eric','Joyce','Stephen','Evelyn','Jonathan','Frances','Larry','Christine'];
+var OTC_LAST=['Smith','Johnson','Williams','Brown','Jones','Davis','Miller','Wilson','Moore','Taylor','Anderson','Thomas','Jackson','White','Harris','Martin','Thompson','Garcia','Martinez','Robinson','Clark','Rodriguez','Lewis','Lee','Walker','Hall','Allen','Young','Hernandez','King','Wright','Lopez','Hill','Scott','Green','Adams','Baker','Gonzalez','Nelson','Carter','Mitchell','Perez','Roberts','Turner','Phillips','Campbell','Parker','Evans','Edwards','Collins','Stewart','Sanchez','Morris','Rogers','Reed','Cook','Morgan','Bell','Murphy','Bailey','Rivera','Cooper','Richardson','Cox','Howard','Ward','Torres','Peterson','Gray','Ramirez','James','Watson','Brooks','Kelly'];
+var OTC_ZONES=['North District','South District','East Zone','West Zone','Central','Metro Core','Suburban East','Suburban West','Airport Zone','Industrial'];
+var OTC_VEH=['Cargo Van','Sprinter Van','Box Truck','Cargo Van','Cargo Van'];
+
+var ONTRAC_COMPANIES=ONTRAC_RSP_NAMES.map(function(name,i){
+  var hub=ONTRAC_HUBS[i];var r=function(n){return _gmr(i,n);};
+  var drivers=250;var fleet=Math.round(drivers*1.12+r(0)*8);
+  var rate=+(hub.rate*(0.92+r(1)*0.18)).toFixed(2);
+  var stopsPerDriver=Math.round(40+r(2)*28);
+  var dailyStops=drivers*stopsPerDriver;
+  var los=+(96.2+r(3)*3.7).toFixed(1);
+  var otp=+(85+r(4)*12).toFixed(1);
+  var sqepRaw=r(5)*5;
+  var sqepEvents=sqepRaw<2?0:Math.round(sqepRaw-1.5);
+  var cppu=+(4.42+r(6)*1.76).toFixed(2);
+  var revenue=Math.round(dailyStops*22*rate*(0.92+r(7)*0.16));
+  var score=los>=99&&otp>=95?'elite':los>=98&&otp>=92?'ok':(los<97||otp<88||sqepEvents>=4)?'alert':'watch';
+  var hour=new Date().getHours();
+  var shiftPct=hour<7?0.08:hour<9?0.72:hour<17?0.91:hour<20?0.28:0.05;
+  var activeNow=Math.round(drivers*shiftPct*(0.88+r(8)*0.18));
+  var dotNum=Math.round(1200000+r(9)*800000);var mcNum=Math.round(300000+r(10)*600000);
+  return{id:200+i,name,city:hub.city,state:hub.state,lat:hub.lat,lng:hub.lng,
+    drivers,fleet,rate,stopsPerDriver,dailyStops,dailyVolume:Math.round(dailyStops*(1.06+r(11)*0.18)),
+    otp,los,sqepEvents,cppu,revenue,score,
+    driverRating:+(3.8+r(12)*1.2).toFixed(1),weekGrowth:+(r(13)*8-2).toFixed(1),
+    exceptions:Math.round(dailyStops*0.009*(1+r(14)*0.8)),activeNow,
+    dot:'DOT-'+dotNum,mc:'MC-'+mcNum,
+    asnCompliance:+(96+r(15)*3.8).toFixed(1),podCapture:+(93+r(16)*6.5).toFixed(1),
+    completedToday:Math.round(activeNow*(0.28+r(17)*0.58))};
+});
+
+// Driver generator for a given company — closure-safe via direct seed
+function _otcDriver(coIdx,drvIdx){
+  var s=function(n){return _gmrng(coIdx*10007+drvIdx*263+n*41+7919);};
+  var hub=ONTRAC_HUBS[coIdx];var co=ONTRAC_COMPANIES[coIdx];
+  var fName=OTC_FIRST[Math.floor(s(1)*OTC_FIRST.length)];
+  var lName=OTC_LAST[Math.floor(s(2)*OTC_LAST.length)];
+  var stops=Math.round(co.stopsPerDriver*(0.78+s(3)*0.44));
+  var hour=new Date().getHours();
+  var donePct=hour<9?0.08+s(4)*0.14:hour<13?0.36+s(4)*0.24:hour<17?0.62+s(4)*0.30:0.86+s(4)*0.12;
+  var done=Math.min(stops,Math.round(stops*donePct));
+  var otp=+(80+s(5)*19).toFixed(1);
+  var rating=+(3.4+s(6)*1.55).toFixed(1);
+  var vtype=OTC_VEH[Math.floor(s(7)*OTC_VEH.length)];
+  var vid=(vtype==='Box Truck'?'BT':'CV')+'-'+(coIdx*250+drvIdx+1000);
+  var zone=hub.state+'-'+OTC_ZONES[Math.floor(s(8)*OTC_ZONES.length)];
+  var status=done>=stops?'completed':done>0?'active':'idle';
+  var earn=Math.round(done*co.rate*(0.90+s(9)*0.20));
+  var cppu=+(4.0+s(10)*2.4).toFixed(2);
+  var asnOk=s(11)>0.08;
+  return{idx:drvIdx,name:fName+' '+lName,company:co.name,city:hub.city,state:hub.state,
+    stops,done,remaining:stops-done,otp,rating,vehicleType:vtype,vehicleId:vid,
+    zone,status,earn,cppu,asnOk,totalDeliveries:Math.round(400+s(12)*2600),streak:Math.round(s(13)*30)};
+}
+var _otcDriverCache={};
+function otcGetDrivers(coIdx){
+  if(_otcDriverCache[coIdx])return _otcDriverCache[coIdx];
+  var drvs=[];for(var i=0;i<250;i++)drvs.push(_otcDriver(coIdx,i));
+  _otcDriverCache[coIdx]=drvs;return drvs;
+}
+function otcGetDriverStats(coIdx){
+  var drvs=otcGetDrivers(coIdx);
+  var totalStops=drvs.reduce(function(a,d){return a+d.stops;},0);
+  var totalDone=drvs.reduce(function(a,d){return a+d.done;},0);
+  var totalEarn=drvs.reduce(function(a,d){return a+d.earn;},0);
+  var active=drvs.filter(function(d){return d.status==='active';}).length;
+  var completed=drvs.filter(function(d){return d.status==='completed';}).length;
+  var idle=250-active-completed;
+  var avgOtp=+(drvs.reduce(function(a,d){return a+d.otp;},0)/250).toFixed(1);
+  var avgRating=+(drvs.reduce(function(a,d){return a+d.rating;},0)/250).toFixed(1);
+  var asnFail=drvs.filter(function(d){return!d.asnOk;}).length;
+  return{drvs,totalStops,totalDone,totalEarn,active,completed,idle,avgOtp,avgRating,asnFail,
+    pct:Math.round(totalDone/totalStops*100)};
+}
+
 // ── DRIVER GPS DATA ──
 const DRIVER_GPS={
   6:{lat:33.9940,lng:-118.3100,heading:142,speed:18,lastUpdate:"2 min ago"},
@@ -1633,10 +1863,10 @@ let notifications=[
 ];
 let notifSeq=9;
 
-const ROLE_LABELS={admin:"Platform Admin",owner:"Company Owner",general_manager:"General Manager",manager:"Manager",accountant:"Accountant",driver:"Driver"};
-const ROLE_PERMS={admin:["all"],owner:["companies","requests","billing","users","analytics","tracking","driver_stats","locations","reporting"],general_manager:["companies","requests","analytics","users","tracking","locations"],manager:["companies","requests","tracking"],accountant:["billing","analytics","manual_data","locations","reporting","driver_stats"],driver:["driver"]};
-const hasPerm=(role,res)=>{const p=ROLE_PERMS[role];return p.includes("all")||p.includes(res)};
-const AVATAR_COLOR={admin:"#00d4ff",owner:"#4ade80",general_manager:"#a78bfa",manager:"#fbbf24",accountant:"#2dd4bf",driver:"#f97316"};
+const ROLE_LABELS={admin:"Platform Admin",owner:"Company Owner",general_manager:"General Manager",ontrac_manager:"OnTrac Manager",manager:"Manager",accountant:"Accountant",driver:"Driver"};
+const ROLE_PERMS={admin:["all"],owner:["companies","requests","billing","users","analytics","tracking","driver_stats","locations","reporting"],general_manager:["companies","requests","analytics","users","tracking","locations"],ontrac_manager:["all"],manager:["companies","requests","tracking"],accountant:["billing","analytics","manual_data","locations","reporting","driver_stats"],driver:["driver"]};
+const hasPerm=(role,res)=>{const p=ROLE_PERMS[role];if(!p)return false;return p.includes("all")||p.includes(res)};
+const AVATAR_COLOR={admin:"#00d4ff",owner:"#4ade80",general_manager:"#a78bfa",ontrac_manager:"#3b82f6",manager:"#fbbf24",accountant:"#2dd4bf",driver:"#f97316"};
 const initials=n=>n.split(" ").map(x=>x[0]).join("").slice(0,2).toUpperCase();
 const coName=id=>(companies.find(c=>c.id===id)||{}).name||`Company #${id}`;
 
@@ -3047,7 +3277,9 @@ function renderSidebar(){
     {id:'admin_system',label:'System Config',icon:'Cpu',res:'analytics'},
   ];
   const OWNER_NAV=[
-    {id:'owner_command',label:'Command Center',icon:'LayoutDashboard',res:'analytics'},
+    {id:'rsp_national',label:'🏢 National Overview',icon:'Building2',res:'analytics'},
+    {id:'rsp_fleet',label:'550 Drivers',icon:'Users',res:'companies'},
+    {id:'owner_command',label:'Legacy Command',icon:'LayoutDashboard',res:'analytics'},
     {id:'owner_fleet',label:'Fleet Command',icon:'Truck',res:'companies'},
     {id:'owner_packages',label:'Package Operations',icon:'Package',res:'companies'},
     {id:'owner_financials',label:'Financial Intel',icon:'DollarSign',res:'billing'},
@@ -3082,6 +3314,7 @@ function renderSidebar(){
   ];
   const DRIVER_NAV=[
     {id:'driver',label:'Dashboard',icon:'LayoutDashboard',res:'driver'},
+    {id:'driver',label:'📦 Pre-Shift Scan',icon:'Package',res:'driver',tab:'preshift'},
     {id:'driver',label:'Route',icon:'Navigation',res:'driver',tab:'route'},
     {id:'driver',label:'Earnings',icon:'DollarSign',res:'driver',tab:'earnings'},
     {id:'driver',label:'Rates',icon:'Globe',res:'driver',tab:'rates'},
@@ -3090,9 +3323,19 @@ function renderSidebar(){
     {id:'driver',label:'Report Data',icon:'Send',res:'driver',tab:'report'},
     {id:'onroute_rates',label:'OnRouteRates',icon:'Globe',res:'driver'},
   ];
-  const NAV=isDriver?DRIVER_NAV:(u&&u.role==='owner'?OWNER_NAV:(u&&u.role==='accountant'?ACCT_NAV:(u&&u.role==='general_manager'?GM_NAV:(u&&u.role==='manager'?MGR_NAV:ADMIN_NAV))));
+  const ONTRAC_MGR_NAV=[
+    {id:'ontrac_gm',label:'🌐 Network Overview',icon:'Globe',res:'analytics'},
+    {id:'ontrac_companies',label:'RSP Companies (35)',icon:'Building2',res:'companies'},
+    {id:'ontrac_network_stats',label:'📊 Network Analytics',icon:'BarChart2',res:'analytics'},
+    {id:'ontrac_alerts',label:'⚠ Alerts & SQEP',icon:'AlertTriangle',res:'analytics'},
+    {id:'tracking',label:'Driver Tracking',icon:'MapPin',res:'tracking'},
+    {id:'acct_locations',label:'Location Reports',icon:'Globe',res:'locations'},
+    {id:'research',label:'Industry Research',icon:'Search',res:'analytics'},
+    {id:'team',label:'Team',icon:'Users',res:'users'},
+  ];
+  const NAV=isDriver?DRIVER_NAV:(u&&u.role==='owner'?OWNER_NAV:(u&&u.role==='accountant'?ACCT_NAV:(u&&u.role==='ontrac_manager'?ONTRAC_MGR_NAV:(u&&u.role==='general_manager'?GM_NAV:(u&&u.role==='manager'?MGR_NAV:ADMIN_NAV)))));
   const visible=NAV.filter(n=>n.id==='_sec'||!u||hasPerm(u.role,n.res)||n.id==='dashboard'||n.id.startsWith('owner_'));
-  return`<div class="sidebar"><div class="sb-head"><div class="sb-logo"><div class="sb-logo-icon"><span style="font-size:11px;font-weight:800;letter-spacing:-0.5px;color:#fff;line-height:1;font-family:'Outfit',sans-serif">DH</span></div><div><div class="sb-logo-name">DriveHub</div><div class="sb-logo-sub">${isDriver?'Driver Portal':u&&u.role==='owner'?'Owner Console':isAcc?'Finance Console':u&&u.role==='general_manager'?'Operations':u&&u.role==='manager'?'Manager':'Admin Console'}</div></div></div></div>
+  return`<div class="sidebar"><div class="sb-head"><div class="sb-logo"><div class="sb-logo-icon"><span style="font-size:11px;font-weight:800;letter-spacing:-0.5px;color:#fff;line-height:1;font-family:'Outfit',sans-serif">DH</span></div><div><div class="sb-logo-name">DriveHub</div><div class="sb-logo-sub">${isDriver?'Driver Portal':u&&u.role==='owner'?'NationWide Partners':isAcc?'Finance Console':u&&u.role==='ontrac_manager'?'OnTrac Network':u&&u.role==='general_manager'?'Operations':u&&u.role==='manager'?'Manager':'Admin Console'}</div></div></div></div>
   <div class="sb-nav"><div class="sb-section">${isDriver?'Driver':'Navigation'}</div>${visible.map((n,i)=>{
     if(n.id==='_sec') return`<div class="sb-section" style="margin-top:14px">${esc(n.label)}</div>`;
     const isActive=isDriver?(n.id==='onroute_rates'?state.page==='onroute_rates':(state.page!=='onroute_rates'&&((state.drvTab||'route')===(n.tab||'route')&&i>0||(i===0&&!state.drvTab)))):state.page===n.id;
@@ -4019,10 +4262,27 @@ function renderPage(){
   if(state.page==='account') return renderAccountSettings();
   if(u&&u.role==='driver'){
     if(state.page==='onroute_rates') return renderOnRouteRates();
+    if(state.drvTab==='preshift') return renderDriverPreShift();
     return renderDriverDashboard();
+  }
+  if(u&&u.role==='ontrac_manager'){
+    switch(state.page){
+      case'ontrac_gm':            return renderOnTracGMDashboard();
+      case'ontrac_companies':     return renderOnTracCompanies();
+      case'ontrac_company_detail':return window.renderPage_ontrac_company_detail();
+      case'ontrac_network_stats': return renderOnTracNetworkStats();
+      case'ontrac_alerts':        return renderOnTracAlerts();
+      case'tracking':             return renderTracking();
+      case'acct_locations':       return renderAcctLocations();
+      case'research':             return renderIntelResearch();
+      case'team':                 return renderTeam();
+      default:                    return renderOnTracGMDashboard();
+    }
   }
   if(u&&u.role==='owner'){
     switch(state.page){
+      case'rsp_national':   return renderRSPNational();
+      case'rsp_fleet':      return renderRSPFleet();
       case'owner_command':  return renderOwnerCommandCenter();
       case'owner_fleet':    return renderOwnerFleet();
       case'owner_packages': return renderOwnerPackages();
@@ -4037,7 +4297,7 @@ function renderPage(){
       case'reporting':      return renderReporting();
       case'acct_locations': return renderAcctLocations();
       case'research':       return renderIntelResearch();
-      default:              return renderOwnerCommandCenter();
+      default:              return renderRSPNational();
     }
   }
   switch(state.page){
@@ -4048,6 +4308,24 @@ function renderPage(){
     case'team':return renderTeam();
     case'tracking':return renderTracking();
     case'driver_stats':return renderDriverStats();
+    case'rsp_national':return renderRSPNational();
+    case'rsp_fleet':return renderRSPFleet();
+    case'ontrac_gm':return renderOnTracGMDashboard();
+    case'ontrac_companies':return renderOnTracCompanies();
+    case'ontrac_company_detail':return window.renderPage_ontrac_company_detail();
+    case'ontrac_network_stats':return renderOnTracNetworkStats();
+    case'ontrac_alerts':return renderOnTracAlerts();
+    case'rsp_state_0':return window['renderRSPState0']();
+    case'rsp_state_1':return window['renderRSPState1']();
+    case'rsp_state_2':return window['renderRSPState2']();
+    case'rsp_state_3':return window['renderRSPState3']();
+    case'rsp_state_4':return window['renderRSPState4']();
+    case'rsp_state_5':return window['renderRSPState5']();
+    case'rsp_state_6':return window['renderRSPState6']();
+    case'rsp_state_7':return window['renderRSPState7']();
+    case'rsp_state_8':return window['renderRSPState8']();
+    case'rsp_state_9':return window['renderRSPState9']();
+    case'rsp_state_10':return window['renderRSPState10']();
     case'acct_locations':return renderAcctLocations();
     case'reporting':return renderReporting();
     case'kanban_board':return renderKanbanBoard();
@@ -4101,7 +4379,7 @@ function conReplacePagePins(){var pg=conCurrentPage();CON.annotations.forEach(fu
 const DEMO=[
   {email:"admin@rspplatform.com",pw:"admin123",role:"Platform Admin",color:"#00d4ff"},
   {email:"owner@firstchoice.com",pw:"owner123",role:"Company Owner",color:"#4ade80"},
-  {email:"gm@ontrac-la.com",pw:"gm123",role:"General Manager",color:"#a78bfa"},
+  {email:"gm@ontrac-la.com",pw:"gm123",role:"OnTrac Manager",color:"#3b82f6"},
   {email:"accountant@swiftdel.com",pw:"acc123",role:"Accountant",color:"#2dd4bf"},
   {email:"manager@pacrim.com",pw:"mgr123",role:"Manager",color:"#fbbf24"},
   {email:"driver@firstchoice.com",pw:"drv123",role:"Driver — James",color:"#f97316"},
@@ -4143,7 +4421,7 @@ function bindLogin(){
     const u=USERS.find(u=>u.email===email&&u.pw===pw&&u.active);
     if(!u){alert('Invalid credentials');return;}
     const{pw:_,...safe}=u;state.user=safe;
-    state.page=safe.role==='driver'?'driver':safe.role==='owner'?'owner_command':safe.role==='accountant'?'billing':'dashboard';
+    state.page=safe.role==='driver'?'driver':safe.role==='owner'?'rsp_national':safe.role==='ontrac_manager'?'ontrac_gm':safe.role==='accountant'?'billing':'dashboard';
     state.drvTab='route';state.accTab='overview';render();
     startSimulation();
   });
@@ -5636,6 +5914,647 @@ function tickDriverPanelSim(gps){
     }
   }
 }
+
+// ══════════════════════════════════════════════════════════
+// RSP NATIONAL — NationWide Delivery Partners 11-State View
+// ══════════════════════════════════════════════════════════
+function renderRSPNational(){
+  var now=new Date();var hour=now.getHours();
+  var totalActive=0,totalDone=0,totalStops=0,totalEarn=0,totalExc=0;
+  NDP_STATES.forEach(function(_,i){
+    var s=ndpGetStateSummary(i);
+    totalActive+=s.active;totalDone+=s.totalDone;totalStops+=s.totalStops;totalEarn+=s.totalEarn;totalExc+=s.exceptions;
+  });
+  var overallPct=Math.round(totalDone/totalStops*100);
+  var h='<div class="page">'+
+    '<div style="background:linear-gradient(135deg,#0a1628,rgba(0,212,255,.14));border:1px solid rgba(0,212,255,.15);border-radius:14px;padding:22px 26px;margin-bottom:18px">'+
+      '<div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px">'+
+        '<div>'+
+          '<div style="display:inline-flex;align-items:center;gap:6px;background:rgba(74,222,128,.15);border:1px solid rgba(74,222,128,.3);border-radius:6px;padding:3px 10px;font-size:11px;font-weight:500;margin-bottom:8px"><span class="drv-status-dot"></span> 11 States · LIVE</div>'+
+          '<div style="font-size:20px;font-weight:700">NationWide Delivery Partners</div>'+
+          '<div style="font-size:12px;opacity:.55">550 Drivers · 11 Warehouses · Amazon RSP · OnTrac Partner</div>'+
+          '<div style="display:flex;gap:18px;margin-top:14px;flex-wrap:wrap">'+
+            [{v:'550',l:'Total Drivers'},{v:totalActive,l:'Active Now'},{v:overallPct+'%',l:'Completion',c:'#4ade80'},{v:totalExc,l:'Exceptions'}]
+            .map(function(s){return'<div style="text-align:center"><div style="font-size:26px;font-weight:700;'+(s.c?'color:'+s.c:'')+'">'+s.v+'</div><div style="font-size:10px;opacity:.5">'+s.l+'</div></div>';}).join('')+
+          '</div>'+
+        '</div>'+
+        '<div style="text-align:right">'+
+          '<div style="font-size:11px;opacity:.45">Today\'s Revenue (est.)</div>'+
+          '<div style="font-size:32px;font-weight:700;color:var(--primary)">$'+totalEarn.toLocaleString()+'</div>'+
+          '<div style="font-size:11px;opacity:.5">Stops done: '+totalDone.toLocaleString()+' / '+totalStops.toLocaleString()+'</div>'+
+          '<div style="margin-top:10px"><button class="btn btn-p" onclick="navigate(\'rsp_fleet\')">'+icon('Users')+' All 550 Drivers</button></div>'+
+        '</div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="g4 mb4">'+
+      [{t:'Total Stops',v:totalStops.toLocaleString(),s:'across 11 states',ic:'Package',bg:'var(--primary-bg)'},{t:'Completed',v:totalDone.toLocaleString(),s:overallPct+'% done',ic:'CheckCircle',bg:'var(--ok-bg)'},{t:'Revenue Today',v:'$'+totalEarn.toLocaleString(),s:'all states combined',ic:'DollarSign',bg:'var(--ok-bg)'},{t:'Exceptions',v:totalExc,s:(totalExc/totalStops*100).toFixed(1)+'% rate',ic:'AlertTriangle',bg:'var(--warn-bg)'}]
+      .map(kpiCard).join('')+
+    '</div>'+
+    '<div class="card mb4"><div class="ch">'+icon('Globe')+'&nbsp;State-by-State Operations — Click to Drill Down</div><div class="cb" style="padding:0"><table><thead><tr>'+
+      '<th>State</th><th>Hub</th><th style="text-align:right">Drivers</th><th style="text-align:right">Active</th>'+
+      '<th style="text-align:right">Stops Done</th><th>Progress</th><th style="text-align:right">Avg OTP</th>'+
+      '<th style="text-align:right">Revenue</th><th style="text-align:right">ASN Issues</th><th>Warehouse</th></tr></thead><tbody>';
+  NDP_STATES.forEach(function(st,i){
+    var s=ndpGetStateSummary(i);var wh=NDP_WAREHOUSES[i];
+    h+='<tr style="cursor:pointer" onclick="navigate(\'rsp_state_'+i+'\')">'+
+      '<td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'+st.color+';margin-right:6px"></span><strong>'+st.code+'</strong></td>'+
+      '<td style="font-size:11px;color:var(--muted)">'+st.hub+'</td>'+
+      '<td style="text-align:right">50</td>'+
+      '<td style="text-align:right;font-weight:600;color:var(--ok-t)">'+s.active+'</td>'+
+      '<td style="text-align:right;font-family:var(--mono);font-size:11px">'+s.totalDone+'/'+s.totalStops+'</td>'+
+      '<td style="min-width:80px"><div style="height:6px;background:var(--border);border-radius:3px;overflow:hidden"><div style="height:100%;width:'+s.pct+'%;background:'+st.color+';border-radius:3px"></div></div></td>'+
+      '<td style="text-align:right;font-weight:600;color:'+(s.avgOtp>=95?'var(--ok-t)':s.avgOtp>=90?'var(--warn-t)':'var(--err-t)')+'">'+s.avgOtp+'%</td>'+
+      '<td style="text-align:right;font-weight:600">$'+s.dailyRev.toLocaleString()+'</td>'+
+      '<td style="text-align:right;color:'+(s.asnFail>3?'var(--err-t)':'var(--ok-t)')+'">'+s.asnFail+'</td>'+
+      '<td><span style="font-size:10px;padding:2px 6px;border-radius:4px;background:'+(wh.asnOk?'var(--ok-bg)':'var(--warn-bg)')+';color:'+(wh.asnOk?'var(--ok-t)':'var(--warn-t)')+'">'+Math.round(wh.load)+'% load</span></td>'+
+    '</tr>';
+  });
+  h+='</tbody></table></div></div></div>';
+  return h;
+}
+
+function renderRSPFleet(){
+  var stateFilter=window._rspStateFilter||'all';
+  var statusFilter=window._rspStatusFilter||'all';
+  var searchQ=(document.getElementById('rsp-search')||{}).value||'';
+  var drivers=[];
+  NDP_STATES.forEach(function(_,i){
+    var s=ndpGetStateSummary(i);
+    s.drvs.forEach(function(d){if(stateFilter==='all'||d.state===stateFilter)drivers.push(d);});
+  });
+  if(searchQ){var q=searchQ.toLowerCase();drivers=drivers.filter(function(d){return d.name.toLowerCase().includes(q)||d.state.toLowerCase().includes(q)||d.zone.toLowerCase().includes(q);});}
+  if(statusFilter!=='all')drivers=drivers.filter(function(d){return d.status===statusFilter;});
+  var totalD=drivers.length;var activeD=drivers.filter(function(d){return d.status==='active';}).length;
+  return'<div class="page">'+
+    '<div class="ph"><div><div class="pt">'+icon('Users')+'&nbsp;Fleet Command · 550 Drivers</div>'+
+    '<div class="ps">NationWide Delivery Partners · 11 States · Live Operations</div></div>'+
+    '<span class="badge b-active">'+activeD+' active / '+totalD+' shown</span></div>'+
+    '<div class="filters">'+
+      '<div class="inp-w" style="flex:1;min-width:180px"><span class="inp-ic">'+icon('Search')+'</span>'+
+      '<input class="inp has-ic" id="rsp-search" placeholder="Search driver, state, zone…" value="'+esc(searchQ)+'" oninput="rerenderPage()"/></div>'+
+      '<select class="inp" style="width:130px" onchange="window._rspStateFilter=this.value;rerenderPage()">'+
+        '<option value="all">All States</option>'+
+        NDP_STATES.map(function(s){return'<option value="'+s.code+'"'+(stateFilter===s.code?' selected':'')+'>'+s.code+' — '+s.name+'</option>';}).join('')+
+      '</select>'+
+      '<select class="inp" style="width:120px" onchange="window._rspStatusFilter=this.value;rerenderPage()">'+
+        '<option value="all">All Status</option>'+
+        ['active','completed','idle'].map(function(s){return'<option value="'+s+'"'+(statusFilter===s?' selected':'')+'>'+s.charAt(0).toUpperCase()+s.slice(1)+'</option>';}).join('')+
+      '</select>'+
+    '</div>'+
+    '<div class="card cb"><table><thead><tr>'+
+      '<th>#</th><th>Driver</th><th>State</th><th>Zone</th><th>Vehicle</th><th>Stops</th><th>Progress</th>'+
+      '<th style="text-align:right">OTP</th><th style="text-align:right">Rating</th><th style="text-align:right">Earned</th>'+
+      '<th>ASN</th><th>Status</th></tr></thead><tbody>'+
+      drivers.slice(0,200).map(function(d,i){
+        var st=NDP_STATES.find(function(s){return s.code===d.state;})||{color:'#999'};
+        var pct=d.stops>0?Math.round(d.done/d.stops*100):0;
+        return'<tr>'+
+          '<td style="font-size:11px;color:var(--dim);width:28px">'+(i+1)+'</td>'+
+          '<td style="font-weight:500">'+esc(d.name)+'</td>'+
+          '<td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'+st.color+';margin-right:4px"></span>'+d.state+'</td>'+
+          '<td style="font-size:11px;color:var(--muted)">'+esc(d.zone)+'</td>'+
+          '<td style="font-family:var(--mono);font-size:10px;color:var(--muted)">'+esc(d.vehicleId)+'</td>'+
+          '<td>'+d.done+'/'+d.stops+'</td>'+
+          '<td style="min-width:70px"><div style="display:flex;align-items:center;gap:5px"><div style="flex:1;height:5px;background:var(--border);border-radius:3px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:'+(d.done>=d.stops?'var(--ok-t)':'var(--primary)')+';border-radius:3px"></div></div><span style="font-size:10px;color:var(--muted)">'+pct+'%</span></div></td>'+
+          '<td style="text-align:right;font-weight:600;color:'+(d.otp>=95?'var(--ok-t)':d.otp>=90?'var(--warn-t)':'var(--err-t)')+'">'+d.otp+'%</td>'+
+          '<td style="text-align:right">'+d.rating+'★</td>'+
+          '<td style="text-align:right;font-weight:600">$'+d.earnings+'</td>'+
+          '<td><span class="badge '+(d.asnOk?'b-active':'b-pending')+'" style="font-size:9px">'+(d.asnOk?'✓ OK':'⚠ PEND')+'</span></td>'+
+          '<td>'+statusBadge(d.status)+'</td>'+
+        '</tr>';
+      }).join('')+
+    '</tbody></table>'+
+    (drivers.length>200?'<div style="text-align:center;padding:10px;font-size:12px;color:var(--muted)">Showing 200 of '+drivers.length+' drivers — use state filter</div>':'')+
+    '</div></div>';
+}
+
+// ── State detail page (dynamically registered) ──
+NDP_STATES.forEach(function(_,idx){
+  window['renderRSPState'+idx]=function(){
+    var s=ndpGetStateSummary(idx);var st=NDP_STATES[idx];var wh=NDP_WAREHOUSES[idx];
+    return'<div class="page">'+
+      '<button class="btn btn-o btn-sm" onclick="navigate(\'rsp_national\')" style="margin-bottom:14px">← All States</button>'+
+      '<div class="ph"><div>'+
+        '<div class="pt" style="display:flex;align-items:center;gap:10px">'+
+          '<span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:'+st.color+'"></span>'+st.name+' Operations'+
+        '</div>'+
+        '<div class="ps">'+st.hub+' · 50 Drivers · 1 Warehouse</div></div>'+
+        '<span class="badge b-active">'+s.active+' active · '+s.completed+' done</span>'+
+      '</div>'+
+      '<div class="g4 mb4">'+
+        [{t:'Stops Done',v:s.totalDone+'/'+s.totalStops,s:s.pct+'% complete',ic:'CheckCircle',bg:'var(--ok-bg)'},
+         {t:'Avg OTP',v:s.avgOtp+'%',s:s.avgOtp>=95?'Above target':'Below 95% target',ic:'Clock',bg:s.avgOtp>=95?'var(--ok-bg)':'var(--warn-bg)'},
+         {t:'Revenue Today',v:'$'+s.dailyRev.toLocaleString(),s:'$'+st.rate+'/stop rate',ic:'DollarSign',bg:'var(--primary-bg)'},
+         {t:'ASN Issues',v:s.asnFail,s:s.asnFail>0?'$1,663 risk/event':'All validated',ic:'Shield',bg:s.asnFail>0?'var(--err-bg)':'var(--ok-bg)'}].map(kpiCard).join('')+
+      '</div>'+
+      '<div class="g21 mb4">'+
+        '<div class="card cb"><div style="font-weight:600;font-size:13px;margin-bottom:12px">🏭 '+st.name+' Hub Warehouse</div>'+
+          '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">'+
+            [{l:'Capacity Load',v:wh.load+'%',c:wh.load>90?'var(--err-t)':wh.load>75?'var(--warn-t)':'var(--ok-t)'},
+             {l:'Packages Ready',v:wh.pkg.toLocaleString()},{l:'Dispatch Queue',v:wh.queue+' routes'},
+             {l:'ASN Status',v:wh.asnOk?'✓ Validated':'⚠ Pending',c:wh.asnOk?'var(--ok-t)':'var(--warn-t)'}]
+            .map(function(k){return'<div style="background:var(--border-sub);border-radius:8px;padding:10px"><div style="font-size:11px;color:var(--muted)">'+k.l+'</div><div style="font-size:16px;font-weight:700;color:'+(k.c||'var(--text)')+'">'+k.v+'</div></div>';}).join('')+
+          '</div>'+
+          '<div style="height:8px;background:var(--border);border-radius:4px;overflow:hidden">'+
+            '<div style="height:100%;width:'+wh.load+'%;background:linear-gradient(to right,'+(wh.load>90?'#f87171,#ef4444':'#4ade80,#22c55e')+');border-radius:4px"></div></div>'+
+          '<div style="font-size:10px;color:var(--muted);margin-top:4px">Capacity utilization</div>'+
+        '</div>'+
+        '<div class="card cb"><div style="font-weight:600;font-size:13px;margin-bottom:10px">Driver Status Split</div>'+
+          [{l:'Active',v:s.active,c:'var(--ok-t)'},{l:'Completed',v:s.completed,c:'var(--primary)'},{l:'Idle',v:50-s.active-s.completed,c:'var(--muted)'}]
+          .map(function(k){return'<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border-sub)"><span style="color:var(--muted)">'+k.l+'</span><span style="font-weight:700;font-size:16px;color:'+k.c+'">'+k.v+'</span></div>';}).join('')+
+          '<div style="margin-top:10px;font-size:11px;color:var(--muted)">Avg Rating: '+s.avgRating+'★ · Exceptions: '+s.exceptions+'</div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="card cb"><table><thead><tr><th>#</th><th>Driver</th><th>Zone</th><th>Vehicle</th><th>Stops</th><th>Progress</th><th style="text-align:right">OTP</th><th style="text-align:right">Earned</th><th>ASN</th><th>CPPU</th><th>Status</th></tr></thead><tbody>'+
+        s.drvs.map(function(d,i){
+          var pct=d.stops>0?Math.round(d.done/d.stops*100):0;
+          return'<tr>'+
+            '<td style="font-size:11px;color:var(--dim)">'+(i+1)+'</td>'+
+            '<td style="font-weight:500">'+esc(d.name)+'</td>'+
+            '<td style="font-size:11px">'+esc(d.zone)+'</td>'+
+            '<td style="font-family:var(--mono);font-size:10px;color:var(--muted)">'+d.vehicleId+'</td>'+
+            '<td>'+d.done+'/'+d.stops+'</td>'+
+            '<td style="min-width:65px"><div style="display:flex;align-items:center;gap:4px"><div style="flex:1;height:5px;background:var(--border);border-radius:3px"><div style="height:100%;width:'+pct+'%;background:'+st.color+';border-radius:3px"></div></div><span style="font-size:9px">'+pct+'%</span></div></td>'+
+            '<td style="text-align:right;font-size:11px;color:'+(d.otp>=95?'var(--ok-t)':'var(--warn-t)')+'">'+d.otp+'%</td>'+
+            '<td style="text-align:right;font-weight:600">$'+d.earnings+'</td>'+
+            '<td><span style="font-size:9px;color:'+(d.asnOk?'var(--ok-t)':'var(--err-t)')+'">'+(d.asnOk?'✓':'⚠')+'</span></td>'+
+            '<td style="font-family:var(--mono);font-size:10px;color:'+(d.cppu<=5.37?'var(--ok-t)':'var(--warn-t)')+'">$'+d.cppu+'</td>'+
+            '<td>'+statusBadge(d.status)+'</td>'+
+          '</tr>';}).join('')+
+      '</tbody></table></div></div>';
+  };
+});
+
+// ══════════════════════════════════════════════════════════
+// ONTRAC GM DASHBOARD — 35 RSP Companies Network View
+// ══════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
+// ONTRAC GM DASHBOARD — Sarah Chen · OnTrac Manager
+// 35 RSP Partners · 8,750 Drivers · Multi-Territory
+// ══════════════════════════════════════════════════════════
+function renderOnTracGMDashboard(){
+  var totalDrivers=8750;
+  var totalActive=ONTRAC_COMPANIES.reduce(function(a,c){return a+c.activeNow;},0);
+  var totalRev=ONTRAC_COMPANIES.reduce(function(a,c){return a+c.revenue;},0);
+  var totalStops=ONTRAC_COMPANIES.reduce(function(a,c){return a+c.dailyStops;},0);
+  var totalVol=ONTRAC_COMPANIES.reduce(function(a,c){return a+c.dailyVolume;},0);
+  var totalSqep=ONTRAC_COMPANIES.reduce(function(a,c){return a+c.sqepEvents;},0);
+  var alerts=ONTRAC_COMPANIES.filter(function(c){return c.score==='alert';}).length;
+  var elites=ONTRAC_COMPANIES.filter(function(c){return c.score==='elite';}).length;
+  var avgOtp=+(ONTRAC_COMPANIES.reduce(function(a,c){return a+c.otp;},0)/35).toFixed(1);
+  var avgLos=+(ONTRAC_COMPANIES.reduce(function(a,c){return a+c.los;},0)/35).toFixed(1);
+  var avgCppu=+(ONTRAC_COMPANIES.reduce(function(a,c){return a+parseFloat(c.cppu);},0)/35).toFixed(2);
+  var sqepFine=totalSqep*1663;
+  var now=new Date();
+  var timeStr=now.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+  var dateStr=now.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+  var sortKey=window._otcSortBy||'score';
+  var scoreOrder={elite:0,ok:1,watch:2,alert:3};
+  var sorted=ONTRAC_COMPANIES.slice().sort(function(a,b){
+    if(sortKey==='score')return scoreOrder[a.score]-scoreOrder[b.score];
+    if(sortKey==='revenue')return b.revenue-a.revenue;
+    if(sortKey==='otp')return b.otp-a.otp;
+    if(sortKey==='los')return b.los-a.los;
+    return 0;
+  });
+  var sb={elite:'b-active',ok:'b-completed',watch:'b-pending',alert:'b-suspended'};
+  return'<div class="page">'+
+  '<div style="background:linear-gradient(135deg,#06091a,rgba(59,130,246,.16),rgba(0,212,255,.06));border:1px solid rgba(59,130,246,.22);border-radius:16px;padding:24px 28px;margin-bottom:18px;position:relative;overflow:hidden">'+
+    '<div style="position:absolute;right:-60px;top:-60px;width:280px;height:280px;border-radius:50%;background:rgba(59,130,246,.04)"></div>'+
+    '<div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:14px;position:relative;z-index:1">'+
+      '<div>'+
+        '<div style="display:inline-flex;align-items:center;gap:6px;background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.28);border-radius:6px;padding:3px 10px;font-size:11px;font-weight:500;margin-bottom:10px;color:#60a5fa">'+
+          '<span class="drv-status-dot" style="background:#3b82f6"></span>OnTrac Network Live · '+esc(timeStr)+'</div>'+
+        '<div style="font-size:22px;font-weight:700">Sarah Chen · OnTrac RSP Manager</div>'+
+        '<div style="font-size:12px;opacity:.55;margin-top:2px">35 RSP Partners · 8,750 Drivers · Multi-Territory · '+esc(dateStr)+'</div>'+
+        '<div style="display:flex;gap:20px;margin-top:16px;flex-wrap:wrap">'+
+          [{v:'35',l:'RSP Partners'},{v:'8,750',l:'Total Drivers'},{v:totalActive.toLocaleString(),l:'Active Now'},{v:totalStops.toLocaleString(),l:'Stops Today'},{v:alerts,l:'⚠ Alerts',c:'#f87171'},{v:elites,l:'★ Elite',c:'#4ade80'}]
+          .map(function(s){return'<div style="text-align:center"><div style="font-size:22px;font-weight:800;'+(s.c?'color:'+s.c:'')+'">'+s.v+'</div><div style="font-size:10px;opacity:.5;margin-top:1px">'+s.l+'</div></div>';}).join('')+
+        '</div>'+
+      '</div>'+
+      '<div style="text-align:right;min-width:180px">'+
+        '<div style="font-size:10px;opacity:.4;text-transform:uppercase;letter-spacing:.5px">Network Monthly Revenue</div>'+
+        '<div style="font-size:30px;font-weight:800;color:var(--primary);letter-spacing:-1px">$'+Math.round(totalRev/1000000).toFixed(0)+'M</div>'+
+        '<div style="font-size:11px;opacity:.5">OTP '+avgOtp+'% · LOS '+avgLos+'% · CPPU $'+avgCppu+'</div>'+
+        '<div style="font-size:11px;opacity:.5;margin-top:2px">SQEP: $'+sqepFine.toLocaleString()+' exposure/mo</div>'+
+        '<div style="margin-top:10px;display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap">'+
+          '<button class="btn btn-p btn-sm" onclick="navigate(\'ontrac_network_stats\')">📊 Analytics</button>'+
+          '<button class="btn '+(alerts>0?'btn-err':'btn-o')+' btn-sm" onclick="navigate(\'ontrac_alerts\')">⚠ Alerts ('+alerts+')</button>'+
+        '</div>'+
+      '</div>'+
+    '</div>'+
+  '</div>'+
+  '<div class="g4 mb4">'+
+    [{t:'Network Avg OTP',v:avgOtp+'%',s:avgOtp>=93?'On track':'Below 95% target',ic:'Clock',bg:avgOtp>=93?'var(--ok-bg)':'var(--warn-bg)',d:'Avg on-time delivery rate across all 35 RSP partners'},
+     {t:'Network Avg LOS',v:avgLos+'%',s:'target ≥97%',ic:'Package',bg:avgLos>=97?'var(--ok-bg)':'var(--warn-bg)',d:'Level of Service rate — first-attempt delivery success'},
+     {t:'Avg CPPU',v:'$'+avgCppu,s:parseFloat(avgCppu)<=5.37?'✓ Below $5.37':'Above benchmark',ic:'DollarSign',bg:parseFloat(avgCppu)<=5.37?'var(--ok-bg)':'var(--warn-bg)',d:'Cost per package unit — OnTrac benchmark is $5.37'},
+     {t:'SQEP Exposure',v:'$'+sqepFine.toLocaleString(),s:totalSqep+' events · $1,663 each',ic:'Shield',bg:totalSqep>5?'var(--err-bg)':'var(--warn-bg)',d:'Total SQEP compliance fine exposure across network this month'}].map(kpiCard).join('')+
+  '</div>'+
+  '<div class="g2 mb4">'+
+    '<div class="card cb">'+
+      '<div style="font-weight:600;font-size:13px;margin-bottom:12px">'+icon('Award')+'&nbsp;Network Score Distribution</div>'+
+      [['elite','#4ade80',elites,'LOS ≥99% & OTP ≥95%'],
+       ['ok','#00d4ff',ONTRAC_COMPANIES.filter(function(c){return c.score==='ok';}).length,'LOS ≥98% & OTP ≥92%'],
+       ['watch','#fbbf24',ONTRAC_COMPANIES.filter(function(c){return c.score==='watch';}).length,'Minor drift — monitoring'],
+       ['alert','#f87171',alerts,'SLA breach risk — action needed']].map(function(sc){
+        return'<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border-sub)">'+
+          '<div style="width:10px;height:10px;border-radius:50%;background:'+sc[1]+';flex-shrink:0"></div>'+
+          '<div style="flex:1"><span style="font-size:12px;font-weight:700;text-transform:uppercase;color:'+sc[1]+'">'+sc[0]+'</span>'+
+          '<span style="font-size:10px;color:var(--muted);margin-left:8px">'+sc[3]+'</span></div>'+
+          '<div style="font-size:22px;font-weight:800;color:'+sc[1]+'">'+sc[2]+'</div>'+
+        '</div>';}).join('')+
+      '<div style="margin-top:10px;display:flex;gap:6px">'+
+        '<button class="btn btn-ok btn-sm" onclick="navigate(\'ontrac_companies\')">Browse All Companies →</button>'+
+      '</div>'+
+    '</div>'+
+    '<div class="card cb">'+
+      '<div style="font-weight:600;font-size:13px;margin-bottom:12px">'+icon('AlertTriangle')+'&nbsp;Attention Required</div>'+
+      (ONTRAC_COMPANIES.filter(function(c){return c.score==='alert'||c.score==='watch';}).slice(0,5).map(function(c){
+        var origIdx=ONTRAC_COMPANIES.indexOf(c);
+        var cl=c.score==='alert'?'var(--err-t)':'var(--warn-t)';
+        var bg=c.score==='alert'?'var(--err-bg)':'var(--warn-bg)';
+        var issues=[];
+        if(c.otp<95)issues.push('OTP '+c.otp+'%');
+        if(c.los<97)issues.push('LOS '+c.los+'%');
+        if(c.sqepEvents>0)issues.push('SQEP ×'+c.sqepEvents);
+        return'<div style="background:'+bg+';border-radius:8px;padding:9px 12px;margin-bottom:6px;cursor:pointer" onclick="window._otcoIdx='+origIdx+';window._otcDrvPage=0;navigate(\'ontrac_company_detail\')">'+
+          '<div style="display:flex;align-items:center;justify-content:space-between">'+
+            '<div style="font-size:12px;font-weight:700;color:'+cl+'">'+esc(c.name)+'</div>'+
+            '<span class="badge '+(c.score==='alert'?'b-suspended':'b-pending')+'" style="font-size:9px">'+c.score.toUpperCase()+'</span>'+
+          '</div>'+
+          '<div style="font-size:10px;color:var(--muted);margin-top:2px">'+c.city+', '+c.state+' · '+issues.join(' · ')+'</div>'+
+        '</div>';}).join(''))+
+    '</div>'+
+  '</div>'+
+  '<div class="card mb4"><div class="ch" style="justify-content:space-between;flex-wrap:wrap;gap:8px">'+
+    '<span>'+icon('Building2')+'&nbsp;All 35 RSP Companies — Click Row for 250-Driver Detail</span>'+
+    '<div style="display:flex;gap:5px;flex-wrap:wrap">'+
+      ['score','otp','los','revenue'].map(function(k){return'<button class="btn btn-sm '+(sortKey===k?'btn-p':'btn-o')+'" onclick="window._otcSortBy=\''+k+'\';rerenderPage()">'+k.charAt(0).toUpperCase()+k.slice(1)+'</button>';}).join('')+
+    '</div>'+
+  '</div>'+
+  '<div class="cb" style="padding:0;overflow-x:auto"><table><thead><tr>'+
+    '<th>#</th><th>RSP Company</th><th>Hub City</th><th style="text-align:right">Active</th>'+
+    '<th style="text-align:right">Stops/Day</th><th style="text-align:right">OTP%</th>'+
+    '<th style="text-align:right">LOS%</th><th style="text-align:right">CPPU</th>'+
+    '<th style="text-align:right">SQEP</th><th style="text-align:right">Rev/Mo</th><th>Score</th>'+
+  '</tr></thead><tbody>'+
+  sorted.map(function(c,i){
+    var origIdx=ONTRAC_COMPANIES.indexOf(c);
+    return'<tr style="cursor:pointer;'+(c.score==='alert'?'background:rgba(239,68,68,.04)':'')+'" onclick="window._otcoIdx='+origIdx+';window._otcDrvPage=0;navigate(\'ontrac_company_detail\')">'+
+      '<td style="font-size:11px;color:var(--dim)">'+(i+1)+'</td>'+
+      '<td style="font-weight:600"><div style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(c.name)+'</div></td>'+
+      '<td style="font-size:11px;color:var(--muted);white-space:nowrap">'+c.city+', '+c.state+'</td>'+
+      '<td style="text-align:right;color:var(--ok-t)">'+c.activeNow+'</td>'+
+      '<td style="text-align:right;font-family:var(--mono);font-size:11px">'+c.dailyStops.toLocaleString()+'</td>'+
+      '<td style="text-align:right;font-weight:600;color:'+(c.otp>=95?'var(--ok-t)':c.otp>=88?'var(--warn-t)':'var(--err-t)')+'">'+c.otp+'%</td>'+
+      '<td style="text-align:right;font-weight:600;color:'+(c.los>=98?'var(--ok-t)':c.los>=97?'var(--warn-t)':'var(--err-t)')+'">'+c.los+'%</td>'+
+      '<td style="text-align:right;font-family:var(--mono);font-size:11px;color:'+(parseFloat(c.cppu)<=5.37?'var(--ok-t)':'var(--warn-t)')+'">$'+c.cppu+'</td>'+
+      '<td style="text-align:right;color:'+(c.sqepEvents>0?'var(--err-t)':'var(--ok-t)')+'">'+c.sqepEvents+(c.sqepEvents>0?' <span style="font-size:9px">($'+(c.sqepEvents*1663)+')</span>':'')+'</td>'+
+      '<td style="text-align:right;font-weight:600">$'+Math.round(c.revenue/1000)+'K</td>'+
+      '<td><span class="badge '+sb[c.score]+'">'+c.score.toUpperCase()+'</span></td>'+
+    '</tr>';}).join('')+
+  '</tbody></table></div></div></div>';
+}
+
+// ── Company Directory (Card View) ──
+function renderOnTracCompanies(){
+  var search=(document.getElementById('otc-search')||{}).value||'';
+  var scoreF=window._otcScoreFilter||'all';
+  var filtered=ONTRAC_COMPANIES.filter(function(c){
+    if(search){var q=search.toLowerCase();if(!c.name.toLowerCase().includes(q)&&!c.city.toLowerCase().includes(q)&&!c.state.toLowerCase().includes(q))return false;}
+    if(scoreF!=='all'&&c.score!==scoreF)return false;
+    return true;
+  });
+  var sb={elite:'b-active',ok:'b-completed',watch:'b-pending',alert:'b-suspended'};
+  var sc={elite:'#4ade80',ok:'var(--primary)',watch:'#fbbf24',alert:'#f87171'};
+  return'<div class="page">'+
+    '<div class="ph"><div><div class="pt">'+icon('Building2')+'&nbsp;RSP Company Directory</div>'+
+    '<div class="ps">'+filtered.length+' of 35 OnTrac RSP partner companies</div></div>'+
+    '<button class="btn btn-o btn-sm" onclick="navigate(\'ontrac_gm\')">← Network Overview</button></div>'+
+    '<div class="filters">'+
+      '<div class="inp-w" style="flex:1;min-width:180px"><span class="inp-ic">'+icon('Search')+'</span>'+
+      '<input class="inp has-ic" id="otc-search" placeholder="Search by name, city, or state…" value="'+esc(search)+'" oninput="rerenderPage()"/></div>'+
+      '<select class="inp" style="width:130px" onchange="window._otcScoreFilter=this.value;rerenderPage()">'+
+        '<option value="all">All Scores</option>'+
+        ['elite','ok','watch','alert'].map(function(s){return'<option value="'+s+'"'+(scoreF===s?' selected':'')+'>'+s.charAt(0).toUpperCase()+s.slice(1)+'</option>';}).join('')+
+      '</select>'+
+    '</div>'+
+    '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px">'+
+    filtered.map(function(c){
+      var origIdx=ONTRAC_COMPANIES.indexOf(c);
+      var clr=sc[c.score];
+      return'<div class="card cb" style="cursor:pointer;border-top:3px solid '+clr+'" onclick="window._otcoIdx='+origIdx+';window._otcDrvPage=0;navigate(\'ontrac_company_detail\')">'+
+        '<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px">'+
+          '<div style="font-weight:700;font-size:12px;line-height:1.3;flex:1;min-width:0;padding-right:6px">'+esc(c.name)+'</div>'+
+          '<span class="badge '+sb[c.score]+'" style="font-size:9px;flex-shrink:0">'+c.score.toUpperCase()+'</span>'+
+        '</div>'+
+        '<div style="font-size:10px;color:var(--muted);margin-bottom:8px">'+icon('MapPin')+'&nbsp;'+c.city+', '+c.state+' · '+esc(c.dot)+'</div>'+
+        '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:8px">'+
+          [{l:'OTP',v:c.otp+'%',ok:c.otp>=95},{l:'LOS',v:c.los+'%',ok:c.los>=97},{l:'CPPU',v:'$'+c.cppu,ok:parseFloat(c.cppu)<=5.37}]
+          .map(function(k){return'<div style="background:var(--border-sub);border-radius:6px;padding:5px 6px;text-align:center"><div style="font-size:12px;font-weight:700;color:'+(k.ok?'var(--ok-t)':'var(--warn-t)')+'">'+k.v+'</div><div style="font-size:9px;color:var(--muted)">'+k.l+'</div></div>';}).join('')+
+        '</div>'+
+        '<div style="display:flex;justify-content:space-between;font-size:10px;border-top:1px solid var(--border-sub);padding-top:6px">'+
+          '<span style="color:var(--muted)">250 drivers · '+c.activeNow+' active</span>'+
+          '<span style="font-weight:700;color:var(--ok-t)">$'+Math.round(c.revenue/1000)+'K/mo</span>'+
+        '</div>'+
+      '</div>';}).join('')+
+    '</div></div>';
+}
+
+// ── Full Company Detail — All 250 Drivers Paginated ──
+window.renderPage_ontrac_company_detail=function(){
+  var idx=window._otcoIdx||0;
+  var c=ONTRAC_COMPANIES[idx];
+  if(!c)return renderOnTracGMDashboard();
+  var stats=otcGetDriverStats(idx);
+  var page=window._otcDrvPage||0;var pageSize=50;
+  var totalPages=Math.ceil(250/pageSize);
+  var pageDrvs=stats.drvs.slice(page*pageSize,(page+1)*pageSize);
+  var sqepFine=c.sqepEvents*1663;
+  var sb={elite:'b-active',ok:'b-completed',watch:'b-pending',alert:'b-suspended'};
+  var slaItems=[
+    {n:'Customer OTP',v:c.otp,t:95,sec:'§7.1'},
+    {n:'LOS Rate',v:c.los,t:97,sec:'§4.2'},
+    {n:'ASN Compliance',v:c.asnCompliance,t:98,sec:'§9.1'},
+    {n:'ePOD Capture',v:c.podCapture,t:95,sec:'§8.2'}
+  ];
+  return'<div class="page">'+
+  '<div style="display:flex;gap:6px;align-items:center;margin-bottom:14px;flex-wrap:wrap">'+
+    '<button class="btn btn-o btn-sm" onclick="window._otcDrvPage=0;navigate(\'ontrac_gm\')">← Network</button>'+
+    '<button class="btn btn-o btn-sm" onclick="window._otcDrvPage=0;navigate(\'ontrac_companies\')">All Companies</button>'+
+    (idx>0?'<button class="btn btn-o btn-sm" onclick="window._otcoIdx='+(idx-1)+';window._otcDrvPage=0;rerenderPage()">‹ Prev</button>':'')+
+    (idx<34?'<button class="btn btn-o btn-sm" onclick="window._otcoIdx='+(idx+1)+';window._otcDrvPage=0;rerenderPage()">Next ›</button>':'')+
+    '<span style="font-size:11px;color:var(--muted);margin-left:4px">Company '+(idx+1)+' of 35</span>'+
+  '</div>'+
+  '<div style="background:linear-gradient(135deg,#06091a,rgba(59,130,246,.12));border:1px solid rgba(59,130,246,.18);border-radius:14px;padding:20px 24px;margin-bottom:16px">'+
+    '<div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px">'+
+      '<div>'+
+        '<div style="font-size:18px;font-weight:700;margin-bottom:2px">'+esc(c.name)+'</div>'+
+        '<div style="font-size:11px;opacity:.5;margin-bottom:10px">'+c.city+', '+c.state+' · '+esc(c.dot)+' · '+esc(c.mc)+' · OnTrac RSP Partner</div>'+
+        '<div style="display:flex;gap:14px;flex-wrap:wrap">'+
+          [{v:'250',l:'Total Drivers'},{v:c.activeNow,l:'Active Now'},{v:c.completedToday,l:'Done Today'},{v:c.dailyStops.toLocaleString(),l:'Stops/Day'},{v:c.fleet,l:'Fleet'}]
+          .map(function(s){return'<div style="text-align:center"><div style="font-size:18px;font-weight:700">'+s.v+'</div><div style="font-size:9px;opacity:.5">'+s.l+'</div></div>';}).join('')+
+        '</div>'+
+      '</div>'+
+      '<div style="text-align:right">'+
+        '<span class="badge '+sb[c.score]+'" style="font-size:11px">'+c.score.toUpperCase()+'</span>'+
+        '<div style="font-size:10px;opacity:.4;margin-top:8px">Monthly Revenue</div>'+
+        '<div style="font-size:24px;font-weight:700;color:var(--primary)">$'+Math.round(c.revenue/1000)+'K</div>'+
+        '<div style="font-size:10px;opacity:.5">$'+c.rate+'/stop · '+c.dailyVolume.toLocaleString()+' pkg/day</div>'+
+      '</div>'+
+    '</div>'+
+  '</div>'+
+  '<div class="g4 mb4">'+
+    [{t:'Customer OTP',v:c.otp+'%',s:c.otp>=95?'✓ Above target':'Below 95%',ic:'Clock',bg:c.otp>=95?'var(--ok-bg)':'var(--warn-bg)',d:'On-time performance across all 250 drivers'},
+     {t:'LOS Rate',v:c.los+'%',s:'target ≥97%',ic:'Package',bg:c.los>=97?'var(--ok-bg)':'var(--warn-bg)',d:'Level of Service — first-attempt delivery success rate'},
+     {t:'CPPU',v:'$'+c.cppu,s:parseFloat(c.cppu)<=5.37?'✓ Below $5.37':'Above $5.37',ic:'DollarSign',bg:parseFloat(c.cppu)<=5.37?'var(--ok-bg)':'var(--warn-bg)',d:'Cost per package unit vs $5.37 OnTrac benchmark'},
+     {t:'SQEP Events',v:c.sqepEvents,s:c.sqepEvents>0?'$'+sqepFine.toLocaleString()+' exposure':'No violations',ic:'Shield',bg:c.sqepEvents>0?'var(--err-bg)':'var(--ok-bg)',d:'SQEP compliance events — $1,663 fine per event'}].map(kpiCard).join('')+
+  '</div>'+
+  '<div class="g2 mb4">'+
+    '<div class="card cb">'+
+      '<div style="font-weight:600;font-size:13px;margin-bottom:14px">'+icon('Shield')+'&nbsp;SLA Compliance — OnTrac Contract</div>'+
+      slaItems.map(function(s){var ok=s.v>=s.t;return'<div style="margin-bottom:12px">'+
+        '<div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:12px">'+
+          '<span>'+s.n+' <span style="font-size:9px;font-family:var(--mono);color:var(--muted)">'+s.sec+'</span></span>'+
+          '<span style="font-weight:700;color:'+(ok?'var(--ok-t)':'var(--err-t)')+'">'+s.v+'%</span></div>'+
+        '<div style="height:7px;background:var(--border);border-radius:4px;overflow:hidden"><div style="height:100%;width:'+Math.min(100,s.v)+'%;background:'+(ok?'#4ade80':'#f87171')+';border-radius:4px"></div></div>'+
+        '<div style="display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-top:2px">'+
+          '<span>Target: ≥'+s.t+'%</span><span>'+(ok?'✓ PASS':'✗ FAIL')+'</span></div>'+
+      '</div>';}).join('')+
+    '</div>'+
+    '<div class="card cb">'+
+      '<div style="font-weight:600;font-size:13px;margin-bottom:14px">'+icon('Users')+'&nbsp;Driver Status · 250 Total</div>'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">'+
+        [{l:'Active',v:stats.active,c:'var(--ok-t)',bg:'var(--ok-bg)'},{l:'Completed',v:stats.completed,c:'var(--primary)',bg:'var(--info-bg)'},
+         {l:'Idle / Off',v:stats.idle,c:'var(--muted)',bg:'var(--border-sub)'},{l:'ASN Issues',v:stats.asnFail,c:'var(--warn-t)',bg:'var(--warn-bg)'}]
+        .map(function(k){return'<div style="background:'+k.bg+';border-radius:10px;padding:12px;text-align:center">'+
+          '<div style="font-size:26px;font-weight:800;color:'+k.c+'">'+k.v+'</div>'+
+          '<div style="font-size:10px;color:var(--muted);margin-top:2px">'+k.l+'</div></div>';}).join('')+
+      '</div>'+
+      [{l:'Avg OTP',v:stats.avgOtp+'%',c:stats.avgOtp>=93?'var(--ok-t)':'var(--warn-t)'},
+       {l:'Avg Rating',v:stats.avgRating+'★',c:'var(--text)'},
+       {l:'Route completion',v:stats.pct+'% ('+stats.totalDone.toLocaleString()+'/'+stats.totalStops.toLocaleString()+')',c:'var(--primary)'},
+       {l:"Today's earnings",v:'$'+stats.totalEarn.toLocaleString(),c:'var(--ok-t)'}].map(function(k){
+        return'<div style="display:flex;justify-content:space-between;font-size:12px;padding:7px 0;border-top:1px solid var(--border-sub)"><span style="color:var(--muted)">'+k.l+'</span><span style="font-weight:600;color:'+k.c+'">'+k.v+'</span></div>';}).join('')+
+    '</div>'+
+  '</div>'+
+  '<div class="card mb4">'+
+    '<div class="ch" style="justify-content:space-between;flex-wrap:wrap;gap:6px">'+
+      '<span>'+icon('Users')+'&nbsp;All 250 Drivers — Page '+(page+1)+'/'+totalPages+'</span>'+
+      '<div style="display:flex;gap:4px">'+
+        (page>0?'<button class="btn btn-o btn-sm" onclick="window._otcDrvPage='+(page-1)+';rerenderPage()">‹ Prev 50</button>':'')+
+        (page<totalPages-1?'<button class="btn btn-o btn-sm" onclick="window._otcDrvPage='+(page+1)+';rerenderPage()">Next 50 ›</button>':'')+
+      '</div>'+
+    '</div>'+
+    '<div class="cb" style="padding:0;overflow-x:auto"><table><thead><tr>'+
+      '<th>#</th><th>Driver</th><th>Zone</th><th>Vehicle</th><th>Stops</th><th>Progress</th>'+
+      '<th style="text-align:right">OTP%</th><th style="text-align:right">Rating</th>'+
+      '<th style="text-align:right">Earned</th><th style="text-align:right">CPPU</th>'+
+      '<th>ASN</th><th>Status</th></tr></thead><tbody>'+
+    pageDrvs.map(function(d){
+      var pct=d.stops>0?Math.round(d.done/d.stops*100):0;
+      return'<tr>'+
+        '<td style="font-size:10px;color:var(--dim)">'+(d.idx+1)+'</td>'+
+        '<td style="font-weight:600;white-space:nowrap;font-size:12px">'+esc(d.name)+'</td>'+
+        '<td style="font-size:10px;color:var(--muted);white-space:nowrap">'+esc(d.zone)+'</td>'+
+        '<td style="font-family:var(--mono);font-size:10px;color:var(--muted)">'+esc(d.vehicleId)+'</td>'+
+        '<td style="white-space:nowrap;font-size:11px">'+d.done+'/'+d.stops+'</td>'+
+        '<td style="min-width:65px"><div style="display:flex;align-items:center;gap:4px">'+
+          '<div style="flex:1;height:5px;background:var(--border);border-radius:3px"><div style="height:100%;width:'+pct+'%;background:'+(d.done>=d.stops?'var(--ok-t)':'var(--primary)')+';border-radius:3px"></div></div>'+
+          '<span style="font-size:9px;color:var(--muted)">'+pct+'%</span></div></td>'+
+        '<td style="text-align:right;font-weight:600;font-size:11px;color:'+(d.otp>=95?'var(--ok-t)':d.otp>=88?'var(--warn-t)':'var(--err-t)')+'">'+d.otp+'%</td>'+
+        '<td style="text-align:right;font-size:11px">'+d.rating+'★</td>'+
+        '<td style="text-align:right;font-weight:600;font-size:11px;white-space:nowrap">$'+d.earn+'</td>'+
+        '<td style="text-align:right;font-family:var(--mono);font-size:10px;color:'+(parseFloat(d.cppu)<=5.37?'var(--ok-t)':'var(--warn-t)')+'">$'+d.cppu+'</td>'+
+        '<td><span style="font-size:10px;font-weight:700;color:'+(d.asnOk?'var(--ok-t)':'var(--err-t)')+'">'+(d.asnOk?'✓':'⚠')+'</span></td>'+
+        '<td>'+statusBadge(d.status)+'</td>'+
+      '</tr>';}).join('')+
+    '</tbody></table></div>'+
+    '<div style="padding:8px 14px;font-size:11px;color:var(--muted);border-top:1px solid var(--border-sub);display:flex;justify-content:space-between">'+
+      '<span>Showing drivers '+(page*pageSize+1)+'–'+Math.min((page+1)*pageSize,250)+' of 250</span>'+
+      '<span>All 250 generated deterministically · Seed: co-'+idx+'</span>'+
+    '</div>'+
+  '</div></div>';
+};
+
+// ── Network Analytics ──
+function renderOnTracNetworkStats(){
+  var totalRev=ONTRAC_COMPANIES.reduce(function(a,c){return a+c.revenue;},0);
+  var totalStops=ONTRAC_COMPANIES.reduce(function(a,c){return a+c.dailyStops;},0);
+  var totalSqep=ONTRAC_COMPANIES.reduce(function(a,c){return a+c.sqepEvents;},0);
+  var totalExc=ONTRAC_COMPANIES.reduce(function(a,c){return a+c.exceptions;},0);
+  var avgOtp=+(ONTRAC_COMPANIES.reduce(function(a,c){return a+c.otp;},0)/35).toFixed(1);
+  var avgLos=+(ONTRAC_COMPANIES.reduce(function(a,c){return a+c.los;},0)/35).toFixed(1);
+  var topOtp=ONTRAC_COMPANIES.slice().sort(function(a,b){return b.otp-a.otp;}).slice(0,5);
+  var botOtp=ONTRAC_COMPANIES.slice().sort(function(a,b){return a.otp-b.otp;}).slice(0,5);
+  return'<div class="page">'+
+    '<div style="display:flex;gap:8px;margin-bottom:14px"><button class="btn btn-o btn-sm" onclick="navigate(\'ontrac_gm\')">← Network Overview</button></div>'+
+    '<div class="ph"><div><div class="pt">📊 Network Analytics</div><div class="ps">35 RSP companies · 8,750 drivers · Aggregated performance data</div></div></div>'+
+    '<div class="g4 mb4">'+
+      [{t:'Monthly Network Rev.',v:'$'+Math.round(totalRev/1000000).toFixed(1)+'M',s:'all 35 RSP companies',ic:'DollarSign',bg:'var(--primary-bg)'},
+       {t:'Daily Package Vol.',v:totalStops.toLocaleString(),s:'stops across all territories',ic:'Package',bg:'var(--ok-bg)'},
+       {t:'Daily Exceptions',v:totalExc.toLocaleString(),s:(totalExc/totalStops*100).toFixed(2)+'% rate',ic:'AlertTriangle',bg:'var(--warn-bg)'},
+       {t:'SQEP Exposure/Mo',v:'$'+(totalSqep*1663).toLocaleString(),s:totalSqep+' events × $1,663',ic:'Shield',bg:totalSqep>0?'var(--err-bg)':'var(--ok-bg)'}].map(kpiCard).join('')+
+    '</div>'+
+    '<div class="g2 mb4">'+
+      '<div class="card"><div class="ch">'+icon('TrendingUp')+'&nbsp;OTP % — All 35 Companies (ranked)</div>'+
+        '<div class="cb">'+lineChart(ONTRAC_COMPANIES.slice().sort(function(a,b){return b.otp-a.otp;}).map(function(c,i){return{month:(i+1)+'',revenue:c.otp};}), 'revenue','#00d4ff')+'</div></div>'+
+      '<div class="card"><div class="ch">'+icon('BarChart2')+'&nbsp;CPPU — All 35 Companies (ranked low→high)</div>'+
+        '<div class="cb">'+lineChart(ONTRAC_COMPANIES.slice().sort(function(a,b){return parseFloat(a.cppu)-parseFloat(b.cppu);}).map(function(c,i){return{month:(i+1)+'',revenue:parseFloat(c.cppu)};}), 'revenue','#f97316')+'</div></div>'+
+    '</div>'+
+    '<div class="g2 mb4">'+
+      '<div class="card cb"><div style="font-weight:600;font-size:13px;margin-bottom:12px">🏆 Top 5 Partners — OTP</div>'+
+        topOtp.map(function(c,i){var origIdx=ONTRAC_COMPANIES.indexOf(c);return'<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border-sub);cursor:pointer" onclick="window._otcoIdx='+origIdx+';window._otcDrvPage=0;navigate(\'ontrac_company_detail\')">'+
+          '<div style="font-size:16px;font-weight:800;color:var(--muted);min-width:22px">'+(i+1)+'</div>'+
+          '<div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(c.name)+'</div>'+
+          '<div style="font-size:10px;color:var(--muted)">'+c.city+', '+c.state+'</div></div>'+
+          '<span style="font-weight:700;font-size:14px;color:var(--ok-t)">'+c.otp+'%</span></div>';}).join('')+
+      '</div>'+
+      '<div class="card cb"><div style="font-weight:600;font-size:13px;margin-bottom:12px">⚠ Bottom 5 — Lowest OTP</div>'+
+        botOtp.map(function(c,i){var origIdx=ONTRAC_COMPANIES.indexOf(c);return'<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border-sub);cursor:pointer" onclick="window._otcoIdx='+origIdx+';window._otcDrvPage=0;navigate(\'ontrac_company_detail\')">'+
+          '<div style="font-size:16px;font-weight:800;color:var(--muted);min-width:22px">'+(i+1)+'</div>'+
+          '<div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(c.name)+'</div>'+
+          '<div style="font-size:10px;color:var(--muted)">'+c.city+', '+c.state+'</div></div>'+
+          '<span style="font-weight:700;font-size:14px;color:'+(c.otp<90?'var(--err-t)':'var(--warn-t)')+'">'+c.otp+'%</span></div>';}).join('')+
+      '</div>'+
+    '</div>'+
+  '</div>';
+}
+
+// ── Alerts & SQEP Page ──
+function renderOnTracAlerts(){
+  var alerts=ONTRAC_COMPANIES.filter(function(c){return c.score==='alert'||c.sqepEvents>0||c.otp<90||c.los<97;});
+  return'<div class="page">'+
+    '<div style="display:flex;gap:8px;margin-bottom:14px"><button class="btn btn-o btn-sm" onclick="navigate(\'ontrac_gm\')">← Network Overview</button></div>'+
+    '<div class="ph"><div><div class="pt">⚠ Alerts & SQEP Compliance</div><div class="ps">'+alerts.length+' companies with active compliance issues or elevated risk</div></div></div>'+
+    (alerts.length===0?'<div class="card cb" style="text-align:center;padding:48px;color:var(--muted)">✅ No active alerts across the network</div>':
+    alerts.map(function(c){
+      var origIdx=ONTRAC_COMPANIES.indexOf(c);
+      var isAlert=c.score==='alert';
+      var issues=[];
+      if(c.otp<95)issues.push({t:'OTP '+c.otp+'%',ok:c.otp>=88});
+      if(c.los<97)issues.push({t:'LOS '+c.los+'%',ok:false});
+      if(c.sqepEvents>0)issues.push({t:'SQEP: '+c.sqepEvents+' events ($'+(c.sqepEvents*1663).toLocaleString()+')',ok:false});
+      return'<div class="card cb mb4" style="border-left:3px solid '+(isAlert?'var(--err-t)':'var(--warn-t)')+'">'+
+        '<div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:12px">'+
+          '<div>'+
+            '<div style="font-weight:700;font-size:14px;color:'+(isAlert?'var(--err-t)':'var(--warn-t)')+'">'+esc(c.name)+'</div>'+
+            '<div style="font-size:11px;color:var(--muted);margin-top:2px">'+c.city+', '+c.state+' · 250 drivers · '+esc(c.dot)+'</div>'+
+          '</div>'+
+          '<button class="btn btn-o btn-sm" onclick="window._otcoIdx='+origIdx+';window._otcDrvPage=0;navigate(\'ontrac_company_detail\')">Full Detail →</button>'+
+        '</div>'+
+        '<div style="display:flex;flex-direction:column;gap:6px">'+
+          issues.map(function(issue){return'<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:'+(issue.ok?'var(--warn-bg)':'var(--err-bg)')+';border-radius:8px">'+
+            '<span style="font-size:14px">'+(issue.ok?'⚠':'✗')+'</span>'+
+            '<span style="font-size:12px;font-weight:600;color:'+(issue.ok?'var(--warn-t)':'var(--err-t)')+'">'+issue.t+'</span>'+
+          '</div>';}).join('')+
+        '</div>'+
+      '</div>';}).join(''))+
+  '</div>';
+}
+
+// ══════════════════════════════════════════════════════════
+// DRIVER PRE-SHIFT SCAN
+// ══════════════════════════════════════════════════════════
+var _preShiftState={scanned:0,total:0,step:'manifest',routeGen:0,routeReady:false};
+function renderDriverPreShift(){
+  var u=state.user;var dd=DRIVER_DATA[u.id];if(!dd)return'';
+  var rt=dd.currentRoute;
+  if(!_preShiftState.total)_preShiftState.total=Math.round(42+Math.random()*28);
+  var sc=_preShiftState.scanned;var tot=_preShiftState.total;
+  var step=_preShiftState.step;
+  // Generate package manifest
+  var pkgs=[];for(var i=0;i<Math.min(tot,30);i++){
+    var w=[{t:'Light',c:'#00d4ff'},{t:'Medium',c:'#2dd4bf'},{t:'Heavy',c:'#fbbf24'}][Math.floor(Math.random()*3)];
+    pkgs.push({id:'1Z'+Math.random().toString(36).slice(2,10).toUpperCase(),type:w.t,color:w.color,scanned:i<sc,priority:i<3});
+  }
+  return'<div class="page">'+
+    '<div class="ph"><div><div class="pt">📦 Pre-Shift Package Scan</div>'+
+    '<div class="ps">'+esc(rt.routeId)+' · '+tot+' packages to scan before departure</div></div>'+
+    '<span class="badge '+(step==='done'?'b-active':'b-pending')+'">'+(step==='done'?'✓ Scan Complete':sc+' / '+tot+' scanned')+'</span></div>'+
+
+    // Progress bar
+    '<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px">'+
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">'+
+        '<span style="font-weight:600">Scan Progress</span>'+
+        '<span style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--primary)">'+Math.round(sc/tot*100)+'%</span>'+
+      '</div>'+
+      '<div style="height:12px;background:var(--border);border-radius:6px;overflow:hidden;margin-bottom:10px">'+
+        '<div style="height:100%;width:'+Math.round(sc/tot*100)+'%;background:linear-gradient(to right,#00d4ff,#4ade80);border-radius:6px;transition:width .4s"></div></div>'+
+      '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
+        [{v:sc,l:'Scanned',c:'var(--ok-t)'},{v:tot-sc,l:'Remaining',c:'var(--muted)'},{v:pkgs.filter(function(p){return p.priority;}).length,l:'Priority',c:'var(--warn-t)'}]
+        .map(function(k){return'<div style="text-align:center;background:var(--border-sub);border-radius:8px;padding:8px 16px"><div style="font-size:20px;font-weight:700;color:'+k.c+'">'+k.v+'</div><div style="font-size:10px;color:var(--muted)">'+k.l+'</div></div>';}).join('')+
+      '</div>'+
+    '</div>'+
+
+    (step==='done'?
+    // Route generation panel (shows after scan complete)
+    '<div style="background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.2);border-radius:12px;padding:16px;margin-bottom:16px">'+
+      '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">'+
+        '<div style="width:36px;height:36px;border-radius:50%;background:var(--ok-bg);display:flex;align-items:center;justify-content:center;font-size:18px">⚡</div>'+
+        '<div><div style="font-weight:700;color:var(--ok-t)">FlowSkip AI Route Generated</div>'+
+        '<div style="font-size:11px;color:var(--muted)">Optimal sequence calculated · CPPU $5.37 benchmark</div></div>'+
+      '</div>'+
+      '<div class="g3" style="gap:10px">'+
+        [{l:'Optimized Stops',v:tot+'  →  '+Math.round(tot*0.94)+' effective',c:'var(--ok-t)'},
+         {l:'Est. Drive Time',v:(Math.round(tot*2.2)/60).toFixed(1)+' hrs (−18 min saved)',c:'var(--primary)'},
+         {l:'Empty Miles',v:'11.2% (−6.1% vs manual)',c:'var(--ok-t)'}]
+        .map(function(k){return'<div style="background:var(--border-sub);border-radius:8px;padding:10px"><div style="font-size:10px;color:var(--muted)">'+k.l+'</div><div style="font-size:12px;font-weight:700;color:'+k.c+'">'+k.v+'</div></div>';}).join('')+
+      '</div>'+
+      '<div style="margin-top:12px;display:flex;gap:8px">'+
+        '<button class="btn btn-p" onclick="window.setDrvTab(\'route\')">▶ Start Route Now</button>'+
+        '<button class="btn btn-o" onclick="toast(\'Route details sent to device\')">📲 Send to Phone</button>'+
+      '</div>'+
+    '</div>':
+
+    // Scan controls
+    '<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px;text-align:center">'+
+      '<div style="font-size:48px;margin-bottom:10px">📷</div>'+
+      '<div style="font-weight:600;font-size:14px;margin-bottom:4px">Barcode Scanner Ready</div>'+
+      '<div style="font-size:12px;color:var(--muted);margin-bottom:16px">Point camera at package barcode or use quick-scan below</div>'+
+      '<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">'+
+        '<button class="btn btn-p" style="font-size:14px;padding:12px 24px" onclick="window._scanPkg()">'+
+          '📦 Scan Package ('+sc+'/'+tot+')</button>'+
+        '<button class="btn btn-ok" onclick="window._scanAll()">⚡ Scan All ('+tot+')</button>'+
+        '<button class="btn btn-o btn-sm" onclick="window._scanPkg(5)">+5 Quick</button>'+
+      '</div>'+
+    '</div>')+
+
+    // Package manifest
+    '<div class="card"><div class="ch">'+icon('Package')+'&nbsp;Package Manifest</div><div class="cb">'+
+      '<table><thead><tr><th>#</th><th>Tracking ID</th><th>Type</th><th>Priority</th><th>Scan Status</th></tr></thead><tbody>'+
+        pkgs.map(function(p,i){return'<tr>'+
+          '<td style="color:var(--dim)">'+(i+1)+'</td>'+
+          '<td style="font-family:var(--mono);font-size:11px">'+p.id+'</td>'+
+          '<td><span style="font-size:10px;padding:2px 7px;border-radius:4px;background:'+p.color+'22;color:'+p.color+'">'+p.type+'</span></td>'+
+          '<td>'+(p.priority?'<span style="color:var(--warn-t);font-weight:600">⭐ Priority</span>':'—')+'</td>'+
+          '<td>'+(p.scanned?'<span style="color:var(--ok-t);font-weight:600">✓ Scanned</span>':'<span style="color:var(--muted)">Pending</span>')+'</td>'+
+        '</tr>';}).join('')+
+        (tot>30?'<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:8px">…and '+(tot-30)+' more packages</td></tr>':'')+
+      '</tbody></table></div></div></div>';
+}
+
+window._scanPkg=function(n){
+  n=n||1;
+  _preShiftState.scanned=Math.min(_preShiftState.total,_preShiftState.scanned+n);
+  if(_preShiftState.scanned>=_preShiftState.total){
+    _preShiftState.step='done';
+    toast('✓ All packages scanned! Route generated.','ok');
+  } else {
+    toast('Scanned '+_preShiftState.scanned+'/'+_preShiftState.total,'ok');
+  }
+  rerenderPage();
+};
+window._scanAll=function(){
+  _preShiftState.scanned=_preShiftState.total;
+  _preShiftState.step='done';
+  toast('✓ All '+_preShiftState.total+' packages scanned! FlowSkip route ready.','ok');
+  rerenderPage();
+};
+window._resetPreShift=function(){
+  _preShiftState={scanned:0,total:0,step:'manifest',routeGen:0,routeReady:false};
+  rerenderPage();
+};
 
 // ── Boot ──
 window._reqView='kanban';
