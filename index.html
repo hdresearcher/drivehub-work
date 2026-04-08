@@ -679,6 +679,100 @@ body.dh-ann-mode #page-content{cursor:crosshair!important}
 /* Map */
 .map-container{width:100%;height:320px;border-radius:var(--r);overflow:hidden;border:1px solid var(--border);margin-bottom:12px}
 .tracking-map{width:100%;height:420px;border-radius:var(--r);overflow:hidden;border:1px solid var(--border)}
+/* ── Driver Detail Side Panel (Glassmorphism — Z:9500) ── */
+#drv-detail-panel{position:fixed;top:0;right:0;bottom:0;width:340px;z-index:9500;
+  background:rgba(10,10,20,0.78);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-left:1px solid rgba(255,255,255,.18);
+  box-shadow:-16px 0 60px rgba(0,0,0,.75),0 0 0 1px rgba(0,212,255,.04);
+  display:flex;flex-direction:column;
+  transform:translateX(100%);
+  transition:transform 400ms cubic-bezier(.16,1,.3,1);
+  pointer-events:none;overflow:hidden}
+#drv-detail-panel.open{transform:translateX(0);pointer-events:auto}
+.ddp-header{display:flex;align-items:center;gap:10px;padding:18px 16px 14px;
+  border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0;
+  background:linear-gradient(180deg,rgba(0,212,255,.04) 0,transparent 100%)}
+.ddp-avatar{width:40px;height:40px;border-radius:50%;
+  background:rgba(249,115,22,.14);color:#f97316;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;flex-shrink:0;
+  border:2px solid rgba(249,115,22,.28);box-shadow:0 0 14px rgba(249,115,22,.18)}
+.ddp-close{margin-left:auto;background:none;border:none;color:rgba(255,255,255,.45);
+  cursor:pointer;font-size:18px;line-height:1;padding:4px 6px;border-radius:6px;
+  transition:color .15s,background .15s;flex-shrink:0}
+.ddp-close:hover{color:#fff;background:rgba(255,255,255,.08)}
+.ddp-body{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+.ddp-body::-webkit-scrollbar{width:3px}
+.ddp-body::-webkit-scrollbar-thumb{background:rgba(0,212,255,.25);border-radius:2px}
+.ddp-section{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);
+  border-radius:10px;padding:11px 12px;transition:border-color .2s}
+.ddp-section:hover{border-color:rgba(0,212,255,.14)}
+.ddp-sec-hd{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2px;
+  color:rgba(0,212,255,.8);margin-bottom:8px;font-family:var(--mono)}
+.ddp-row{display:flex;justify-content:space-between;align-items:center;
+  padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:11px}
+.ddp-row:last-child{border-bottom:none}
+.ddp-lbl{color:rgba(255,255,255,.48)}
+.ddp-val{font-weight:600;color:var(--text);font-family:var(--mono);font-size:10px}
+.ddp-gauge-wrap{display:flex;align-items:center;justify-content:center;gap:16px;padding:4px 0 8px}
+.ddp-cts-net{font-size:22px;font-weight:700;color:#4ade80;text-align:center;
+  padding:4px 0 2px;font-family:var(--mono);text-shadow:0 0 16px rgba(74,222,128,.3)}
+.ddp-margin-bar{height:7px;border-radius:4px;background:rgba(255,255,255,.06);overflow:hidden;margin-top:5px}
+.ddp-margin-fill{height:100%;border-radius:4px;
+  background:linear-gradient(90deg,#4ade80,#00d4ff);
+  transition:width .9s cubic-bezier(.4,0,.2,1)}
+.ddp-asn{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;
+  padding:3px 10px;border-radius:6px;font-family:var(--mono);letter-spacing:.5px}
+.ddp-asn.ok{background:var(--ok-bg);color:var(--ok-t)}
+.ddp-asn.warn{background:var(--warn-bg);color:var(--warn-t)}
+.ddp-hint{font-size:9px;color:rgba(255,255,255,.28);margin-top:5px;
+  text-align:center;font-family:var(--mono);letter-spacing:.5px}
+/* ══ MICRO-CONTEXTUAL DASHBOARDS (MCD) — Spring-physics popups ══ */
+#mcd{
+  position:fixed;z-index:9800;pointer-events:none;
+  transform:translateY(8px) scale(0.95);opacity:0;
+  transition:transform 380ms cubic-bezier(0.34,1.56,0.64,1),opacity 180ms ease;
+  will-change:transform,opacity;
+}
+#mcd.vis{
+  transform:translateY(0) scale(1);opacity:1;pointer-events:auto;
+}
+.mcd-card{
+  background:rgba(8,9,20,0.82);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-radius:12px;padding:12px 14px;min-width:200px;max-width:240px;
+  box-shadow:0 8px 32px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.1);
+  font-family:'Outfit',-apple-system,sans-serif;font-size:12px;
+  color:#fff;line-height:1.4;
+}
+.mcd-card::before{
+  content:'';position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);
+  border:6px solid transparent;border-top-color:rgba(8,9,20,0.82);
+  border-bottom:none;
+}
+/* accent line top — color by type */
+.mcd-driver .mcd-card{border-top:2px solid #f97316;}
+.mcd-stop .mcd-card{border-top:2px solid #00d4ff;}
+.mcd-warehouse .mcd-card{border-top:2px solid #a78bfa;}
+.mcd-hd{display:flex;align-items:center;gap:8px;margin-bottom:8px;padding-bottom:6px;
+  border-bottom:1px solid rgba(255,255,255,.07);}
+.mcd-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;}
+.mcd-name{font-size:12px;font-weight:700;color:#fff;line-height:1.2;}
+.mcd-sub{font-size:9px;color:rgba(255,255,255,.42);font-family:'JetBrains Mono',monospace;letter-spacing:.3px;}
+.mcd-row{display:flex;justify-content:space-between;align-items:center;
+  padding:2px 0;font-size:10px;}
+.mcd-lbl{color:rgba(255,255,255,.42);}
+.mcd-val{font-weight:700;font-family:'JetBrains Mono',monospace;font-size:10px;}
+.mcd-divider{height:1px;background:rgba(255,255,255,.06);margin:5px 0;}
+.mcd-pill{display:inline-flex;align-items:center;gap:3px;font-size:8px;font-weight:700;
+  padding:2px 7px;border-radius:4px;font-family:'JetBrains Mono',monospace;letter-spacing:.4px;}
+.mcd-pill-ok{background:rgba(74,222,128,.12);color:#4ade80;}
+.mcd-pill-warn{background:rgba(251,191,36,.12);color:#fbbf24;}
+.mcd-pill-err{background:rgba(248,113,113,.12);color:#f87171;}
+.mcd-pill-cyan{background:rgba(0,212,255,.1);color:#00d4ff;}
+.mcd-footer{margin-top:7px;font-size:9px;color:rgba(255,255,255,.25);
+  font-family:'JetBrains Mono',monospace;letter-spacing:.8px;text-align:center;}
 .driver-card-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
 @media(max-width:900px){.driver-card-row{grid-template-columns:1fr}}
 
@@ -2339,7 +2433,18 @@ function initTrackingMap(){
     const gps=DRIVER_GPS[u.id];const dd=DRIVER_DATA[u.id];if(!gps||!dd)return;
     const co=companies.find(c=>c.id===u.co);const rt=dd.currentRoute;const pct=Math.round(rt.completed/rt.totalStops*100);
     const driverIcon=L.divIcon({className:'',html:'<div style="background:#f97316;color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.3)">'+initials(u.name)+'</div>',iconSize:[32,32],iconAnchor:[16,16]});
-    L.marker([gps.lat,gps.lng],{icon:driverIcon}).addTo(map).bindPopup('<div style="font-family:sans-serif;font-size:12px;min-width:160px"><strong>'+u.name+'</strong><br/><span style="color:#666">'+(co?.name||'')+' · '+dd.zone+'</span><br/><span style="color:#f97316;font-weight:600">'+pct+'% done</span> · '+rt.completed+'/'+rt.totalStops+' stops</div>');
+    const _dm=L.marker([gps.lat,gps.lng],{icon:driverIcon}).addTo(map).bindPopup('<div style="font-family:sans-serif;font-size:12px;min-width:160px"><strong>'+u.name+'</strong><br/><span style="color:#666">'+(co?.name||'')+' · '+dd.zone+'</span><br/><span style="color:#f97316;font-weight:600">'+pct+'% done</span> · '+rt.completed+'/'+rt.totalStops+' stops</div>');
+    _dm.on('dblclick',function(e){L.DomEvent.stopPropagation(e);map.flyTo([gps.lat,gps.lng],18,{animate:true,duration:0.8});openDriverDetailPanel(u,dd,gps);});
+    /* MCD hover/click */
+    _mcdAttach(_dm,'driver',function(){return _mcdDriverHtml(u,dd,gps);},gps.lat,gps.lng,map);
+    /* Route stop markers with MCD */
+    dd.currentRoute.stops.forEach(function(st){if(!st.lat||!st.lng)return;
+      var sclr=st.status==='delivered'?'#15803d':st.status==='active'?'#00d4ff':'#94a3b8';
+      var ssz=st.status==='active'?22:16;
+      var sIcon=L.divIcon({className:'',html:'<div style="background:'+sclr+';color:#fff;width:'+ssz+'px;height:'+ssz+'px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;border:2px solid rgba(255,255,255,.8);box-shadow:0 1px 4px rgba(0,0,0,.3)'+(st.status==='active'?';animation:pulse 2s infinite':'')+'">'+st.n+'</div>',iconSize:[ssz,ssz],iconAnchor:[ssz/2,ssz/2]});
+      var sm=L.marker([st.lat,st.lng],{icon:sIcon}).addTo(map);
+      _mcdAttach(sm,'stop',function(){return _mcdStopHtml(st);},st.lat,st.lng,map);
+    });
     bounds.push([gps.lat,gps.lng]);
     dd.currentRoute.stops.forEach(s=>{if(!s.lat)return;
       const clr=s.status==='delivered'?'#15803d':s.status==='active'?'#00d4ff':'#94a3b8';
@@ -2349,6 +2454,12 @@ function initTrackingMap(){
     });
   });
   if(bounds.length>0)map.fitBounds(bounds,{padding:[30,30]});
+  /* ── Warehouse Nodes ── */
+  WAREHOUSE_NODES.forEach(function(wh){
+    var whIcon=L.divIcon({className:'',html:'<div style="background:rgba(167,139,250,.18);border:2px solid #a78bfa;color:#a78bfa;width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:0 2px 8px rgba(167,139,250,.35)">🏭</div>',iconSize:[28,28],iconAnchor:[14,14]});
+    var wm=L.marker([wh.lat,wh.lng],{icon:whIcon}).addTo(map);
+    _mcdAttach(wm,'warehouse',function(){return _mcdWarehouseHtml(wh);},wh.lat,wh.lng,map);
+  });
 }
 function initDriverRouteMap(){
   const mapEl=document.getElementById('driver-route-map');if(!mapEl||mapEl._leaflet_id)return;
@@ -2362,7 +2473,8 @@ function initDriverRouteMap(){
   stops.forEach(s=>{
     const clr=s.status==='delivered'?'#15803d':s.status==='active'?'#00d4ff':'#94a3b8';const sz=s.status==='active'?26:20;
     const stopIcon=L.divIcon({className:'',html:'<div style="background:'+clr+';color:#fff;width:'+sz+'px;height:'+sz+'px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:'+(s.status==='active'?10:9)+'px;font-weight:700;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3)'+(s.status==='active'?';animation:pulse 2s infinite':'')+'">'+s.n+'</div>',iconSize:[sz,sz],iconAnchor:[sz/2,sz/2]});
-    L.marker([s.lat,s.lng],{icon:stopIcon}).addTo(map).bindPopup('<div style="font-family:sans-serif;font-size:12px;min-width:180px"><strong>#'+s.n+' — '+s.name+'</strong><br/>'+s.addr+'<br/><span style="color:'+clr+';font-weight:600">'+s.status+'</span> · '+s.pkg+' · '+s.time+'</div>');
+    const _sm=L.marker([s.lat,s.lng],{icon:stopIcon}).addTo(map).bindPopup('<div style="font-family:sans-serif;font-size:12px;min-width:180px"><strong>#'+s.n+' — '+s.name+'</strong><br/>'+s.addr+'<br/><span style="color:'+clr+';font-weight:600">'+s.status+'</span> · '+s.pkg+' · '+s.time+'</div>');
+    _mcdAttach(_sm,'stop',function(){return _mcdStopHtml(s);},s.lat,s.lng,map);
     bounds.push([s.lat,s.lng]);
   });
   if(bounds.length>0)map.fitBounds(bounds,{padding:[25,25]});
@@ -4117,7 +4229,7 @@ function notifCanNavigate(n){
   var map=NOTIF_NAV_MAP[n.type]||NOTIF_NAV_MAP.sim;
   if(!map.page)return false;
   var role=state.user.role;
-  if(map.page==='driver'&&role!=='driver')return(role==='admin'||role==='general_manager'||role==='manager');
+  if(map.page==='driver'&&role!=='driver')return(role==='admin'||role==='general_manager'||role==='manager'||role==='gm');
   if(map.page==='billing'&&(role==='manager'||role==='driver'))return false;
   return true;
 }
@@ -4127,7 +4239,7 @@ function resolveNotifPage(n){
   var role=state.user?state.user.role:'admin';
   var target=n.page||map.page;
   if(!target)return null;
-  if(target==='driver'&&role!=='driver')return{page:'tracking',tab:null};
+  if(target==='driver'&&role!=='driver')return{page:'tracking',tab:null};if(target==='owner_command'&&(role==='manager'||role==='general_manager'||role==='gm'))return{page:'dashboard',tab:null};
   if(target==='dashboard'&&role==='owner')return{page:'owner_command',tab:null};
   if(target==='billing'&&n.type==='submission')return{page:'billing',tab:'manual'};
   return{page:target,tab:map.tab||null};
@@ -5136,9 +5248,401 @@ function renderIntelResearch(){
   '</div>';
 }
 
+// ══════════════════════════════════════════════════════════
+// DHBus — Cross-map state synchronization bus
+// ══════════════════════════════════════════════════════════
+window.DHBus=(function(){
+  var _subs={};
+  return{
+    on:function(evt,fn){(_subs[evt]=_subs[evt]||[]).push(fn);},
+    emit:function(evt,data){(_subs[evt]||[]).forEach(function(fn){try{fn(data);}catch(e){}});},
+    off:function(evt,fn){if(_subs[evt])_subs[evt]=_subs[evt].filter(function(f){return f!==fn;});}
+  };
+})();
+
+// ──  Live GPS deltas — emit to bus every 3s  ──
+setInterval(function(){
+  USERS.filter(function(u){return u.role==='driver'&&u.active;}).forEach(function(u){
+    var gps=DRIVER_GPS[u.id];if(!gps)return;
+    gps.speed=Math.max(0,Math.min(55,Math.round(gps.speed+(Math.random()*6-3))));
+    gps.heading=(gps.heading+(Math.random()*8-4)+360)%360;
+    DHBus.emit('driver:update',{uid:u.id,gps:gps});
+  });
+},3000);
+
+// ══════════════════════════════════════════════════════════
+// SIMULATED WAREHOUSE NODES (T11 Territory — Youngstown OH)
+// ══════════════════════════════════════════════════════════
+var WAREHOUSE_NODES=[
+  {id:'WH-PIT',name:'PIT Hub',lat:40.4774,lng:-79.9993,asnOk:true,load:87,queue:42,pkg:1240,color:'#a78bfa'},
+  {id:'WH-YNG',name:'Youngstown Sort',lat:41.0998,lng:-80.6495,asnOk:true,load:64,queue:28,pkg:880,color:'#c084fc'},
+  {id:'WH-TOL',name:'Toledo Express',lat:41.6528,lng:-83.5379,asnOk:false,load:91,queue:61,pkg:1560,color:'#a78bfa'},
+];
+
+// ══════════════════════════════════════════════════════════
+// MICRO-CONTEXTUAL DASHBOARD ENGINE
+// ══════════════════════════════════════════════════════════
+var _mcdTimeout=null;
+var _mcdTarget=null;
+
+function _mcdEnsure(){
+  var el=document.getElementById('mcd');
+  if(!el){
+    el=document.createElement('div');el.id='mcd';
+    document.body.appendChild(el);
+  }
+  return el;
+}
+
+function _mcdPosition(lat,lng,map){
+  /* Convert LatLng to screen coords and position MCD above the marker */
+  var pt=map.latLngToContainerPoint(L.latLng(lat,lng));
+  var mapEl=map.getContainer();
+  var rect=mapEl.getBoundingClientRect();
+  var absX=rect.left+pt.x;
+  var absY=rect.top+pt.y;
+  var el=_mcdEnsure();
+  // Card dimensions: approx 240×180
+  var cardW=240;var topOffset=16; /* gap above marker */
+  var left=absX-cardW/2;
+  var top=absY-(180+topOffset);
+  /* Clamp to viewport */
+  left=Math.max(8,Math.min(window.innerWidth-cardW-8,left));
+  top=Math.max(8,top);
+  el.style.left=left+'px';
+  el.style.top=top+'px';
+}
+
+function _mcdShow(type,html,lat,lng,map){
+  clearTimeout(_mcdTimeout);
+  var el=_mcdEnsure();
+  el.className='mcd-'+type;
+  el.innerHTML='<div class="mcd-card">'+html+'</div>';
+  _mcdPosition(lat,lng,map);
+  /* Force reflow then add vis */
+  el.offsetHeight;
+  el.classList.add('vis');
+  _mcdTarget={lat,lng,map};
+}
+
+function _mcdHide(delay){
+  delay=delay||0;
+  _mcdTimeout=setTimeout(function(){
+    var el=document.getElementById('mcd');
+    if(el)el.classList.remove('vis');
+    _mcdTarget=null;
+  },delay);
+}
+
+function _mcdKeep(){clearTimeout(_mcdTimeout);}
+
+/* ── Attach stay-alive on the floating card ── */
+document.addEventListener('mouseover',function(e){
+  if(e.target.closest('#mcd'))_mcdKeep();
+});
+document.addEventListener('mouseout',function(e){
+  if(e.target.closest('#mcd'))_mcdHide(300);
+});
+/* Dismiss on map click */
+document.addEventListener('click',function(e){
+  if(!e.target.closest('#mcd')&&!e.target.closest('.leaflet-marker-icon'))_mcdHide(0);
+});
+
+/* ── Driver MCD HTML ── */
+function _mcdDriverHtml(u,dd,gps){
+  var rt=dd.currentRoute;
+  var pct=Math.round(rt.completed/rt.totalStops*100);
+  var sqepRisk=dd.onTimeRate<92?'HIGH':'LOW';
+  var dirs=['N','NE','E','SE','S','SW','W','NW'];
+  var dir=dirs[Math.round(gps.heading/45)%8];
+  var spdClr=gps.speed<25?'#4ade80':gps.speed<45?'#fbbf24':'#f87171';
+  return '<div class="mcd-hd">'+
+    '<div class="mcd-av" style="background:rgba(249,115,22,.15);color:#f97316">'+initials(u.name)+'</div>'+
+    '<div><div class="mcd-name">'+esc(u.name)+'</div>'+
+    '<div class="mcd-sub">'+esc(dd.zone)+' · '+esc(dd.vehicleId||dd.vehicleType)+'</div></div>'+
+  '</div>'+
+  '<div class="mcd-row"><span class="mcd-lbl">Speed</span><span class="mcd-val" style="color:'+spdClr+'">'+gps.speed+' mph</span></div>'+
+  '<div class="mcd-row"><span class="mcd-lbl">Heading</span><span class="mcd-val">'+Math.round(gps.heading)+'° '+dir+'</span></div>'+
+  '<div class="mcd-row"><span class="mcd-lbl">Route progress</span><span class="mcd-val">'+pct+'%  ('+rt.completed+'/'+rt.totalStops+')</span></div>'+
+  '<div class="mcd-divider"></div>'+
+  '<div class="mcd-row"><span class="mcd-lbl">Margin expansion</span><span class="mcd-val" style="color:#4ade80">+31% ↑</span></div>'+
+  '<div class="mcd-row"><span class="mcd-lbl">SQEP risk</span>'+
+    '<span class="mcd-pill '+(sqepRisk==='HIGH'?'mcd-pill-err':'mcd-pill-ok')+'">'+sqepRisk+'</span></div>'+
+  '<div class="mcd-row"><span class="mcd-lbl">OTP rate</span>'+
+    '<span class="mcd-val" style="color:'+(dd.onTimeRate>=95?'#4ade80':'#fbbf24')+'">'+dd.onTimeRate+'%</span></div>'+
+  '<div class="mcd-footer">DOUBLE-CLICK · FULL DETAIL PANEL</div>';
+}
+
+/* ── Stop / Delivery Point MCD HTML ── */
+function _mcdStopHtml(s){
+  var delivered=s.status==='delivered';
+  var active=s.status==='active';
+  var clr=delivered?'#4ade80':active?'#00d4ff':'#94a3b8';
+  var epodPct=delivered?96:active?78:42;
+  var cppu=5.37;
+  return '<div class="mcd-hd">'+
+    '<div class="mcd-av" style="background:'+clr+'22;color:'+clr+';font-size:12px;font-weight:800">#'+s.n+'</div>'+
+    '<div><div class="mcd-name" style="font-size:11px">'+esc(s.name||s.addr)+'</div>'+
+    '<div class="mcd-sub">'+esc(s.addr)+'</div></div>'+
+  '</div>'+
+  '<div class="mcd-row"><span class="mcd-lbl">Status</span>'+
+    '<span class="mcd-pill '+(delivered?'mcd-pill-ok':active?'mcd-pill-cyan':'mcd-pill-warn')+'">'+s.status.toUpperCase()+'</span></div>'+
+  '<div class="mcd-row"><span class="mcd-lbl">ETA</span><span class="mcd-val">'+esc(s.time)+'</span></div>'+
+  '<div class="mcd-row"><span class="mcd-lbl">Packages</span><span class="mcd-val">'+esc(s.pkg)+'</span></div>'+
+  '<div class="mcd-divider"></div>'+
+  '<div class="mcd-row"><span class="mcd-lbl">ePOD probability</span>'+
+    '<span class="mcd-val" style="color:'+(epodPct>=85?'#4ade80':epodPct>=70?'#fbbf24':'#f87171')+'">'+epodPct+'%</span></div>'+
+  '<div class="mcd-row"><span class="mcd-lbl">CPPU reference</span><span class="mcd-val" style="color:#00d4ff">$'+cppu.toFixed(2)+'</span></div>'+
+  '<div class="mcd-row"><span class="mcd-lbl">Loss risk</span><span class="mcd-val" style="color:'+(delivered?'#4ade80':'#fbbf24')+'">'+(delivered?'$0':'$17.93')+'</span></div>';
+}
+
+/* ── Warehouse MCD HTML ── */
+function _mcdWarehouseHtml(wh){
+  return '<div class="mcd-hd">'+
+    '<div class="mcd-av" style="background:rgba(167,139,250,.15);color:#a78bfa;font-size:14px">🏭</div>'+
+    '<div><div class="mcd-name">'+esc(wh.name)+'</div>'+
+    '<div class="mcd-sub">'+wh.id+' · SORT FACILITY</div></div>'+
+  '</div>'+
+  '<div class="mcd-row"><span class="mcd-lbl">Capacity load</span>'+
+    '<span class="mcd-val" style="color:'+(wh.load>85?'#f87171':wh.load>70?'#fbbf24':'#4ade80')+'">'+wh.load+'%</span></div>'+
+  '<div class="mcd-row"><span class="mcd-lbl">Packages ready</span><span class="mcd-val">'+wh.pkg.toLocaleString()+'</span></div>'+
+  '<div class="mcd-row"><span class="mcd-lbl">Queue to dispatch</span><span class="mcd-val">'+wh.queue+' routes</span></div>'+
+  '<div class="mcd-divider"></div>'+
+  '<div class="mcd-row"><span class="mcd-lbl">ASN validation</span>'+
+    '<span class="mcd-pill '+(wh.asnOk?'mcd-pill-ok':'mcd-pill-warn')+'">'+(wh.asnOk?'✓ VALIDATED':'⚠ PENDING')+'</span></div>'+
+  '<div class="mcd-row"><span class="mcd-lbl">SQEP fine risk</span><span class="mcd-val" style="color:'+(wh.asnOk?'#4ade80':'#f87171')+'">'+(wh.asnOk?'LOW':'$1,663')+'</span></div>'+
+  '<div class="mcd-footer">EDI 856 · OnTrac Rating API</div>';
+}
+
+/* ── Attach MCD events to a Leaflet marker ── */
+function _mcdAttach(marker,type,htmlFn,lat,lng,map){
+  /* Desktop hover */
+  marker.on('mouseover',function(){
+    _mcdKeep();
+    _mcdShow(type,htmlFn(),lat,lng,map);
+  });
+  marker.on('mouseout',function(){_mcdHide(400);});
+  /* Mobile tap — L.DomEvent */
+  marker.on('click',function(e){
+    L.DomEvent.stopPropagation(e);
+    _mcdShow(type,htmlFn(),lat,lng,map);
+  });
+  /* Sync to DHBus for driver markers */
+  if(type==='driver'){
+    DHBus.on('driver:update',function(data){
+      var el=document.getElementById('mcd');
+      if(!el||!el.classList.contains('vis'))return;
+      /* If this card is visible and it's for this driver, refresh silently */
+      if(data.uid&&Math.abs(data.gps.lat-lat)<0.001){
+        /* Position stays same; content updates will be reflected on next hover */
+      }
+    });
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// DRIVER DETAIL SIDE PANEL (GLASSMORPHISM)
+// ══════════════════════════════════════════════════════════
+var _drvDetailSim=null;
+
+function openDriverDetailPanel(u,dd,gps){
+  var panel=document.getElementById('drv-detail-panel');
+  if(!panel)return;
+  // Snapshot so simulation deltas work on this copy
+  var liveGps={lat:gps.lat,lng:gps.lng,heading:gps.heading,speed:gps.speed,lastUpdate:gps.lastUpdate};
+  panel.innerHTML=buildDriverDetailPanel(u,dd,liveGps);
+  panel.classList.add('open');
+  if(_drvDetailSim)clearInterval(_drvDetailSim);
+  _drvDetailSim=setInterval(function(){tickDriverPanelSim(liveGps);},1400);
+}
+window.openDriverDetailPanel=openDriverDetailPanel;
+
+function closeDriverDetailPanel(){
+  var panel=document.getElementById('drv-detail-panel');
+  if(panel)panel.classList.remove('open');
+  if(_drvDetailSim){clearInterval(_drvDetailSim);_drvDetailSim=null;}
+}
+window.closeDriverDetailPanel=closeDriverDetailPanel;
+
+function buildDriverDetailPanel(u,dd,gps){
+  var co=companies.find(function(c){return c.id===u.co;});
+  var rt=dd.currentRoute;
+  var pct=Math.round(rt.completed/rt.totalStops*100);
+  // Cost-to-Serve
+  var baseCost=5.37,ontracDisc=0.42;
+  var netCost=(baseCost*(1-ontracDisc)).toFixed(2);
+  var margin=31;
+  // ASN: toggle deterministically by driver id
+  var asnOk=(u.id%2===0);
+  // ePOD probability
+  var epodPct=Math.min(99,Math.round(dd.customerRating/5*96+8));
+  var dirs=['N','NE','E','SE','S','SW','W','NW'];
+  var dirLabel=dirs[Math.round(gps.heading/45)%8];
+  var spd=gps.speed;
+  var spdClr=spd<25?'#4ade80':spd<45?'#fbbf24':'#f87171';
+
+  return '<div class="ddp-header">'+
+    '<div class="ddp-avatar">'+initials(u.name)+'</div>'+
+    '<div style="flex:1;min-width:0">'+
+      '<div style="font-size:13px;font-weight:700;color:#fff">'+esc(u.name)+'</div>'+
+      '<div style="font-size:10px;color:rgba(255,255,255,.42);font-family:var(--mono)">'+esc(co?co.name:'')+' · '+esc(dd.zone)+'</div>'+
+      '<div style="margin-top:3px;display:flex;gap:5px">'+
+        '<span style="font-size:9px;background:rgba(249,115,22,.12);color:#f97316;border:1px solid rgba(249,115,22,.22);padding:1px 7px;border-radius:4px;font-family:var(--mono)">'+esc(dd.vehicleId||dd.vehicleType||'N/A')+'</span>'+
+        '<span style="font-size:9px;background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.2);padding:1px 7px;border-radius:4px;font-family:var(--mono);animation:pulse 2s infinite">LIVE</span>'+
+      '</div>'+
+    '</div>'+
+    '<button class="ddp-close" onclick="closeDriverDetailPanel()">✕</button>'+
+  '</div>'+
+  '<div class="ddp-body">'+
+
+    /* ── Telemetry ── */
+    '<div class="ddp-section">'+
+      '<div class="ddp-sec-hd">⚡ Telemetry</div>'+
+      '<div class="ddp-gauge-wrap">'+
+        _buildSpeedGauge(spd)+
+        '<div style="text-align:center">'+
+          '<svg id="ddp-compass-svg" width="64" height="64" viewBox="0 0 64 64">'+
+            '<circle cx="32" cy="32" r="24" stroke="rgba(255,255,255,.06)" stroke-width="2" fill="none"/>'+
+            '<circle cx="32" cy="32" r="24" stroke="rgba(0,212,255,.1)" stroke-width="1" fill="none" stroke-dasharray="4 4"/>'+
+            '<g id="ddp-needle" style="transform-origin:32px 32px;transform:rotate('+gps.heading+'deg);transition:transform .5s cubic-bezier(.4,0,.2,1)">'+
+              '<polygon points="32,10 29,32 32,30 35,32" fill="#00d4ff"/>'+
+              '<polygon points="32,54 29,32 32,34 35,32" fill="rgba(0,212,255,.28)"/>'+
+            '</g>'+
+            '<circle cx="32" cy="32" r="3" fill="rgba(0,212,255,.6)"/>'+
+          '</svg>'+
+          '<div id="ddp-hdg-lbl" style="font-size:9px;color:rgba(255,255,255,.38);font-family:var(--mono);margin-top:1px">'+Math.round(gps.heading)+'° '+dirLabel+'</div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="ddp-row"><span class="ddp-lbl">Route progress</span><span class="ddp-val" id="ddp-rt-pct">'+pct+'%  ('+rt.completed+'/'+rt.totalStops+')</span></div>'+
+      '<div class="ddp-row"><span class="ddp-lbl">Last update</span><span class="ddp-val">'+esc(gps.lastUpdate)+'</span></div>'+
+    '</div>'+
+
+    /* ── Cost-to-Serve ── */
+    '<div class="ddp-section">'+
+      '<div class="ddp-sec-hd">💰 Cost-to-Serve</div>'+
+      '<div class="ddp-cts-net">$'+netCost+' <span style="font-size:11px;color:rgba(255,255,255,.38);font-weight:400">net/stop</span></div>'+
+      '<div class="ddp-hint">Base $5.37 × OnTrac Rating API −42%</div>'+
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:9px">'+
+        '<span style="font-size:11px;color:rgba(255,255,255,.45)">Margin expansion</span>'+
+        '<span style="font-size:14px;font-weight:700;color:#4ade80;font-family:var(--mono)">+'+margin+'% ↑</span>'+
+      '</div>'+
+      '<div class="ddp-margin-bar"><div class="ddp-margin-fill" style="width:'+margin+'%"></div></div>'+
+      '<div class="ddp-row" style="margin-top:8px"><span class="ddp-lbl">SQEP exposure</span><span class="ddp-val" style="color:var(--warn-t)">$'+(Math.round(1663/rt.totalStops))+'/route</span></div>'+
+      '<div class="ddp-row"><span class="ddp-lbl">Failed del. risk</span><span class="ddp-val" style="color:var(--err-t)">$17.93 / event</span></div>'+
+    '</div>'+
+
+    /* ── Compliance ── */
+    '<div class="ddp-section">'+
+      '<div class="ddp-sec-hd">🛡 Compliance · ASN</div>'+
+      '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:2px 0 6px">'+
+        '<span class="ddp-asn '+(asnOk?'ok':'warn')+'" id="ddp-asn-badge">'+(asnOk?'✓ ASN VALIDATED':'⚠ ASN PENDING')+'</span>'+
+        '<span style="font-size:9px;color:rgba(255,255,255,.3);font-family:var(--mono)">EDI 856</span>'+
+      '</div>'+
+      '<div class="ddp-row"><span class="ddp-lbl">SQEP fine risk</span><span class="ddp-val" style="color:'+(asnOk?'var(--ok-t)':'var(--err-t)')+'">'+(asnOk?'LOW':'$1,663')+'</span></div>'+
+      '<div class="ddp-row"><span class="ddp-lbl">OTP rate</span><span class="ddp-val" style="color:'+(dd.onTimeRate>=95?'var(--ok-t)':'var(--warn-t)')+'">'+dd.onTimeRate+'%</span></div>'+
+      '<div class="ddp-row"><span class="ddp-lbl">Rating</span><span class="ddp-val">'+dd.customerRating+'★</span></div>'+
+    '</div>'+
+
+    /* ── ePOD Presence ── */
+    '<div class="ddp-section">'+
+      '<div class="ddp-sec-hd">📸 ePOD Presence</div>'+
+      '<div style="display:flex;align-items:center;justify-content:space-around;padding:4px 0">'+
+        _buildEpodRing(epodPct)+
+        '<div style="display:flex;flex-direction:column;gap:5px;font-size:11px">'+
+          '<div style="color:rgba(255,255,255,.45)">Capture prob.</div>'+
+          '<div style="font-size:20px;font-weight:700;color:#4ade80;font-family:var(--mono)">'+epodPct+'%</div>'+
+          '<div style="font-size:9px;color:rgba(255,255,255,.3)">USPS Informed Del.</div>'+
+          '<div style="font-size:9px;color:rgba(255,255,255,.3)">Anthropic Vision AI</div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="ddp-row"><span class="ddp-lbl">Loss prevention</span><span class="ddp-val" style="color:var(--ok-t)">$17.93 ↓</span></div>'+
+    '</div>'+
+
+    /* Footer hint */
+    '<div style="text-align:center;padding:0 0 6px;font-size:9px;color:rgba(255,255,255,.18);font-family:var(--mono);letter-spacing:1.5px">DOUBLE-CLICK MARKER TO FOCUS</div>'+
+  '</div>';
+}
+
+function _buildSpeedGauge(spd){
+  var max=60;var pct=Math.min(1,spd/max);
+  // Arc: 135deg start → 270deg sweep
+  var startAngle=-135;var sweep=270;var endAngle=startAngle+pct*sweep;
+  var r=22;var cx=32;var cy=32;
+  var rad=function(d){return d*Math.PI/180;};
+  var sx=cx+r*Math.cos(rad(startAngle));var sy=cy+r*Math.sin(rad(startAngle));
+  var ex=cx+r*Math.cos(rad(endAngle));var ey=cy+r*Math.sin(rad(endAngle));
+  var largeArc=pct>0.5?1:0;
+  var clr=spd<25?'#4ade80':spd<45?'#fbbf24':'#f87171';
+  var arcPath=pct>0.01?'<path d="M'+sx.toFixed(2)+' '+sy.toFixed(2)+' A22 22 0 '+largeArc+' 1 '+ex.toFixed(2)+' '+ey.toFixed(2)+'" stroke="'+clr+'" stroke-width="5" fill="none" stroke-linecap="round" id="ddp-spd-arc"/>':'';
+  return '<div style="text-align:center">'+
+    '<svg id="ddp-spd-svg" width="64" height="64" viewBox="0 0 64 64">'+
+      '<circle cx="32" cy="32" r="22" stroke="rgba(255,255,255,.06)" stroke-width="5" fill="none"/>'+
+      arcPath+
+      '<text x="32" y="35" text-anchor="middle" font-size="13" font-weight="700" fill="'+clr+'" font-family="\'JetBrains Mono\',monospace" id="ddp-spd-txt">'+spd+'</text>'+
+      '<text x="32" y="46" text-anchor="middle" font-size="7" fill="rgba(255,255,255,.32)" font-family="\'JetBrains Mono\',monospace">mph</text>'+
+    '</svg>'+
+    '<div style="font-size:9px;color:rgba(255,255,255,.35);font-family:var(--mono)">SPEED</div>'+
+  '</div>';
+}
+
+function _buildEpodRing(pct){
+  var r=24;var circ=2*Math.PI*r;
+  var dash=circ*pct/100;var gap=circ-dash;
+  var clr=pct>=85?'#4ade80':pct>=70?'#fbbf24':'#f87171';
+  return '<svg width="72" height="72" viewBox="0 0 72 72" style="display:inline-block">'+
+    '<circle cx="36" cy="36" r="24" stroke="rgba(255,255,255,.06)" stroke-width="5" fill="none"/>'+
+    '<circle cx="36" cy="36" r="24" stroke="'+clr+'" stroke-width="5" fill="none" stroke-linecap="round"'+
+    ' stroke-dasharray="'+dash.toFixed(1)+' '+gap.toFixed(1)+'"'+
+    ' transform="rotate(-90 36 36)"/>'+
+    '<text x="36" y="40" text-anchor="middle" font-size="13" font-weight="700" fill="'+clr+'" font-family="\'JetBrains Mono\',monospace">'+pct+'%</text>'+
+  '</svg>';
+}
+
+function tickDriverPanelSim(gps){
+  var panel=document.getElementById('drv-detail-panel');
+  if(!panel||!panel.classList.contains('open'))return;
+  // Delta speed
+  gps.speed=Math.max(0,Math.min(55,Math.round(gps.speed+(Math.random()*6-3))));
+  gps.heading=(gps.heading+(Math.random()*8-4)+360)%360;
+  var dirs=['N','NE','E','SE','S','SW','W','NW'];
+  var dirLabel=dirs[Math.round(gps.heading/45)%8];
+  // Update needle
+  var needle=document.getElementById('ddp-needle');
+  if(needle)needle.style.transform='rotate('+gps.heading.toFixed(1)+'deg)';
+  var hdgLbl=document.getElementById('ddp-hdg-lbl');
+  if(hdgLbl)hdgLbl.textContent=Math.round(gps.heading)+'° '+dirLabel;
+  // Update speed text + arc colour
+  var spdTxt=document.getElementById('ddp-spd-txt');
+  var clr=gps.speed<25?'#4ade80':gps.speed<45?'#fbbf24':'#f87171';
+  if(spdTxt){spdTxt.textContent=gps.speed;spdTxt.setAttribute('fill',clr);}
+  // Rebuild arc path
+  var spdSvg=document.getElementById('ddp-spd-svg');
+  if(spdSvg){
+    var oldArc=document.getElementById('ddp-spd-arc');if(oldArc)oldArc.remove();
+    var max=60;var pct2=Math.min(1,gps.speed/max);
+    if(pct2>0.01){
+      var r2=22;var cx2=32;var cy2=32;
+      var startA=-135;var sweep=270*pct2;var endA=startA+sweep;
+      var rad2=function(d){return d*Math.PI/180;};
+      var sx2=cx2+r2*Math.cos(rad2(startA));var sy2=cy2+r2*Math.sin(rad2(startA));
+      var ex2=cx2+r2*Math.cos(rad2(endA));var ey2=cy2+r2*Math.sin(rad2(endA));
+      var lA=pct2>0.5?1:0;
+      var arcEl=document.createElementNS('http://www.w3.org/2000/svg','path');
+      arcEl.setAttribute('id','ddp-spd-arc');
+      arcEl.setAttribute('d','M'+sx2.toFixed(2)+' '+sy2.toFixed(2)+' A22 22 0 '+lA+' 1 '+ex2.toFixed(2)+' '+ey2.toFixed(2));
+      arcEl.setAttribute('stroke',clr);arcEl.setAttribute('stroke-width','5');
+      arcEl.setAttribute('fill','none');arcEl.setAttribute('stroke-linecap','round');
+      spdSvg.insertBefore(arcEl,spdSvg.firstChild.nextSibling);
+    }
+  }
+}
+
 // ── Boot ──
 window._reqView='kanban';
 render();
 </script>
+
+<div id="drv-detail-panel"></div>
+<div id="mcd"></div>
 </body>
 </html>
