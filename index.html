@@ -155,7 +155,7 @@ button{cursor:pointer}
 .topbar{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;border-bottom:1px solid var(--border);background:#0a0a0f;flex-shrink:0;gap:8px}
 .topbar-left{display:flex;align-items:center;gap:8px}
 .topbar-right{display:flex;align-items:center;gap:6px}
-#page-content{flex:1;overflow-y:auto;min-height:0;position:relative;z-index:0}
+#page-content{flex:1;overflow-y:auto;min-height:0;position:relative}
 .page{padding:20px 24px}
 
 .cb{padding:14px 16px}
@@ -728,8 +728,7 @@ body.dh-ann-mode #page-content{cursor:crosshair!important}
 .sb-toggle svg{pointer-events:none}
 
 /* Sidebar overlay backdrop */
-/* z-index must beat Leaflet controls (1000), tiles (200), markers (600) */
-.sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:1001;-webkit-tap-highlight-color:transparent}
+.sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:99;-webkit-tap-highlight-color:transparent}
 .sb-overlay.open{display:block}
 
 /* GPU-optimized stars */
@@ -753,7 +752,7 @@ a,button,select,.nav-item,.tab-item,.demo-btn,.demo-dropdown summary,.btn,.notif
   #star-canvas{display:none}
   /* Show hamburger, sidebar becomes overlay */
   .sb-toggle{display:flex}
-  .sidebar{position:fixed;left:0;top:0;bottom:0;z-index:1002;transform:translateX(-100%);transition:transform .28s cubic-bezier(.4,0,.2,1);box-shadow:none;will-change:transform}
+  .sidebar{position:fixed;left:0;top:0;bottom:0;z-index:100;transform:translateX(-100%);transition:transform .28s cubic-bezier(.4,0,.2,1);box-shadow:none;will-change:transform}
   .sidebar.open{transform:translateX(0);box-shadow:8px 0 40px rgba(0,0,0,.5)}
   .app{display:flex}
 
@@ -920,47 +919,119 @@ a,button,select,.nav-item,.tab-item,.demo-btn,.demo-dropdown summary,.btn,.notif
   .dh-pin-del{width:22px;height:22px;font-size:11px;top:-10px;right:-10px}
 }
 
-/* ── Driver License Card ── */
-.drv-lic-card{background:linear-gradient(135deg,#101528 0%,#0c1020 100%);border:1px solid rgba(0,212,255,.22);border-radius:10px;padding:11px 12px;margin-bottom:10px;position:relative;overflow:hidden;cursor:pointer;transition:border-color .18s,box-shadow .18s}
-.drv-lic-card:hover{border-color:rgba(0,212,255,.55);box-shadow:0 4px 18px rgba(0,212,255,.13)}
-.drv-lic-card::before{content:'DRIVER LICENSE';position:absolute;top:7px;right:10px;font-size:7px;letter-spacing:2.5px;font-weight:700;color:rgba(0,212,255,.45);font-family:var(--mono);pointer-events:none}
-.drv-lic-card::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,212,255,.03) 0%,transparent 60%);pointer-events:none}
-.drv-lic-photo{width:48px;height:60px;border-radius:5px;background:rgba(0,212,255,.1);border:2px solid rgba(0,212,255,.28);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;flex-shrink:0;color:var(--primary);position:relative;overflow:hidden}
-.drv-lic-photo-stripe{position:absolute;bottom:0;left:0;right:0;height:12px;background:linear-gradient(0deg,rgba(0,212,255,.25) 0%,transparent 100%)}
-.drv-lic-name{font-size:12px;font-weight:700;color:var(--text);letter-spacing:.4px;line-height:1.2;margin-bottom:2px}
-.drv-lic-num{font-family:var(--mono);font-size:9px;color:var(--primary);font-weight:600;letter-spacing:1px;margin-bottom:3px}
-.drv-lic-meta{font-size:9.5px;color:var(--muted);line-height:1.7}
-.drv-lic-bar{height:3px;border-radius:2px;background:var(--border);overflow:hidden;margin-top:8px}
-.drv-lic-bar-fill{height:100%;background:linear-gradient(90deg,var(--ok-t),#34d399);border-radius:2px;transition:width .6s}
+/* ══ FlowSkip v2 Embedded (.fs2-*) ══ */
+.fs2-wrap{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden;background:var(--bg);z-index:2}
+.fs2-cmd{height:46px;display:flex;align-items:center;gap:8px;padding:0 10px;background:rgba(10,10,15,.97);border-bottom:1px solid var(--border);flex-shrink:0;backdrop-filter:blur(14px)}
+.fs2-logo-icon{width:24px;height:24px;border-radius:6px;background:linear-gradient(135deg,#00d4ff,#0088bb);display:flex;align-items:center;justify-content:center;font-size:11px;box-shadow:0 0 10px rgba(0,212,255,.3);flex-shrink:0}
+.fs2-logo-name{font-size:12px;font-weight:700;letter-spacing:-.02em}
+.fs2-logo-ver{font-size:9px;color:var(--primary);font-family:var(--mono);padding:1px 4px;border-radius:3px;background:var(--primary-bg)}
+.fs2-vsep{width:1px;height:22px;background:var(--border);flex-shrink:0}
+.fs2-kpis{flex:1;display:flex;gap:3px;justify-content:center;overflow:hidden}
+.fs2-ck{display:flex;align-items:center;gap:3px;padding:2px 7px;border-radius:4px;background:rgba(255,255,255,.025);border:1px solid var(--border);flex-shrink:0}
+.fs2-ck-v{font-family:var(--mono);font-weight:600;font-size:10px}
+.fs2-ck-l{font-size:8px;color:var(--muted)}
+.fs2-loc-bar{height:30px;display:flex;align-items:center;padding:0 8px;background:rgba(10,10,15,.8);border-bottom:1px solid var(--border);flex-shrink:0;overflow-x:auto;gap:0}
+.fs2-ltab{display:flex;align-items:center;gap:4px;padding:4px 9px;cursor:pointer;font-size:9px;font-weight:600;color:var(--muted);white-space:nowrap;border-bottom:2px solid transparent;transition:all .12s;font-family:var(--mono);letter-spacing:.5px;flex-shrink:0}
+.fs2-ltab:hover{color:var(--text)}.fs2-ltab.act{color:var(--primary);border-bottom-color:var(--primary)}
+.fs2-sim-bar{height:22px;display:flex;align-items:center;gap:8px;padding:0 10px;background:rgba(0,0,0,.4);border-bottom:1px solid rgba(255,255,255,.03);flex-shrink:0;font-size:9px;font-family:var(--mono);color:var(--muted)}
+.fs2-sim-led{width:5px;height:5px;border-radius:50%;background:var(--ok-t);animation:fs2led 1.5s infinite;flex-shrink:0}
+@keyframes fs2led{0%,100%{opacity:1}50%{opacity:.2}}
+.fs2-main{display:flex;flex:1;min-height:0;overflow:hidden}
+.fs2-lp{width:298px;min-width:298px;display:flex;flex-direction:column;border-right:1px solid var(--border);background:rgba(10,10,15,.6);overflow:hidden}
+.fs2-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
+.fs2-tab{flex:1;padding:7px 4px;text-align:center;font-size:9px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .12s;text-transform:uppercase;letter-spacing:1px;font-family:var(--mono);border-bottom:2px solid transparent}
+.fs2-tab.act{color:var(--primary);border-bottom-color:var(--primary);background:rgba(0,212,255,.03)}
+.fs2-lp-body{flex:1;overflow-y:auto;overflow-x:hidden}
+.fs2-sec{padding:5px 10px 3px;font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:var(--muted);font-family:var(--mono);border-bottom:1px solid var(--border-sub);display:flex;justify-content:space-between}
+.fs2-drv{display:flex;align-items:center;gap:8px;padding:7px 10px;cursor:pointer;border-bottom:1px solid var(--border-sub);transition:background .1s}
+.fs2-drv:hover,.fs2-drv.sel{background:rgba(0,212,255,.05)}
+.fs2-drv-av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.fs2-drv-name{font-size:11px;font-weight:600;line-height:1.2}
+.fs2-drv-meta{font-size:9px;color:var(--muted)}
+.fs2-map-wrap{flex:1;position:relative;overflow:hidden}
+#fs2-map{height:100%;width:100%}
+.fs2-mc{background:rgba(10,10,15,.9);border:1px solid var(--border);border-radius:5px;padding:3px 7px;font-size:10px;font-family:var(--mono);color:var(--muted);cursor:pointer;transition:all .12s;line-height:1.5}
+.fs2-mc:hover,.fs2-mc.act{color:var(--primary);border-color:rgba(0,212,255,.3)}
+/* Double-click driver focus card with Cost-to-Serve */
+.fs2-fc{position:absolute;top:10px;right:10px;width:272px;background:rgba(8,9,20,.96);border:1px solid var(--border);border-radius:12px;padding:12px;z-index:600;display:none;backdrop-filter:blur(16px);box-shadow:0 8px 32px rgba(0,0,0,.7),0 0 0 1px rgba(0,212,255,.06)}
+.fs2-fc.vis{display:block}
+.fs2-fc-hdr{display:flex;align-items:center;gap:8px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.fs2-fc-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.fs2-fc-close{margin-left:auto;background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;line-height:1;padding:0;transition:color .1s}
+.fs2-fc-close:hover{color:var(--text)}
+.fs2-tr{display:flex;justify-content:space-between;font-size:10px;padding:3px 0;border-bottom:1px solid var(--border-sub)}
+.fs2-cts{margin-top:10px;padding:9px;background:rgba(0,212,255,.05);border:1px solid rgba(0,212,255,.15);border-radius:8px}
+.fs2-cts-hd{font-size:9px;font-weight:700;color:var(--primary);font-family:var(--mono);letter-spacing:1px;margin-bottom:6px}
+.fs2-cts-r{display:flex;justify-content:space-between;font-size:10px;padding:3px 0;border-bottom:1px solid var(--border-sub)}
+.fs2-cts-total{display:flex;justify-content:space-between;font-size:11px;font-weight:700;padding:5px 0 2px;color:var(--ok-t)}
+/* FlowSkip optimization panel slide-in */
+.fs2-panel{position:absolute;right:0;top:0;bottom:0;width:350px;background:rgba(8,9,18,.97);border-left:1px solid var(--border);z-index:400;transform:translateX(100%);transition:transform .3s cubic-bezier(.16,1,.3,1);display:flex;flex-direction:column;backdrop-filter:blur(16px)}
+.fs2-panel.open{transform:translateX(0)}
+.fs2-ph{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border);flex-shrink:0}
+.fs2-pt{font-size:13px;font-weight:700}
+.fs2-pc{background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:2px;transition:color .1s}
+.fs2-pc:hover{color:var(--text)}
+.fs2-pb{flex:1;overflow-y:auto;padding:12px}
+.fs2-pf{padding:10px 12px;border-top:1px solid var(--border);flex-shrink:0;display:flex;gap:8px}
+.fs2-exc-banner{position:absolute;bottom:8px;left:8px;z-index:500;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:7px 9px;font-size:9px;max-width:200px;pointer-events:none}
+.fs2-exc-item{padding:2px 0;color:var(--muted)}
+.fs2-exc-code{color:var(--err-t);font-weight:600;margin-left:4px}
+.fs2-oee-bar{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:3px}
+.fs2-oee-fill{height:100%;border-radius:2px;transition:width .3s}
+.fs2-stop-list{padding:4px 0}
+.fs2-sc{display:flex;align-items:center;gap:8px;padding:7px 10px;cursor:pointer;border-bottom:1px solid var(--border-sub);transition:background .1s;font-size:10px}
+.fs2-sc:hover{background:rgba(255,255,255,.03)}
+.fs2-sc-num{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0}
 
-/* ── Facility Card ── */
-.facility-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:0;cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .15s;overflow:hidden;position:relative}
-.facility-card:hover{border-color:var(--primary);box-shadow:var(--sh2);transform:translateY(-2px)}
-.facility-card.active{border-color:var(--primary);background:rgba(0,212,255,.06)}
-.facility-card-stripe{width:100%;height:4px;flex-shrink:0}
-.facility-card-body{padding:14px 16px}
-.facility-card-stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
-.facility-card-stat-val{font-size:15px;font-weight:700;line-height:1.1}
-.facility-card-stat-lbl{font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
-.facility-card-footer{display:flex;gap:10px;flex-wrap:wrap;padding-top:8px;border-top:1px solid var(--border-sub);font-size:11px;color:var(--muted)}
-
-/* ── Driver photo in license card ── */
-.drv-lic-photo{overflow:hidden}
-.drv-photo-img{width:100%;height:100%;object-fit:cover;border-radius:3px;display:block}
-.drv-lic-photo-wrap{position:relative;display:inline-flex}
-.drv-photo-cam{position:absolute;bottom:-5px;right:-5px;width:18px;height:18px;border-radius:50%;background:var(--primary);border:2px solid var(--bg);display:flex;align-items:center;justify-content:center;font-size:9px;cursor:pointer;z-index:2}
-
-/* ── Driver detail modal ── */
-.drv-modal-photo{width:108px;height:134px;border-radius:10px;background:rgba(0,212,255,.08);border:2px solid rgba(0,212,255,.28);display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:700;color:var(--primary);flex-shrink:0;overflow:hidden;position:relative;cursor:pointer;transition:border-color .15s}
-.drv-modal-photo:hover{border-color:rgba(0,212,255,.6)}
-.drv-modal-photo-overlay{position:absolute;inset:0;background:rgba(0,0,0,.58);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;opacity:0;transition:opacity .15s;font-size:11px;color:#fff;font-weight:600;pointer-events:none}
-.drv-modal-photo:hover .drv-modal-photo-overlay{opacity:1}
-.drv-stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
-.drv-stat-box{background:var(--border-sub);border-radius:8px;padding:10px 12px;text-align:center}
-.drv-stat-box-val{font-size:18px;font-weight:700;line-height:1.1}
-.drv-stat-box-lbl{font-size:10px;color:var(--muted);margin-top:2px}
-.drv-info-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border-sub);font-size:12px}
-.drv-info-row:last-child{border-bottom:none}
+/* ══ Research miniEngine Embedded (.re-*) ══ */
+.re-wrap{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden;background:#080c14;font-family:'Outfit',-apple-system,sans-serif}
+.re-topbar{display:flex;align-items:center;gap:10px;padding:9px 18px;background:#0d1421;border-bottom:1px solid rgba(249,115,22,.15);flex-shrink:0}
+.re-logo{font-size:15px;font-weight:700;letter-spacing:.5px;background:linear-gradient(135deg,#f97316,#3b82f6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.re-badge{font-size:9px;padding:2px 7px;border-radius:20px;background:rgba(249,115,22,.12);border:1px solid rgba(249,115,22,.25);color:#f97316;-webkit-text-fill-color:#f97316}
+.re-live-dot{width:7px;height:7px;border-radius:50%;background:#10b981;box-shadow:0 0 6px #10b981;animation:re-pulse 1.2s infinite}
+@keyframes re-pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.re-main{display:flex;flex:1;overflow:hidden;min-height:0}
+.re-sidebar{width:248px;min-width:248px;background:#0d1421;border-right:1px solid rgba(249,115,22,.1);display:flex;flex-direction:column;overflow:hidden}
+.re-sb-hd{padding:8px 14px;border-bottom:1px solid rgba(249,115,22,.1);font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:#64748b}
+.re-sb-body{flex:1;overflow-y:auto}
+.re-ch-item{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.03);cursor:pointer;transition:background .1s}
+.re-ch-item:hover,.re-ch-item.sel{background:rgba(249,115,22,.06)}
+.re-ch-name{font-size:10px;font-weight:600;color:#e2e8f0;margin-bottom:1px}
+.re-ch-cat{font-size:9px;color:#64748b}
+.re-center{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.re-search-area{padding:16px 20px;background:#0d1421;border-bottom:1px solid rgba(249,115,22,.1);flex-shrink:0}
+.re-search-box{display:flex;gap:8px}
+.re-si{flex:1;padding:9px 13px;background:#111827;border:1px solid rgba(249,115,22,.2);border-radius:8px;color:#e2e8f0;font-size:12px;outline:none;font-family:inherit;transition:border-color .2s}
+.re-si:focus{border-color:rgba(249,115,22,.5)}
+.re-sb-btn{padding:9px 16px;background:linear-gradient(135deg,#f97316,#ea580c);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}
+.re-results{flex:1;overflow-y:auto;padding:14px 18px}
+.re-rc{background:#111827;border:1px solid rgba(249,115,22,.1);border-radius:10px;padding:12px;margin-bottom:10px;cursor:pointer;transition:border-color .15s}
+.re-rc:hover{border-color:rgba(249,115,22,.35)}
+.re-rc-src{font-size:9px;color:#f97316;font-weight:600;letter-spacing:.5px;margin-bottom:3px}
+.re-rc-title{font-size:12px;font-weight:700;color:#e2e8f0;margin-bottom:5px;line-height:1.3}
+.re-rc-preview{font-size:10px;color:#64748b;line-height:1.6}
+.re-rc-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:7px}
+.re-tag{font-size:9px;padding:2px 6px;border-radius:4px;font-weight:600;font-family:var(--mono)}
+.re-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:12px 18px;flex-shrink:0;border-bottom:1px solid rgba(249,115,22,.08)}
+.re-kpi{background:#111827;border:1px solid rgba(249,115,22,.1);border-radius:7px;padding:8px 10px}
+.re-kpi-v{font-size:16px;font-weight:700;color:#f97316}
+.re-kpi-l{font-size:9px;color:#64748b;margin-top:2px}
+/* Content reader panel */
+.re-reader{position:absolute;top:0;right:0;bottom:0;width:56%;background:#0d1421;border-left:1px solid rgba(249,115,22,.15);z-index:300;transform:translateX(100%);transition:transform .3s cubic-bezier(.16,1,.3,1);display:flex;flex-direction:column}
+.re-reader.open{transform:translateX(0)}
+.re-rdr-hdr{padding:12px 16px;border-bottom:1px solid rgba(249,115,22,.1);flex-shrink:0;display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.re-rdr-title{font-size:12px;font-weight:700;color:#e2e8f0;line-height:1.3}
+.re-rdr-close{background:none;border:none;color:#64748b;cursor:pointer;font-size:16px;flex-shrink:0;padding:0;transition:color .1s}
+.re-rdr-close:hover{color:#e2e8f0}
+.re-rdr-body{flex:1;overflow-y:auto;padding:16px}
+.re-rdr-body h2{font-size:13px;font-weight:700;color:#e2e8f0;margin:12px 0 5px;border-bottom:1px solid rgba(249,115,22,.15);padding-bottom:4px}
+.re-rdr-body h3{font-size:11px;font-weight:700;color:#e2e8f0;margin:8px 0 3px}
+.re-rdr-body p{font-size:11px;color:#94a3b8;line-height:1.7;margin-bottom:7px}
+.re-rdr-body strong{color:#f97316}
+.re-rdr-body table{width:100%;border-collapse:collapse;margin:8px 0;font-size:10px}
+.re-rdr-body th{background:rgba(249,115,22,.08);padding:5px 7px;text-align:left;color:#e2e8f0;border:1px solid rgba(249,115,22,.1)}
+.re-rdr-body td{padding:4px 7px;border:1px solid rgba(255,255,255,.04);color:#94a3b8}
+.re-sim-bar{height:26px;display:flex;align-items:center;gap:10px;padding:0 18px;background:rgba(0,0,0,.35);border-top:1px solid rgba(249,115,22,.06);flex-shrink:0;font-size:9px;color:#475569;font-family:var(--mono)}
 </style>
 </head>
 <body>
@@ -1896,9 +1967,7 @@ function renderTeam(){
   const grouped={};USERS.forEach(u=>{if(!grouped[u.role])grouped[u.role]=[];grouped[u.role].push(u);});
   return `<div class="page">
     <div class="ph"><div><div class="pt">Team</div><div class="ps">${USERS.length} platform users</div></div></div>
-    ${ROLE_ORDER.filter(r=>grouped[r]).map(role=>`<div class="mb6"><div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><div class="st" style="margin:0">${esc(ROLE_LABELS[role])}</div><span class="badge b-secondary">${grouped[role].length}</span></div><div class="gc" style="gap:12px">${grouped[role].map(u=>{const co=u.co?companies.find(c=>c.id===u.co):null;const cn=co?.name||null;const dd=u.role==='driver'?DRIVER_DATA[u.id]:null;const gps=u.role==='driver'?DRIVER_GPS[u.id]:null;const pct=dd?Math.round(dd.currentRoute.completed/dd.currentRoute.totalStops*100):0;return`<div class="card cb" style="padding:14px;cursor:pointer" onclick="toast('${esc(u.name)} · ${esc(ROLE_LABELS[role])}')">
-              ${u.role==='driver'&&dd?driverLicenseCard(u,dd,gps,co,pct):`<div class="user-card" style="margin-bottom:0"><div class="av-lg" style="background:${AVB[role]};color:${AVATAR_COLOR[role]}">${initials(u.name)}</div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:3px"><div style="font-weight:600;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(u.name)}</div><span class="badge ${u.active?'b-active':'b-inactive'}">${u.active?'Active':'Inactive'}</span></div><span class="badge b-${role}" style="margin-bottom:5px">${esc(ROLE_LABELS[role])}</span><br/>${u.phone?`<div class="icon-row" style="margin-top:5px">${icon('Phone')}&nbsp;${esc(u.phone)}</div>`:''}<div class="icon-row">${icon('Mail')}&nbsp;<span style="font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(u.email)}</span></div>${cn?`<div class="icon-row">${icon('Building2')}&nbsp;${esc(cn)}</div>`:''}</div></div>`}
-              ${u.role==='driver'&&dd?`<div style="display:flex;gap:8px;margin-top:2px;font-size:11px"><span class="badge b-${role}">${esc(ROLE_LABELS[role])}</span>${u.phone?'<span style="color:var(--muted)">'+esc(u.phone)+'</span>':''}</div>`:''}</div>`;}).join('')}</div></div>`).join('')}
+    ${ROLE_ORDER.filter(r=>grouped[r]).map(role=>`<div class="mb6"><div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><div class="st" style="margin:0">${esc(ROLE_LABELS[role])}</div><span class="badge b-secondary">${grouped[role].length}</span></div><div class="gc" style="gap:12px">${grouped[role].map(u=>{const cn=u.co?companies.find(c=>c.id===u.co)?.name:null;const dd=u.role==='driver'?DRIVER_DATA[u.id]:null;return`<div class="card cb" style="padding:14px"><div class="user-card"><div class="av-lg" style="background:${AVB[role]};color:${AVATAR_COLOR[role]}">${initials(u.name)}</div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:3px"><div style="font-weight:600;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(u.name)}</div><span class="badge ${u.active?'b-active':'b-inactive'}">${u.active?'Active':'Inactive'}</span></div><span class="badge b-${role}" style="margin-bottom:5px">${esc(ROLE_LABELS[role])}</span><br/>${u.phone?`<div class="icon-row" style="margin-top:5px">${icon('Phone')}&nbsp;${esc(u.phone)}</div>`:''}<div class="icon-row">${icon('Mail')}&nbsp;<span style="font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(u.email)}</span></div>${cn?`<div class="icon-row">${icon('Building2')}&nbsp;${esc(cn)}</div>`:''}</div></div></div>`;}).join('')}</div></div>`).join('')}
   </div>`;
 }
 
@@ -1956,29 +2025,7 @@ function renderOwnerFleet(){
     <div class="ph"><div><div class="pt">${icon('Truck')}&nbsp;Fleet Command</div><div class="ps">${ops.driverCount} drivers · ${ops.co.fleet} vehicles</div></div><span class="badge b-active">${active} active · ${completed} done</span></div>
     <div class="g4 mb4">${[{t:'On Shift',v:ops.driversOnShift,s:`of ${ops.driverCount}`,ic:'Users',bg:'var(--primary-bg)',d:'Drivers currently on active delivery routes right now'},{t:'Stops Done',v:totalStops.toLocaleString(),s:'all routes',ic:'CheckCircle',bg:'var(--ok-bg)',d:'Total delivery stops completed across all active drivers today'},{t:'Avg OTP',v:avgOtp+'%',s:'target 95%',ic:'Clock',bg:parseFloat(avgOtp)>=95?'var(--ok-bg)':'var(--warn-bg)',d:'Average on-time performance across all drivers — target is 95%+'},{t:'Earnings',v:'$'+totalEarnings.toLocaleString(),s:'driver pay today',ic:'DollarSign',bg:'var(--primary-bg)',d:'Total driver compensation earned today based on per-stop rates'}].map(kpiCard).join('')}</div>
     <div class="filters"><div class="inp-w" style="flex:1;min-width:180px"><span class="inp-ic">${icon('Search')}</span><input class="inp has-ic" id="fleet-search" placeholder="Search driver, zone…" value="${esc(search)}" oninput="rerenderPage()"/></div><select class="inp" id="fleet-status" style="width:140px" onchange="rerenderPage()"><option value="all"${statusF==='all'?' selected':''}>All</option><option value="active"${statusF==='active'?' selected':''}>Active</option><option value="completed"${statusF==='completed'?' selected':''}>Completed</option><option value="idle"${statusF==='idle'?' selected':''}>Idle</option></select></div>
-    <div class="st">Driver Cards</div>
-    <div class="driver-card-row mb4">${drivers.slice(0,12).map(d=>{const pct=d.stops>0?Math.round(d.done/d.stops*100):0;const licNum='DL-CA-'+String(1000000+d.id*137891%9000000).padStart(7,'0');const dob=DRV_LIC_DOBS[d.id%DRV_LIC_DOBS.length];const expYear=2026+(d.id%4);const cardInfo=drvModalInfo({key:'fleet-'+d.name,name:d.name,initials:d.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase(),stateCode:'CA',uid:d.id,pct,otp:d.otp,rating:d.rating,earnings:d.earnings,done:d.done,stops:d.stops,zone:d.zone,vehicle:d.vehicle,status:d.status,coName:ops.co.name});return`<div class="card cb" style="cursor:pointer" onclick="openDriverModal('${cardInfo}')">
-      <div class="drv-lic-card" style="margin-bottom:10px;cursor:pointer" onclick="event.stopPropagation();openDriverModal('${cardInfo}')">
-        <div style="display:flex;gap:10px;align-items:flex-start">
-          ${photoEl('fleet-'+d.name,d.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase(),48,60,5)}
-          <div style="flex:1;min-width:0;padding-right:60px">
-            <div class="drv-lic-name">${esc(d.name)}</div>
-            <div class="drv-lic-num">${esc(licNum)}</div>
-            <div class="drv-lic-meta">DOB: ${dob} &nbsp; EXP: 12/${expYear}<br/>${esc(ops.co.name)} · ${esc(d.zone)}</div>
-          </div>
-        </div>
-        <div class="drv-lic-bar"><div class="drv-lic-bar-fill" style="width:${pct}%"></div></div>
-        <div style="font-size:9px;color:var(--muted);margin-top:3px">${pct}% route · ${d.done}/${d.stops} stops</div>
-      </div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;font-size:11px">
-        <span style="color:var(--muted)">OTP</span><span style="font-weight:600;color:${d.otp>=95?'var(--ok-t)':d.otp>=90?'var(--warn-t)':'var(--err-t)'}">${d.otp}%</span>
-        <span style="color:var(--muted)">Rating</span><span style="font-weight:600;color:var(--warn-t)">${d.rating}★</span>
-        <span style="color:var(--muted)">Earned</span><span style="font-weight:600;color:var(--ok-t)">$${d.earnings}</span>
-        <span style="margin-left:auto">${statusBadge(d.status)}</span>
-      </div>
-    </div>`;}).join('')}</div>
-    <div class="st">Driver Performance Table</div>
-    <div class="card cb"><table><thead><tr><th></th><th>Driver</th><th>Zone</th><th>Vehicle</th><th>Stops</th><th>Progress</th><th style="text-align:right">OTP</th><th style="text-align:right">Rating</th><th style="text-align:right">Earned</th><th>Status</th></tr></thead><tbody>${drivers.map((d,i)=>{const fleetPct=d.stops>0?Math.round(d.done/d.stops*100):0;const fleetInfo=drvModalInfo({key:'fleet-'+d.name,name:d.name,initials:d.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase(),stateCode:'CA',uid:d.id,pct:fleetPct,otp:d.otp,rating:d.rating,earnings:d.earnings,done:d.done,stops:d.stops,zone:d.zone,vehicle:d.vehicle,status:d.status,coName:ops.co.name});return`<tr style="cursor:pointer" onclick="openDriverModal('${fleetInfo}')"><td style="font-size:11px;color:var(--dim);width:28px">${i+1}</td><td><div style="display:flex;align-items:center;gap:8px">${photoEl('fleet-'+d.name,d.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase(),28,28,14)}<span style="font-weight:500">${esc(d.name)}</span></div></td><td><span class="spec-tag">${esc(d.zone)}</span></td><td style="font-family:var(--mono);font-size:11px;color:var(--muted)">${esc(d.vehicle)}</td><td>${d.done}/${d.stops}</td><td style="min-width:80px"><div style="display:flex;align-items:center;gap:6px"><div style="flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden"><div style="height:100%;width:${fleetPct}%;background:${d.done>=d.stops?'var(--ok-t)':'var(--primary)'};border-radius:3px"></div></div><span style="font-size:10px;font-weight:600;color:var(--muted)">${fleetPct}%</span></div></td><td style="text-align:right;font-weight:500;color:${d.otp>=95?'var(--ok-t)':d.otp>=90?'var(--warn-t)':'var(--err-t)'}">${d.otp}%</td><td style="text-align:right">${d.rating}★</td><td style="text-align:right;font-weight:600">$${d.earnings}</td><td>${statusBadge(d.status)}</td></tr>`;}).join('')}</tbody></table></div>
+    <div class="card cb"><table><thead><tr><th></th><th>Driver</th><th>Zone</th><th>Vehicle</th><th>Stops</th><th>Progress</th><th style="text-align:right">OTP</th><th style="text-align:right">Rating</th><th style="text-align:right">Earned</th><th>Status</th></tr></thead><tbody>${drivers.map((d,i)=>`<tr><td style="font-size:11px;color:var(--dim);width:28px">${i+1}</td><td style="font-weight:500">${esc(d.name)}</td><td><span class="spec-tag">${esc(d.zone)}</span></td><td style="font-family:var(--mono);font-size:11px;color:var(--muted)">${esc(d.vehicle)}</td><td>${d.done}/${d.stops}</td><td style="min-width:80px"><div style="display:flex;align-items:center;gap:6px"><div style="flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden"><div style="height:100%;width:${d.stops>0?Math.round(d.done/d.stops*100):0}%;background:${d.done>=d.stops?'var(--ok-t)':'var(--primary)'};border-radius:3px"></div></div><span style="font-size:10px;font-weight:600;color:var(--muted)">${d.stops>0?Math.round(d.done/d.stops*100):0}%</span></div></td><td style="text-align:right;font-weight:500;color:${d.otp>=95?'var(--ok-t)':d.otp>=90?'var(--warn-t)':'var(--err-t)'}">${d.otp}%</td><td style="text-align:right">${d.rating}★</td><td style="text-align:right;font-weight:600">$${d.earnings}</td><td>${statusBadge(d.status)}</td></tr>`).join('')}</tbody></table></div>
   </div>`;
 }
 function renderOwnerFinancials(){
@@ -2258,159 +2305,6 @@ function renderDriverReport(dd,u){
 
 
 // ══════════════════════════════════════════════════════════
-// DRIVER PHOTO STORAGE
-// ══════════════════════════════════════════════════════════
-let driverPhotos={};
-try{driverPhotos=JSON.parse(localStorage.getItem('driverPhotos')||'{}');}catch(e){}
-
-window.triggerPhotoUpload=function(key){
-  const inp=document.createElement('input');
-  inp.type='file';inp.accept='image/*';
-  inp.onchange=function(e){
-    const file=e.target.files[0];if(!file)return;
-    const reader=new FileReader();
-    reader.onload=function(ev){
-      driverPhotos[key]=ev.target.result;
-      try{localStorage.setItem('driverPhotos',JSON.stringify(driverPhotos));}catch(e){}
-      // Update open modal photo live
-      const ph=document.getElementById('dmp-'+key.replace(/\W/g,'-'));
-      if(ph){ph.style.backgroundImage='url("'+ev.target.result+'")';ph.style.backgroundSize='cover';ph.style.backgroundPosition='center';const ini=ph.querySelector('.dmp-initials');if(ini)ini.style.display='none';}
-      rerenderPage();
-    };
-    reader.readAsDataURL(file);
-  };
-  inp.click();
-};
-
-window.openDriverModal=function(infoJson){
-  const info=JSON.parse(decodeURIComponent(infoJson));
-  const key=info.key;
-  const photo=driverPhotos[key];
-  const safeKey=key.replace(/\W/g,'-');
-  const pct=info.pct||0;
-  const stateCode=info.stateCode||'CA';
-  const licNum='DL-'+stateCode+'-'+String(1000000+(info.uid||info.name.charCodeAt(0)*13+7)*137891%9000000).padStart(7,'0');
-  const dob=DRV_LIC_DOBS[(info.uid||info.name.charCodeAt(0))%DRV_LIC_DOBS.length];
-  const expYear=2026+((info.uid||info.name.charCodeAt(0))%4);
-  const html=`<div class="overlay" id="drv-detail-modal" onclick="if(event.target.id==='drv-detail-modal')closeModal('drv-detail-modal')">
-    <div class="modal" style="max-width:560px">
-      <div style="display:flex;gap:20px;align-items:flex-start;margin-bottom:20px">
-        <div class="drv-modal-photo" id="dmp-${safeKey}"
-          style="${photo?'background-image:url("'+photo+'");background-size:cover;background-position:center;':''}"
-          onclick="triggerPhotoUpload('${key}')">
-          <span class="dmp-initials" style="${photo?'display:none':''}">
-            ${info.initials}
-          </span>
-          <div class="drv-modal-photo-overlay">📷<span style="font-size:10px;margin-top:2px">Upload photo</span></div>
-        </div>
-        <div style="flex:1;min-width:0">
-          <div style="font-size:19px;font-weight:700;margin-bottom:3px">${esc(info.name)}</div>
-          <div style="font-family:var(--mono);font-size:10px;color:var(--primary);letter-spacing:1px;margin-bottom:6px">${esc(licNum)}</div>
-          <div style="font-size:11px;color:var(--muted);margin-bottom:2px">DOB: ${dob} &nbsp;|&nbsp; EXP: 12/${expYear}</div>
-          ${info.coName?`<div style="font-size:11px;color:var(--muted);margin-bottom:6px">${esc(info.coName)}${info.zone?' · '+esc(info.zone):''}</div>`:''}
-          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
-            ${info.status?'<span class="badge '+(info.status==='active'?'b-active':info.status==='completed'?'b-completed':'b-inactive')+'">'+(info.status.charAt(0).toUpperCase()+info.status.slice(1))+'</span>':''}
-            ${info.role?'<span class="badge b-'+info.role+'">'+(ROLE_LABELS[info.role]||info.role)+'</span>':''}
-          </div>
-          <button class="btn btn-o btn-sm" onclick="triggerPhotoUpload('${key}')">📷 Upload photo from PC</button>
-        </div>
-      </div>
-      <div class="drv-stat-row">
-        ${info.otp!=null?`<div class="drv-stat-box"><div class="drv-stat-box-val" style="color:${parseFloat(info.otp)>=95?'var(--ok-t)':parseFloat(info.otp)>=90?'var(--warn-t)':'var(--err-t)'}">${info.otp}%</div><div class="drv-stat-box-lbl">OTP</div></div>`:''}
-        ${info.rating!=null?`<div class="drv-stat-box"><div class="drv-stat-box-val" style="color:var(--warn-t)">${info.rating}★</div><div class="drv-stat-box-lbl">Rating</div></div>`:''}
-        ${info.earnings!=null?`<div class="drv-stat-box"><div class="drv-stat-box-val" style="color:var(--ok-t)">$${info.earnings}</div><div class="drv-stat-box-lbl">Earned Today</div></div>`:''}
-        ${info.stops!=null?`<div class="drv-stat-box"><div class="drv-stat-box-val">${info.done}/${info.stops}</div><div class="drv-stat-box-lbl">Stops</div></div>`:''}
-        ${info.pct!=null?`<div class="drv-stat-box"><div class="drv-stat-box-val">${info.pct}%</div><div class="drv-stat-box-lbl">Route Done</div></div>`:''}
-        ${info.speed!=null?`<div class="drv-stat-box"><div class="drv-stat-box-val" style="color:var(--primary)">${info.speed} mph</div><div class="drv-stat-box-lbl">Speed</div></div>`:''}
-      </div>
-      ${pct>0?`<div style="margin-bottom:14px"><div class="drv-lic-bar" style="height:6px"><div class="drv-lic-bar-fill" style="width:${pct}%"></div></div><div style="font-size:11px;color:var(--muted);margin-top:4px">${pct}% complete${info.routeId?' · Route '+esc(info.routeId):''}</div></div>`:''}
-      <div style="background:var(--border-sub);border-radius:8px;padding:12px 14px">
-        ${info.email?`<div class="drv-info-row"><span style="color:var(--muted)">Email</span><span style="font-family:var(--mono);font-size:11px">${esc(info.email)}</span></div>`:''}
-        ${info.phone?`<div class="drv-info-row"><span style="color:var(--muted)">Phone</span><span>${esc(info.phone)}</span></div>`:''}
-        ${info.vehicleType?`<div class="drv-info-row"><span style="color:var(--muted)">Vehicle</span><span>${esc(info.vehicleType)} ${esc(info.vehicleId||'')}</span></div>`:''}
-        ${info.zone?`<div class="drv-info-row"><span style="color:var(--muted)">Zone</span><span>${esc(info.zone)}</span></div>`:''}
-        ${info.vehicle&&!info.vehicleType?`<div class="drv-info-row"><span style="color:var(--muted)">Vehicle</span><span style="font-family:var(--mono);font-size:11px">${esc(info.vehicle)}</span></div>`:''}
-        ${info.streak!=null?`<div class="drv-info-row"><span style="color:var(--muted)">Active Streak</span><span style="color:var(--warn-t);font-weight:600">${info.streak}d 🔥</span></div>`:''}
-        ${info.totalDeliveries!=null?`<div class="drv-info-row"><span style="color:var(--muted)">Total Deliveries</span><span style="font-weight:600">${info.totalDeliveries.toLocaleString()}</span></div>`:''}
-        ${info.lastUpdate?`<div class="drv-info-row"><span style="color:var(--muted)">Last GPS Update</span><span>${esc(info.lastUpdate)}</span></div>`:''}
-      </div>
-      <div class="modal-foot">
-        <button class="btn btn-o" onclick="closeModal('drv-detail-modal')">Close</button>
-      </div>
-    </div>
-  </div>`;
-  closeModal('drv-detail-modal');
-  document.body.insertAdjacentHTML('beforeend',html);
-};
-
-function drvModalInfo(obj){return encodeURIComponent(JSON.stringify(obj));}
-function photoEl(key,initStr,w,h,r){const photo=driverPhotos[key];return`<div class="drv-lic-photo-wrap"><div class="drv-lic-photo" style="width:${w}px;height:${h}px;border-radius:${r}px">${photo?`<img class="drv-photo-img" src="${photo}"/>`:'<span>'+initStr+'</span>'}</div><div class="drv-photo-cam" onclick="event.stopPropagation();triggerPhotoUpload('${key}')">📷</div></div>`;}
-
-// ══════════════════════════════════════════════════════════
-// DRIVER LICENSE CARD HELPER
-// ══════════════════════════════════════════════════════════
-const DRV_LIC_DOBS=['05/12/1988','03/24/1991','11/08/1985','07/19/1993','02/28/1990','09/14/1987','12/01/1995','07/30/1982'];
-const DRV_LIC_STATES={1:'CA',2:'CA',3:'AZ',4:'CA',6:'CA',7:'CA',8:'AZ'};
-function driverLicenseCard(u,dd,gps,co,pct){
-  const stateCode=DRV_LIC_STATES[u.id]||'CA';
-  const licNum='DL-'+stateCode+'-'+String(1000000+u.id*137891%9000000).padStart(7,'0');
-  const expYear=2026+((u.id*3)%4);
-  const dob=DRV_LIC_DOBS[u.id%DRV_LIC_DOBS.length];
-  const liveDot=gps?'<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--ok-t);margin-right:4px;vertical-align:middle"></span>':'';
-  const speedStr=gps?' · '+gps.speed+' mph':'';
-  const routeStr=dd?' · '+dd.zone:'';
-  const barPct=pct!=null?pct:0;
-  const key='user-'+u.id;
-  const modalInfo=drvModalInfo({key,uid:u.id,name:u.name,initials:initials(u.name),stateCode,pct:barPct,otp:dd?dd.onTimeRate:null,rating:dd?dd.customerRating:null,earnings:dd?dd.todayPay:null,done:dd?dd.currentRoute.completed:null,stops:dd?dd.currentRoute.totalStops:null,speed:gps?gps.speed:null,lastUpdate:gps?gps.lastUpdate:null,zone:dd?dd.zone:null,vehicleType:dd?dd.vehicleType:null,vehicleId:dd?dd.vehicleId:null,streak:dd?dd.streak:null,totalDeliveries:dd?dd.totalDeliveries:null,routeId:dd?dd.currentRoute.routeId:null,coName:co?co.name:null,email:u.email,phone:u.phone,role:u.role,status:u.active?'active':'inactive'});
-  return`<div class="drv-lic-card" onclick="event.stopPropagation();openDriverModal('${modalInfo}')" style="cursor:pointer">
-    <div style="display:flex;gap:10px;align-items:flex-start">
-      ${photoEl(key,initials(u.name),48,60,5)}
-      <div style="flex:1;min-width:0;padding-right:60px">
-        <div class="drv-lic-name">${esc(u.name)}</div>
-        <div class="drv-lic-num">${esc(licNum)}</div>
-        <div class="drv-lic-meta">DOB: ${dob} &nbsp; EXP: 12/${expYear}<br/>
-        ${esc(stateCode)} LICENSE${co?' · '+esc(co.name):''}${routeStr}<br/>
-        ${liveDot}${gps?'<span style="color:var(--ok-t)">Live</span>'+speedStr:'Offline'}</div>
-      </div>
-    </div>
-    ${dd?`<div class="drv-lic-bar"><div class="drv-lic-bar-fill" style="width:${barPct}%"></div></div><div style="font-size:9px;color:var(--muted);margin-top:3px">${barPct}% route · ${dd.currentRoute.completed}/${dd.currentRoute.totalStops} stops</div>`:''}
-  </div>`;
-}
-
-// ══════════════════════════════════════════════════════════
-// FACILITY CARD HELPER
-// ══════════════════════════════════════════════════════════
-function facilityCard(loc,isActive,onClickFn){
-  const s=loc.summary;
-  const losColor=s.losRate>=98?'var(--ok-t)':s.losRate>=96?'var(--warn-t)':'var(--err-t)';
-  const otpColor=s.custOTP>=90?'var(--ok-t)':s.custOTP>=85?'var(--warn-t)':'var(--err-t)';
-  const click=onClickFn||("acctFilterLoc('"+loc.id+"')");
-  return`<div class="facility-card${isActive?' active':''}" onclick="${click}">
-    <div class="facility-card-stripe" style="background:${loc.color}"></div>
-    <div class="facility-card-body">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px">
-        <div>
-          <div style="font-weight:700;font-size:14px;line-height:1.2">${esc(loc.name)}</div>
-          <div style="font-size:10px;color:var(--muted);font-family:var(--mono);margin-top:1px">${esc(loc.facility)} · ${esc(loc.region)}</div>
-        </div>
-        <span class="badge b-active" style="flex-shrink:0">${esc(loc.state)}</span>
-      </div>
-      <div class="facility-card-stat-grid">
-        <div><div class="facility-card-stat-lbl">LOS Rate</div><div class="facility-card-stat-val" style="color:${losColor}">${s.losRate}%</div></div>
-        <div><div class="facility-card-stat-lbl">Cust OTP</div><div class="facility-card-stat-val" style="color:${otpColor}">${s.custOTP}%</div></div>
-        <div><div class="facility-card-stat-lbl">Volume</div><div class="facility-card-stat-val">${(s.volume/1000).toFixed(1)}K</div></div>
-      </div>
-      <div class="facility-card-footer">
-        <span>${icon('Users')}&nbsp;${loc.drivers} drivers</span>
-        <span>${icon('Truck')}&nbsp;${loc.fleet} vehicles</span>
-        <span>${icon('Building2')}&nbsp;${loc.spCount} SPs</span>
-        <span style="margin-left:auto;font-size:10px;color:var(--primary)">View →</span>
-      </div>
-    </div>
-  </div>`;
-}
-
-// ══════════════════════════════════════════════════════════
 // DRIVER TRACKING
 // ══════════════════════════════════════════════════════════
 function renderTracking(){
@@ -2420,7 +2314,18 @@ function renderTracking(){
     <div class="driver-card-row">${driverUsers.map(u=>{
       const dd=DRIVER_DATA[u.id];const gps=DRIVER_GPS[u.id];const co=companies.find(c=>c.id===u.co);
       if(!dd||!gps)return'';const rt=dd.currentRoute;const pct=Math.round(rt.completed/rt.totalStops*100);
-      return driverLicenseCard(u,dd,gps,co,pct);
+      return`<div class="card cb">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+          <div class="avatar" style="background:rgba(249,115,22,.15);color:#f97316;width:36px;height:36px">${initials(u.name)}</div>
+          <div style="flex:1;min-width:0"><div style="font-weight:600;font-size:13px">${esc(u.name)}</div><div style="font-size:11px;color:var(--muted)">${esc(co?.name||'')} · ${esc(dd.zone)}</div></div>
+          <span class="badge b-active" style="font-size:10px"><span class="drv-status-dot"></span>&nbsp;Active</span>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+          ${[{l:'Stops',v:rt.completed+'/'+rt.totalStops},{l:'Speed',v:gps.speed+' mph'},{l:'Updated',v:gps.lastUpdate}].map(s=>'<div style="background:var(--border-sub);padding:4px 8px;border-radius:6px;font-size:11px"><span style="color:var(--muted)">'+s.l+':</span> <span style="font-weight:600">'+s.v+'</span></div>').join('')}
+        </div>
+        <div class="progress" style="height:6px;border-radius:3px;background:var(--border);margin:0"><div style="height:100%;width:${pct}%;background:var(--ok-t);border-radius:3px"></div></div>
+        <div style="font-size:10px;color:var(--muted);margin-top:3px">${pct}% route complete · ${esc(dd.vehicleType)} ${esc(dd.vehicleId)}</div>
+      </div>`;
     }).join('')}</div>
     <div class="card mb4" style="overflow:hidden"><div class="ch">${icon('MapPin')}&nbsp;Live Driver Locations</div><div class="cb" style="padding:0"><div id="tracking-map" class="tracking-map"></div></div></div>
   </div>`;
@@ -2475,13 +2380,8 @@ function renderDriverStats(){
   const alertBanner=alertSPs.length>0?`<div class="card cb mb4" style="border-left:3px solid var(--err-t);background:var(--err-bg)"><div style="display:flex;align-items:flex-start;gap:10px"><span style="color:var(--err-t);flex-shrink:0;margin-top:2px">${icon('AlertTriangle')}</span><div style="flex:1"><div style="font-weight:600;font-size:13px;color:var(--err-t);margin-bottom:4px">Action Required — SP ${alertSPs[0].sp} / ${alertSPs[0].territory} (ZIP ${alertSPs[0].zip})</div><div style="font-size:12px;color:var(--muted)">${alertSPs[0].lates} SP Lates · ${alertSPs[0].d1Fail} Incomplete D1 · ${alertSPs[0].d2Fail} Incomplete D2 · Customer OTP ${alertSPs[0].otp}%</div></div></div></div>`:'';
   const exceptions=[{label:'OD Not Delivered',val:d.odNotDelivered,color:'var(--err-t)'},{label:'Incomplete D1',val:382,color:'var(--warn-t)'},{label:'Incomplete D2',val:362,color:'var(--amber-t)'},{label:'Lost (SP + Delivery)',val:d.lostSP+30,color:'var(--err-t)'},{label:'Bad Weather',val:d.badWeather,color:'var(--info-t)'},{label:'SP Lates',val:d.spLates,color:'var(--warn-t)'},{label:'Before Cutoff',val:d.beforeCutoff,color:'var(--muted)'},{label:'Signature Missing',val:d.signatureMissing,color:'var(--pur-t)'}];
   const maxExc=Math.max(...exceptions.map(e=>e.val));
-  const pitLoc=LOCATIONS.find(l=>l.id==='LOC-PIT')||LOCATIONS[0];
   return `<div class="page">
     <div class="ph"><div><div class="pt">Driver Statistics</div><div class="ps">DSP performance metrics · ${esc(d.facility)} (code ${esc(d.code)}) · ${esc(d.period)}</div></div><span class="badge b-info-t">${d.spPerformance.length} SPs · 9 Territories</span></div>
-    <div class="st">Active Facility</div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px">${facilityCard(pitLoc,true,"toast('Facility: "+esc(pitLoc.name)+"')")}
-    <div class="card" style="grid-column:span 2"><div class="ch">${icon('BarChart2')}&nbsp;Facility Overview · ${esc(pitLoc.name)}</div><div class="cb"><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">${[{l:'Net OTP',v:pitLoc.summary.netOTP+'%',c:'var(--ok-t)'},{l:'Branch OTP',v:pitLoc.summary.branchOTP+'%',c:'var(--ok-t)'},{l:'Lost SP',v:pitLoc.summary.lostSP,c:'var(--err-t)'},{l:'Bad Weather',v:pitLoc.summary.badWeather,c:'var(--info-t)'},{l:'Inc D1',v:pitLoc.summary.incD1,c:'var(--warn-t)'},{l:'Inc D2',v:pitLoc.summary.incD2,c:'var(--warn-t)'},{l:'Before Cutoff',v:pitLoc.summary.beforeCutoff,c:'var(--muted)'},{l:'OD%',v:pitLoc.summary.odPct+'%',c:'var(--ok-t)'}].map(s=>'<div><div style="font-size:10px;color:var(--muted)">'+s.l+'</div><div style="font-size:16px;font-weight:700;color:'+s.c+'">'+s.v+'</div></div>').join('')}</div></div></div>
-    </div>
     ${alertBanner}
     <div class="ds-kpi-row">
       <div class="ds-kpi"><div class="ds-kpi-label">${icon('Package')}&nbsp;Total Volume</div><div class="ds-kpi-val">${d.totalVolume.toLocaleString()}</div><div class="ds-kpi-sub">packages inducted</div></div>
@@ -2517,7 +2417,7 @@ function renderAcctLocations(){
       <div class="ds-kpi"><div class="ds-kpi-label">${icon('Truck')}&nbsp;Fleet</div><div class="ds-kpi-val">${LOCATIONS.reduce((a,l)=>a+l.drivers,0)}</div><div class="ds-kpi-sub">drivers · ${LOCATIONS.reduce((a,l)=>a+l.fleet,0)} vehicles</div></div>
     </div>
     <div class="st">Location Summary — ${locLabel}</div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px">${LOCATIONS.map(loc=>{const isActive=acctLocFilter===loc.id;return facilityCard(loc,isActive);}).join('')}</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">${locSummary.map(l=>{const isActive=acctLocFilter===l.id;return'<div class="card cb" style="cursor:pointer;'+(isActive?'border-color:var(--primary);background:var(--primary-bg)':'')+'" onclick="acctFilterLoc(\''+l.id+'\')"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><div style="display:flex;align-items:center;gap:6px"><div style="width:10px;height:10px;border-radius:50%;background:'+l.color+'"></div><span style="font-weight:600;font-size:13px">'+esc(l.name)+'</span></div><span class="badge b-active">'+esc(l.state)+'</span></div><div style="font-size:11px;color:var(--muted);margin-bottom:8px">'+esc(l.facility)+' · '+l.spCount+' SPs · '+l.drivers+' drivers</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px"><div><div style="font-size:10px;color:var(--muted)">Volume</div><div style="font-size:14px;font-weight:700">'+l.totVol.toLocaleString()+'</div></div><div><div style="font-size:10px;color:var(--muted)">Avg LOS</div><div style="font-size:14px;font-weight:700;color:'+(l.avgLOS>=98?'var(--ok-t)':'var(--warn-t)')+'">'+l.avgLOS+'%</div></div></div></div>';}).join('')}</div>
     <div class="card mb4"><div class="ch" style="justify-content:space-between"><span>${icon('FileText')}&nbsp;Daily Detail — ${data.length} rows</span>${acctLocFilter!=='all'?'<button class="btn btn-sm btn-o" onclick="acctFilterLoc(\'all\')">Show All</button>':''}</div>
     <div class="cb" style="overflow-x:auto"><table><thead><tr><th ${thS} onclick="acctSort('day')">Day ${sIc('day')}</th><th>Date</th><th>Dow</th><th>Location</th><th ${thS} onclick="acctSort('volume')" style="text-align:right">Volume ${sIc('volume')}</th><th style="text-align:right">Stops</th><th style="text-align:right">Delivered</th><th ${thS} onclick="acctSort('losRate')" style="text-align:right">LOS% ${sIc('losRate')}</th><th ${thS} onclick="acctSort('custOTP')" style="text-align:right">Cust OTP% ${sIc('custOTP')}</th><th style="text-align:right">Bad W</th><th style="text-align:right">Inc D1</th><th style="text-align:right">Lost SP</th><th style="text-align:right">Drivers</th></tr></thead>
     <tbody>${data.slice(0,100).map(d=>'<tr><td>'+d.day+'</td><td style="font-family:monospace;font-size:11px">'+d.date+'</td><td>'+d.dow+'</td><td style="font-weight:500">'+esc(d.location)+'</td><td style="text-align:right">'+d.volume.toLocaleString()+'</td><td style="text-align:right">'+d.stops.toLocaleString()+'</td><td style="text-align:right">'+d.delivered.toLocaleString()+'</td><td style="text-align:right;font-weight:600;color:'+(parseFloat(d.losRate)>=98?'var(--ok-t)':'var(--warn-t)')+'">'+d.losRate+'%</td><td style="text-align:right;color:'+(parseFloat(d.custOTP)>=90?'var(--ok-t)':'var(--warn-t)')+'">'+d.custOTP+'%</td><td style="text-align:right">'+d.badWeather+'</td><td style="text-align:right">'+d.incD1+'</td><td style="text-align:right">'+d.lostSP+'</td><td style="text-align:right">'+d.driversActive+'</td></tr>').join('')}</tbody></table></div></div>
@@ -3028,6 +2928,7 @@ function renderSidebar(){
     {id:'acct_locations',label:'Location Reports',icon:'Globe',res:'locations'},
     {id:'reporting',label:'Analytics & Reports',icon:'FileText',res:'reporting'},
     {id:'onroute_rates',label:'OnRouteRates',icon:'Globe',res:'analytics'},
+    {id:'research',label:'Industry Research',icon:'Search',res:'analytics'},
     {id:'_sec',label:'Platform Admin'},
     {id:'admin_data_streams',label:'Data Streams',icon:'Zap',res:'analytics'},
     {id:'admin_platform',label:'Platform Settings',icon:'Settings',res:'analytics'},
@@ -3045,6 +2946,7 @@ function renderSidebar(){
     {id:'kanban_board',label:'Project Board',icon:'ClipboardList',res:'analytics',badge:kbTasks.filter(function(t){return t.createdBy==='admin'&&t.col!=='done';}).length},
     {id:'requests',label:'Service Requests',icon:'FileText',res:'requests',badge:openCount},
     {id:'team',label:'Team',icon:'Users',res:'users'},
+    {id:'research',label:'Industry Research',icon:'Search',res:'analytics'},
   ];
   const ACCT_NAV=[
     {id:'acct_locations',label:'Location Reports',icon:'Globe',res:'locations'},
@@ -3335,7 +3237,592 @@ var FEATURES={
     log:['<span class="dim">2026-03-22</span> Slack app manifest: <span class="ok">created</span>','<span class="dim">2026-03-18</span> OAuth flow: <span class="ok">tested in sandbox</span>','<span class="dim">2026-03-12</span> Slash command /dh status: <span class="ok">prototype working</span>']}
 };
 
+// ══════════════════════════════════════════════════════════
+// 7 ADVANCED FEATURE MODULE RENDERERS  (delta-edit — additions only)
+// ══════════════════════════════════════════════════════════
+
+// ── AI Route Optimization: FlowSkip v2 Embedded ──────────
+function renderFeature_ai_route_opt(){
+  return renderFlowSkipPage();
+}
+
+// ── MODULE 1: Predictive Analytics Engine ─────────────────
+function renderFeature_predictive_analytics(){
+  var T=Date.now();
+  var zones=[
+    {z:'LA South',vol:342,base:.914,pres:72},{z:'Phoenix East',vol:218,base:.876,pres:61},
+    {z:'Bay Area',vol:287,base:.931,pres:78},{z:'Chicago',vol:194,base:.869,pres:59},
+    {z:'NYC Metro',vol:412,base:.846,pres:51},{z:'Dallas',vol:263,base:.908,pres:69},
+    {z:'Seattle',vol:176,base:.923,pres:74},{z:'Miami',vol:231,base:.871,pres:55},
+  ].map(function(d,i){
+    var j=Math.sin(T/60000+i)*0.025;
+    var ep=Math.min(.99,Math.max(.70,d.base+j));
+    var tc=ep>.92?'var(--ok-t)':ep>.87?'var(--warn-t)':'var(--err-t)';
+    var bg=ep>.92?'var(--ok-t)':ep>.87?'var(--warn-t)':'var(--err-t)';
+    var jt=j>0?'+'+j.toFixed(2)+'%':j.toFixed(2)+'%';
+    return{z:d.z,vol:d.vol,pres:d.pres,ep:ep,tc:tc,bg:bg,anomaly:d.pres<60,trend:jt,forecast:Math.round(d.vol*(1+j*2))};
+  });
+  var wvs=Array.from({length:12},function(_,i){return 62+Math.sin(i*.9+T/120000)*18+i*.8;});
+  var wmax=Math.max.apply(null,wvs);
+  var fcsvg=wvs.map(function(v,i){
+    var h=Math.round((v/wmax)*52);var hi=v>82;
+    return'<rect x="'+(i*43+1)+'" y="'+(58-h)+'" width="36" height="'+h+'" rx="3" fill="'+(hi?'rgba(251,191,36,.7)':'rgba(0,212,255,.6)')+'"/>'+
+           '<text x="'+(i*43+19)+'" y="74" text-anchor="middle" font-size="7" fill="rgba(255,255,255,.35)">W'+(i+1)+'</text>';
+  }).join('');
+  var avgEp=(zones.reduce(function(a,z){return a+z.ep;},0)/zones.length*100).toFixed(1);
+  var aZ=zones.filter(function(z){return z.anomaly;});
+  var avgPres=Math.round(zones.reduce(function(a,z){return a+z.pres;},0)/zones.length);
+  return'<div class="page">'+
+    '<button class="btn btn-o btn-sm" onclick="navigate(state._prevPage||\'dashboard\')" style="margin-bottom:16px">← Back</button>'+
+    '<div class="ph"><div><div class="pt">📊 Predictive Analytics Engine</div><div class="ps">Presence Intelligence · ePOD Probability · 12-Week Forecast · Z-score Anomaly Detection</div></div>'+
+      '<span class="badge b-active" style="font-size:10px;font-family:var(--mono)">LIVE · '+new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})+'</span></div>'+
+    '<div class="g4 mb4">'+
+      [{l:'ePOD Avg Probability',v:avgEp+'%',c:'var(--ok-t)',s:'Across all 8 zones'},
+       {l:'Anomaly Alerts',v:aZ.length,c:aZ.length>0?'var(--err-t)':'var(--ok-t)',s:'Z-score > 2σ detected'},
+       {l:'Forecast Accuracy',v:'94.2%',c:'var(--ok-t)',s:'12-week ARIMA model'},
+       {l:'Presence Index',v:avgPres+'%',c:'var(--primary)',s:'USPS Informed Delivery'},
+      ].map(function(k){return'<div class="card cb"><div class="kpi-label">'+k.l+'</div><div class="kpi-val" style="color:'+k.c+'">'+k.v+'</div><div class="kpi-sub">'+k.s+'</div></div>';}).join('')+
+    '</div>'+
+    '<div class="g21 mb4">'+
+      '<div class="card"><div class="ch">🎯 ePOD Probability by Zone · Presence Intelligence</div><div class="cb">'+
+        zones.map(function(z){
+          var pct=Math.round(z.ep*100);
+          return'<div style="margin-bottom:11px">'+
+            '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">'+
+              '<span style="font-weight:500">'+z.z+(z.anomaly?'&nbsp;<span style="font-size:9px;background:var(--err-bg);color:var(--err-t);padding:1px 5px;border-radius:3px;font-family:var(--mono)">⚡ ANOMALY</span>':'')+'</span>'+
+              '<div style="display:flex;gap:12px;align-items:center">'+
+                '<span style="font-size:10px;color:var(--muted);font-family:var(--mono)">Presence '+z.pres+'%</span>'+
+                '<span style="font-weight:700;color:'+z.tc+'">'+pct+'%</span>'+
+              '</div></div>'+
+            '<div style="height:7px;background:var(--border);border-radius:4px;overflow:hidden">'+
+              '<div style="height:100%;width:'+pct+'%;background:'+z.bg+';border-radius:4px"></div></div>'+
+            '<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--dim);margin-top:3px">'+
+              '<span>Vol: '+z.vol+' pkg/d</span>'+
+              '<span>Forecast: '+z.forecast+' <span style="color:'+(z.forecast>z.vol?'var(--ok-t)':'var(--err-t)')+'">'+z.trend+'</span></span>'+
+            '</div></div>';}).join('')+
+      '</div></div>'+
+      '<div style="display:flex;flex-direction:column;gap:12px">'+
+        '<div class="card cb"><div style="font-weight:600;font-size:12px;margin-bottom:8px">📈 12-Week Volume Forecast</div>'+
+          '<svg viewBox="0 0 518 80" style="width:100%">'+fcsvg+'</svg>'+
+          '<div style="font-size:10px;color:var(--dim);margin-top:2px">Amber = high-risk weeks (SLA pressure zone)</div></div>'+
+        '<div class="card cb"><div style="font-weight:600;font-size:12px;margin-bottom:8px">⚡ Anomaly Feed</div>'+
+          (aZ.length===0?'<div style="color:var(--ok-t);font-size:12px;text-align:center;padding:14px">✓ No anomalies detected</div>':
+            aZ.map(function(z){return'<div style="padding:8px;background:var(--err-bg);border-left:3px solid var(--err-t);border-radius:0 6px 6px 0;margin-bottom:6px;font-size:11px">'+
+              '<div style="font-weight:600;color:var(--err-t)">'+z.z+' — ePOD drop</div>'+
+              '<div style="color:var(--muted);margin-top:2px">Presence: '+z.pres+'% · Below 60% floor · Action required</div></div>';}).join(''))+
+          '<div style="margin-top:10px;font-size:10px;color:var(--muted);margin-bottom:6px;font-family:var(--mono);letter-spacing:1px">ACTIVE MODELS</div>'+
+          [['ARIMA · Volume Forecast','93.8%'],['Random Forest · Churn','91.2%'],['Log-Reg · SLA Risk','87.4%'],['Monte Carlo · Revenue','94.6%']].map(function(m){
+            return'<div style="display:flex;justify-content:space-between;font-size:11px;padding:4px 0;border-bottom:1px solid var(--border-sub)">'+
+              '<span style="color:var(--muted)">'+m[0]+'</span><span style="color:var(--ok-t);font-weight:600">'+m[1]+'</span></div>';}).join('')+
+        '</div>'+
+      '</div>'+
+    '</div>'+
+  '</div>';
+}
+
+// ── MODULE 2: Geofence Zone Editor ────────────────────────
+var _geoZones=[
+  {id:1,name:'Zone A – Downtown Core',col:'#00d4ff',drivers:12,cppu:5.37,stops:847,active:true,lat:34.048,lng:-118.236,r:0.018},
+  {id:2,name:'Zone B – Eastside Industrial',col:'#4ade80',drivers:8,cppu:4.82,stops:612,active:true,lat:34.005,lng:-118.190,r:0.022},
+  {id:3,name:'Zone C – Westside Residential',col:'#c084fc',drivers:15,cppu:5.91,stops:1103,active:true,lat:34.022,lng:-118.462,r:0.025},
+  {id:4,name:'Zone D – Harbor / Port',col:'#fbbf24',drivers:6,cppu:6.14,stops:388,active:false,lat:33.736,lng:-118.278,r:0.020},
+];
+function renderFeature_geofence_editor(){
+  var totalRev=_geoZones.reduce(function(a,z){return a+z.cppu*z.stops;},0);
+  var totalOpt=_geoZones.reduce(function(a,z){return a+Math.max(0,(z.cppu-5.37)*z.stops);},0);
+  return'<div class="page">'+
+    '<button class="btn btn-o btn-sm" onclick="navigate(state._prevPage||\'dashboard\')" style="margin-bottom:16px">← Back</button>'+
+    '<div class="ph"><div><div class="pt">🗺 Geofence Zone Editor</div><div class="ps">Draw delivery zones · Dynamic Cost-to-Serve · OnTrac CPPU alignment · $5.37 benchmark</div></div>'+
+      '<button class="btn btn-p btn-sm" onclick="geoAddZone()">+ New Zone</button></div>'+
+    '<div style="display:grid;grid-template-columns:1fr 320px;gap:16px;min-height:400px;margin-bottom:16px">'+
+      '<div class="card" style="padding:0;overflow:hidden;min-height:440px">'+
+        '<div id="geo-map" style="height:440px;width:100%"></div></div>'+
+      '<div style="display:flex;flex-direction:column;gap:10px;overflow-y:auto;max-height:440px">'+
+        '<div class="card cb" style="flex-shrink:0">'+
+          '<div style="font-weight:600;font-size:12px;margin-bottom:8px">💰 Cost-to-Serve Summary</div>'+
+          [['Total Daily Revenue','$'+Math.round(totalRev).toLocaleString()],
+           ['Platform CPPU Benchmark','$5.37'],
+           ['Zones Above Target',_geoZones.filter(function(z){return z.cppu>5.37;}).length+' / '+_geoZones.length],
+           ['Optimization Upside','$'+Math.round(totalOpt).toLocaleString()+'/d'],
+          ].map(function(r){return'<div style="display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid var(--border-sub)"><span style="color:var(--muted)">'+r[0]+'</span><span style="font-weight:600">'+r[1]+'</span></div>';}).join('')+
+        '</div>'+
+        _geoZones.map(function(z){
+          var oc=z.cppu>5.37?'var(--warn-t)':'var(--ok-t)';
+          return'<div class="card cb" style="border-left:3px solid '+z.col+';flex-shrink:0">'+
+            '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">'+
+              '<span style="font-weight:600;font-size:12px">'+z.name+'</span>'+
+              '<span class="badge '+(z.active?'b-active':'b-pending')+'" style="font-size:9px">'+( z.active?'ACTIVE':'IDLE')+'</span>'+
+            '</div>'+
+            '<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:11px">'+
+              '<span style="color:var(--muted)">CPPU: <strong style="color:'+oc+'">$'+z.cppu.toFixed(2)+'</strong></span>'+
+              '<span style="color:var(--muted)">Stops: <strong>'+z.stops+'</strong></span>'+
+              '<span style="color:var(--muted)">Drivers: <strong>'+z.drivers+'</strong></span>'+
+              '<span style="color:var(--muted)">Rev/d: <strong style="color:var(--primary)">$'+Math.round(z.cppu*z.stops).toLocaleString()+'</strong></span>'+
+            '</div></div>';}).join('')+
+      '</div>'+
+    '</div>'+
+  '</div>';
+}
+window.geoAddZone=function(){
+  var nm=prompt('New zone name:','Zone E – Custom Area');if(!nm)return;
+  _geoZones.push({id:Date.now(),name:nm,col:'#'+Math.floor(Math.random()*0xffffff).toString(16).padStart(6,'0'),
+    drivers:Math.round(5+Math.random()*15),cppu:parseFloat((4.5+Math.random()*2).toFixed(2)),
+    stops:Math.round(200+Math.random()*700),active:true,lat:34.02+Math.random()*.1-0.05,lng:-118.25-Math.random()*.3,r:.015});
+  toast('Zone added — reinitializing map');rerenderPage();
+};
+function initGeoMap(){
+  var el=document.getElementById('geo-map');
+  if(!el||typeof L==='undefined')return;
+  if(el._leafletInitDone)return;el._leafletInitDone=true;
+  var map=L.map('geo-map',{center:[34.02,-118.28],zoom:11});
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'©CARTO',maxZoom:19}).addTo(map);
+  _geoZones.forEach(function(z){
+    var pts=[];for(var i=0;i<6;i++){var a=i*Math.PI/3;pts.push([z.lat+Math.cos(a)*z.r,z.lng+Math.sin(a)*z.r*1.6]);}
+    L.polygon(pts,{color:z.col,fillColor:z.col,fillOpacity:z.active?.25:.08,weight:2,dashArray:z.active?null:'6,4'}).addTo(map)
+      .bindPopup('<strong style="color:'+z.col+'">'+z.name+'</strong><br>CPPU: $'+z.cppu.toFixed(2)+'<br>Stops/d: '+z.stops+'<br>Drivers: '+z.drivers);
+    L.circleMarker([z.lat,z.lng],{radius:4,color:z.col,fillColor:z.col,fillOpacity:.9}).addTo(map);
+  });
+}
+
+// ── MODULE 3: Cost-per-Stop Optimizer ─────────────────────
+function renderFeature_cost_per_stop(){
+  var sample=[
+    {name:'First Choice Delivery',cur:5.82,opt:4.41,stops:847,drivers:28},
+    {name:'Pacific Rim Logistics',cur:6.14,opt:4.62,stops:612,drivers:19},
+    {name:'Swift Delivery Co.',cur:5.37,opt:4.28,stops:1103,drivers:35},
+    {name:'Lone Star Couriers',cur:7.21,opt:5.14,stops:388,drivers:12},
+    {name:'Emerald Route Inc.',cur:5.93,opt:4.55,stops:723,drivers:22},
+  ];
+  var fCur=sample.reduce(function(a,c){return a+c.cur*c.stops;},0);
+  var fOpt=sample.reduce(function(a,c){return a+c.opt*c.stops;},0);
+  var totalStops=sample.reduce(function(a,c){return a+c.stops;},0);
+  var saving=fCur-fOpt;var mg=((saving/fCur)*100);var tgt31=mg>=31;
+  var breakdown=[
+    {cat:'Driver Labor',cur:2.18,opt:1.74},{cat:'Fuel & Maintenance',cur:1.42,opt:1.05},
+    {cat:'Vehicle Depreciation',cur:0.84,opt:0.71},{cat:'Insurance',cur:0.63,opt:0.58},
+    {cat:'Admin & Overhead',cur:0.30,opt:0.22},{cat:'Route Waste',cur:0.45,opt:0.08},
+  ];
+  return'<div class="page">'+
+    '<button class="btn btn-o btn-sm" onclick="navigate(state._prevPage||\'dashboard\')" style="margin-bottom:16px">← Back</button>'+
+    '<div class="ph"><div><div class="pt">💲 Cost-per-Stop Optimizer</div><div class="ps">AI margin enhancement · Benchmark CPPU $5.37 · Target: +31% margin lift</div></div>'+
+      '<span class="badge '+(tgt31?'b-active':'b-pending')+'">'+mg.toFixed(1)+'% / 31% target</span></div>'+
+    '<div class="g4 mb4">'+
+      [{l:'Current Fleet CPS',v:'$'+(fCur/totalStops).toFixed(2),c:'var(--err-t)',s:'Weighted avg across fleet'},
+       {l:'Optimized CPS',v:'$'+(fOpt/totalStops).toFixed(2),c:'var(--ok-t)',s:'AI-recommended baseline'},
+       {l:'Daily Fleet Saving',v:'$'+Math.round(saving).toLocaleString(),c:'var(--primary)',s:'Total recoverable/day'},
+       {l:'Margin Lift',v:'+'+mg.toFixed(1)+'%',c:tgt31?'var(--ok-t)':'var(--warn-t)',s:'Target: +31%'},
+      ].map(function(k){return'<div class="card cb"><div class="kpi-label">'+k.l+'</div><div class="kpi-val" style="color:'+k.c+'">'+k.v+'</div><div class="kpi-sub">'+k.s+'</div></div>';}).join('')+
+    '</div>'+
+    '<div style="margin-bottom:16px">'+
+      '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px">'+
+        '<span style="font-weight:600">Progress to +31% Margin Target</span>'+
+        '<span style="color:'+(tgt31?'var(--ok-t)':'var(--warn-t)')+'">'+mg.toFixed(1)+'% / 31%</span></div>'+
+      '<div style="height:10px;background:var(--border);border-radius:5px;overflow:hidden">'+
+        '<div style="height:100%;width:'+Math.min(100,mg/31*100).toFixed(0)+'%;background:linear-gradient(to right,var(--primary),var(--ok-t));border-radius:5px"></div></div>'+
+    '</div>'+
+    '<div class="g21 mb4">'+
+      '<div class="card"><div class="ch">🏢 Company-Level Optimization Matrix</div><div class="cb">'+
+        '<table><thead><tr><th>Company</th><th style="text-align:right">Current CPS</th><th style="text-align:right">Optimized</th><th style="text-align:right">Saving/Day</th><th style="text-align:right">Margin Δ</th></tr></thead><tbody>'+
+          sample.map(function(c){
+            var sv=(c.cur-c.opt)*c.stops;var mg2=((c.cur-c.opt)/c.cur*100).toFixed(1);
+            return'<tr><td style="font-weight:500">'+c.name+'</td>'+
+              '<td style="text-align:right;color:var(--err-t);font-family:var(--mono)">$'+c.cur.toFixed(2)+'</td>'+
+              '<td style="text-align:right;color:var(--ok-t);font-family:var(--mono)">$'+c.opt.toFixed(2)+'</td>'+
+              '<td style="text-align:right;font-weight:600">$'+Math.round(sv).toLocaleString()+'</td>'+
+              '<td style="text-align:right;color:var(--ok-t)">+'+mg2+'%</td></tr>';}).join('')+
+        '</tbody></table></div></div>'+
+      '<div class="card cb"><div style="font-weight:600;font-size:12px;margin-bottom:10px">🔬 Cost Driver Breakdown</div>'+
+        breakdown.map(function(b){
+          var sv=b.cur-b.opt;var pc=(sv/b.cur*100).toFixed(0);
+          return'<div style="margin-bottom:10px">'+
+            '<div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px">'+
+              '<span style="color:var(--muted)">'+b.cat+'</span>'+
+              '<span style="color:var(--ok-t);font-weight:600">-'+pc+'% ($'+sv.toFixed(2)+')</span></div>'+
+            '<div style="display:flex;flex-direction:column;gap:2px">'+
+              '<div style="height:5px;background:rgba(239,68,68,.35);border-radius:3px;overflow:hidden">'+
+                '<div style="height:100%;width:100%;background:rgba(239,68,68,.5);border-radius:3px"></div></div>'+
+              '<div style="height:5px;background:var(--border);border-radius:3px;overflow:hidden">'+
+                '<div style="height:100%;width:'+(b.opt/b.cur*100).toFixed(0)+'%;background:var(--ok-t);border-radius:3px;opacity:.7"></div>'+
+              '</div></div></div>';}).join('')+
+        '<div style="font-size:10px;color:var(--muted);margin-top:8px">Red bar = current cost · Green bar = optimized cost</div>'+
+      '</div>'+
+    '</div>'+
+  '</div>';
+}
+
+// ── MODULE 4: Fleet Maintenance Alerts ────────────────────
+function renderFeature_fleet_maintenance(){
+  var vehicles=[
+    {id:'CV-1041',driver:'James Williams',mi:127430,next:'Oil Change',due:820,status:'ok'},
+    {id:'CV-1047',driver:'Miguel Torres',mi:98210,next:'Tire Rotation',due:150,status:'warn'},
+    {id:'CV-1089',driver:'Keisha Johnson',mi:143820,next:'DOT Inspection',due:-12,status:'err'},
+    {id:'CV-1102',driver:'Sarah Chen',mi:76340,next:'Brake Inspection',due:2100,status:'ok'},
+    {id:'CV-1118',driver:'Mike Patterson',mi:112670,next:'Tire Rotation',due:30,status:'warn'},
+    {id:'CV-1124',driver:'Diana Reeves',mi:89450,next:'Oil Change',due:1660,status:'ok'},
+    {id:'CV-1201',driver:'Tom Richards',mi:158340,next:'DOT Inspection',due:-4,status:'err'},
+    {id:'CV-1207',driver:'Emily Rodriguez',mi:64120,next:'First Service',due:3200,status:'ok'},
+  ];
+  var over=vehicles.filter(function(v){return v.due<0;}).length;
+  var soon=vehicles.filter(function(v){return v.due>=0&&v.due<=300;}).length;
+  return'<div class="page">'+
+    '<button class="btn btn-o btn-sm" onclick="navigate(state._prevPage||\'dashboard\')" style="margin-bottom:16px">← Back</button>'+
+    '<div class="ph"><div><div class="pt">🔧 Fleet Maintenance Alerts</div><div class="ps">Predictive maintenance · Breakdown reduction 24% · DOT compliance · OBD-II integration</div></div>'+
+      '<span class="badge '+(over>0?'b-err':'b-active')+'" style="font-size:11px">'+over+' OVERDUE · '+soon+' DUE SOON</span></div>'+
+    '<div class="g4 mb4">'+
+      [{l:'Fleet Tracked',v:vehicles.length,c:'var(--primary)',s:'Active vehicles'},
+       {l:'Overdue',v:over,c:over>0?'var(--err-t)':'var(--ok-t)',s:'Immediate action needed'},
+       {l:'Due ≤ 300mi',v:soon,c:soon>0?'var(--warn-t)':'var(--ok-t)',s:'Schedule this week'},
+       {l:'Breakdown Reduction',v:'24%',c:'var(--ok-t)',s:'vs pre-AI baseline'},
+      ].map(function(k){return'<div class="card cb"><div class="kpi-label">'+k.l+'</div><div class="kpi-val" style="color:'+k.c+'">'+k.v+'</div><div class="kpi-sub">'+k.s+'</div></div>';}).join('')+
+    '</div>'+
+    '<div class="card mb4"><div class="ch">🚛 Vehicle Health Matrix</div><div class="cb">'+
+      '<table><thead><tr><th>Vehicle</th><th>Driver</th><th>Odometer</th><th>Next Service</th><th>Until Due</th><th>Status</th></tr></thead><tbody>'+
+        vehicles.map(function(v){
+          var sc=v.status==='ok'?'var(--ok-t)':v.status==='warn'?'var(--warn-t)':'var(--err-t)';
+          var bw=Math.min(100,Math.max(0,v.due<0?100:(5000-v.due)/50));
+          var dueTxt=v.due<0?'<span style="color:var(--err-t);font-weight:700">'+Math.abs(v.due)+' mi OVERDUE</span>':
+            '<span style="color:'+sc+'">'+v.due.toLocaleString()+' mi</span>';
+          return'<tr>'+
+            '<td style="font-family:var(--mono);font-weight:600;font-size:12px">'+v.id+'</td>'+
+            '<td>'+v.driver+'</td>'+
+            '<td style="font-family:var(--mono);color:var(--muted);font-size:11px">'+v.mi.toLocaleString()+' mi</td>'+
+            '<td style="font-weight:500">'+v.next+'</td>'+
+            '<td><div style="display:flex;align-items:center;gap:8px">'+
+              '<div style="width:52px;height:5px;background:var(--border);border-radius:3px;overflow:hidden">'+
+                '<div style="height:100%;width:'+bw+'%;background:'+sc+';border-radius:3px"></div></div>'+
+              dueTxt+'</div></td>'+
+            '<td><span class="badge '+(v.status==='ok'?'b-active':v.status==='warn'?'b-pending':'b-err')+'" style="font-size:9px">'+v.status.toUpperCase()+'</span></td>'+
+          '</tr>';}).join('')+
+      '</tbody></table></div></div>'+
+    '<div class="g21">'+
+      '<div class="card cb"><div style="font-weight:600;font-size:12px;margin-bottom:10px">⚠️ Priority Alert Queue</div>'+
+        vehicles.filter(function(v){return v.status!=='ok';}).map(function(v){
+          var ub=v.status==='err'?'var(--err-bg)':'var(--warn-bg)';
+          var tc=v.status==='err'?'var(--err-t)':'var(--warn-t)';
+          var pr=v.status==='err'?'CRITICAL':'HIGH';
+          return'<div style="padding:10px;background:'+ub+';border-radius:8px;border-left:3px solid '+tc+';margin-bottom:8px">'+
+            '<div style="display:flex;justify-content:space-between;margin-bottom:4px">'+
+              '<span style="font-weight:600;font-size:12px">'+v.id+' — '+v.next+'</span>'+
+              '<span style="font-size:9px;color:'+tc+';font-weight:700;font-family:var(--mono)">'+pr+'</span></div>'+
+            '<div style="font-size:11px;color:var(--muted)">'+v.driver+' · '+(v.due<0?Math.abs(v.due)+' mi overdue':v.due+' mi remaining')+'</div>'+
+            '<button class="btn btn-o btn-sm" style="margin-top:6px;font-size:10px;padding:3px 8px" onclick="toast(\'Work order created for '+v.id+'\')">Create Work Order</button>'+
+          '</div>';}).join('')+
+      '</div>'+
+      '<div class="card cb"><div style="font-weight:600;font-size:12px;margin-bottom:10px">📅 Maintenance Config</div>'+
+        [['Oil Change Interval','5,000 mi / 6 months'],['Tire Rotation','7,500 mi'],
+         ['DOT Inspection','Annual · 12-month cycle'],['Brake Inspection','15,000 mi'],
+         ['OBD-II Integration','Samsara / Geotab'],['Avg Monthly Cost','$4,200 / fleet'],
+         ['Work Order System','Integrated · Planned Sprint 11'],
+        ].map(function(r){return'<div style="display:flex;justify-content:space-between;font-size:12px;padding:6px 0;border-bottom:1px solid var(--border-sub)"><span style="color:var(--muted)">'+r[0]+'</span><span style="font-weight:600">'+r[1]+'</span></div>';}).join('')+
+        '<button class="btn btn-p btn-sm" style="margin-top:12px;width:100%" onclick="toast(\'Maintenance report exported\')">Export Fleet Report</button>'+
+      '</div>'+
+    '</div>'+
+  '</div>';
+}
+
+// ── MODULE 5: SLA Compliance Monitor ──────────────────────
+function renderFeature_sla_compliance(){
+  var T=Date.now();var j=Math.sin(T/45000);
+  var metrics=[
+    {name:'LOS Rate',cur:98.5+j*.3,target:97,unit:'%',inv:false,sec:'OnTrac §4.2'},
+    {name:'Customer OTP',cur:88.3+j*.8,target:90,unit:'%',inv:false,sec:'OnTrac §7.1'},
+    {name:'Exception Rate',cur:1.7-j*.2,target:2,unit:'%',inv:true,sec:'OnTrac §5.3'},
+    {name:'SP Late Rate',cur:0.8+j*.1,target:1,unit:'%',inv:true,sec:'OnTrac §6.1'},
+    {name:'Photo Capture',cur:96.2+j*.4,target:95,unit:'%',inv:false,sec:'OnTrac §8.2'},
+    {name:'ASN On-Time',cur:99.1-j*.2,target:98,unit:'%',inv:false,sec:'EDI 856'},
+  ];
+  var sqep=[
+    {event:'SP Lates > 1%',vol:847,rate:1.8,fine:1663},
+    {event:'Failed POD',vol:23,rate:.4,fine:412},
+    {event:'LOS Breach',vol:0,rate:0,fine:0},
+    {event:'ASN Late',vol:5,rate:.3,fine:248},
+  ];
+  var totalFine=sqep.reduce(function(a,f){return a+f.fine;},0);
+  var asn=[
+    {id:'ASN-2026-0311',stops:342,st:'ok',ts:'08:02',note:''},
+    {id:'ASN-2026-0310',stops:287,st:'ok',ts:'07:58',note:''},
+    {id:'ASN-2026-0308',stops:412,st:'warn',ts:'06:41',note:'2 packages missing from manifest'},
+    {id:'ASN-2026-0307',stops:194,st:'ok',ts:'05:30',note:''},
+  ];
+  function svgGauge(val,target,inv,w){
+    var ok=inv?val<=target:val>=target;
+    var near=Math.abs(val-target)<2;
+    var color=ok?'#4ade80':near?'#fbbf24':'#f87171';
+    var normPct=inv?Math.max(0,Math.min(100,(1-(val/target))*100+80)):Math.max(0,Math.min(100,val/target*100));
+    var deg=-130+normPct/100*220;
+    var r=34;var cx=50;var cy=52;
+    var tr=function(d){return d*Math.PI/180;};
+    var s1x=cx+r*Math.cos(tr(-130));var s1y=cy+r*Math.sin(tr(-130));
+    var s2x=cx+r*Math.cos(tr(90));var s2y=cy+r*Math.sin(tr(90));
+    var ex=cx+r*Math.cos(tr(deg));var ey=cy+r*Math.sin(tr(deg));
+    var la=normPct/100*220>180?1:0;
+    return'<svg viewBox="0 0 100 82" style="width:'+w+'px">'+
+      '<path d="M '+s1x.toFixed(1)+' '+s1y.toFixed(1)+' A '+r+' '+r+' 0 1 1 '+s2x.toFixed(1)+' '+s2y.toFixed(1)+'" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="6" stroke-linecap="round"/>'+
+      '<path d="M '+s1x.toFixed(1)+' '+s1y.toFixed(1)+' A '+r+' '+r+' 0 '+la+' 1 '+ex.toFixed(1)+' '+ey.toFixed(1)+'" fill="none" stroke="'+color+'" stroke-width="6" stroke-linecap="round"/>'+
+      '<text x="50" y="50" text-anchor="middle" font-size="13" font-weight="700" fill="'+color+'" font-family="JetBrains Mono,monospace">'+val.toFixed(1)+'</text>'+
+      '<text x="50" y="62" text-anchor="middle" font-size="7" fill="rgba(255,255,255,.38)">tgt '+target+'%</text>'+
+    '</svg>';
+  }
+  var breaches=metrics.filter(function(m){return!(m.inv?m.cur<=m.target:m.cur>=m.target);}).length;
+  return'<div class="page">'+
+    '<button class="btn btn-o btn-sm" onclick="navigate(state._prevPage||\'dashboard\')" style="margin-bottom:16px">← Back</button>'+
+    '<div class="ph"><div><div class="pt">📋 SLA Compliance Monitor</div><div class="ps">SQEP risk · ASN validation · OnTrac contract §4–§8 · Fine exposure calculator</div></div>'+
+      '<span class="badge '+(breaches>0?'b-err':'b-active')+'" style="font-size:10px">'+breaches+' BREACH'+(breaches!==1?'ES':'')+'</span></div>'+
+    '<div class="card mb4"><div class="ch">🎯 SLA Compliance Gauges · Live ('+new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})+')</div>'+
+      '<div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:space-around;padding:14px">'+
+        metrics.map(function(m){
+          var ok=m.inv?m.cur<=m.target:m.cur>=m.target;
+          var near=Math.abs(m.cur-m.target)<2;
+          var bg=ok?'var(--ok-bg)':near?'var(--warn-bg)':'var(--err-bg)';
+          return'<div style="text-align:center;padding:10px 14px;background:'+bg+';border-radius:10px;min-width:105px">'+
+            svgGauge(m.cur,m.target,m.inv,88)+
+            '<div style="font-size:11px;font-weight:600;margin-top:2px">'+m.name+'</div>'+
+            '<div style="font-size:9px;color:var(--muted);font-family:var(--mono)">'+m.sec+'</div>'+
+          '</div>';}).join('')+
+      '</div></div>'+
+    '<div class="g21 mb4">'+
+      '<div class="card"><div class="ch">💸 SQEP Fine Risk Calculator</div><div class="cb">'+
+        '<table><thead><tr><th>SQEP Event</th><th style="text-align:right">Volume</th><th style="text-align:right">Rate</th><th style="text-align:right">Fine Risk</th></tr></thead><tbody>'+
+          sqep.map(function(f){return'<tr>'+
+            '<td style="font-weight:500">'+f.event+'</td>'+
+            '<td style="text-align:right;font-family:var(--mono);color:var(--muted)">'+f.vol+'</td>'+
+            '<td style="text-align:right;font-family:var(--mono)">'+f.rate+'%</td>'+
+            '<td style="text-align:right;font-weight:700;color:'+(f.fine>0?'var(--err-t)':'var(--ok-t)')+'">'+( f.fine>0?'$'+f.fine.toLocaleString():'$0 — OK')+'</td></tr>';}).join('')+
+          '<tr style="background:var(--err-bg)"><td colspan="3" style="font-weight:700;padding:8px">Total Fine Exposure</td>'+
+            '<td style="text-align:right;font-weight:800;color:var(--err-t);font-size:15px;padding:8px">$'+totalFine.toLocaleString()+'</td></tr>'+
+        '</tbody></table>'+
+        '<div style="font-size:11px;color:var(--muted);margin-top:10px;padding:8px;background:var(--warn-bg);border-radius:6px">⚠ SQEP benchmark: $1,663/event · CPPU: $5.37 · Penalty avoidance = direct margin gain</div>'+
+      '</div></div>'+
+      '<div class="card cb"><div style="font-weight:600;font-size:12px;margin-bottom:10px">📦 ASN Validation Queue · EDI 856</div>'+
+        asn.map(function(a){
+          var bg=a.st==='ok'?'var(--ok-bg)':'var(--warn-bg)';
+          var tc=a.st==='ok'?'var(--ok-t)':'var(--warn-t)';
+          return'<div style="padding:10px;background:'+bg+';border-radius:8px;margin-bottom:8px;border-left:3px solid '+tc+'">'+
+            '<div style="display:flex;justify-content:space-between;align-items:center">'+
+              '<span style="font-weight:600;font-size:11px;font-family:var(--mono)">'+a.id+'</span>'+
+              '<span style="color:'+tc+';font-size:10px;font-weight:700">'+a.st.toUpperCase()+'</span></div>'+
+            '<div style="font-size:11px;color:var(--muted);margin-top:2px">Stops: '+a.stops+' · Received: '+a.ts+(a.note?' · <span style="color:var(--warn-t)">'+a.note+'</span>':'')+'</div>'+
+          '</div>';}).join('')+
+      '</div>'+
+    '</div>'+
+  '</div>';
+}
+
+// ── MODULE 6: Real-time Telemetry ─────────────────────────
+function renderFeature_realtime_telemetry(){
+  var T=Date.now()/1000;
+  var drv=[
+    {id:1041,name:'James Williams',speed:32+Math.sin(T*.7)*8,hdg:127+Math.sin(T*.3)*15,stops:41,total:58,st:'on_route',zone:'LA South'},
+    {id:1047,name:'Miguel Torres',speed:0,hdg:243,stops:38,total:58,st:'idle',zone:'Eastside Industrial'},
+    {id:1089,name:'Keisha Johnson',speed:48+Math.sin(T*.9)*12,hdg:78+Math.sin(T*.4)*20,stops:46,total:46,st:'completed',zone:'Westside Residential'},
+    {id:1102,name:'Sarah Chen',speed:24+Math.sin(T*.6)*6,hdg:312+Math.sin(T*.5)*10,stops:22,total:58,st:'on_route',zone:'Harbor / Port'},
+    {id:1118,name:'Mike Patterson',speed:38+Math.sin(T*.8)*10,hdg:190+Math.sin(T*.2)*25,stops:33,total:58,st:'on_route',zone:'Valley West'},
+    {id:1124,name:'Diana Reeves',speed:55+Math.sin(T)*15,hdg:45+Math.sin(T*.6)*18,stops:19,total:58,st:'on_route',zone:'Glendale North'},
+  ];
+  function sGauge(spd){
+    var max=80;var pc=Math.min(spd/max,1);var angle=-140+pc*280;
+    var r=36;var cx=50;var cy=55;var rd=function(d){return d*Math.PI/180;};
+    var col=spd>65?'#f87171':spd>50?'#fbbf24':'#00d4ff';
+    var s1x=cx+r*Math.cos(rd(-140));var s1y=cy+r*Math.sin(rd(-140));
+    var s2x=cx+r*Math.cos(rd(140));var s2y=cy+r*Math.sin(rd(140));
+    var ex=cx+r*Math.cos(rd(angle));var ey=cy+r*Math.sin(rd(angle));
+    var nx=cx+(r*.7)*Math.cos(rd(angle));var ny=cy+(r*.7)*Math.sin(rd(angle));
+    var la=pc>.64?1:0;
+    return'<svg viewBox="0 0 100 72" style="width:88px">'+
+      '<path d="M '+s1x.toFixed(1)+' '+s1y.toFixed(1)+' A '+r+' '+r+' 0 1 1 '+s2x.toFixed(1)+' '+s2y.toFixed(1)+'" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="5" stroke-linecap="round"/>'+
+      '<path d="M '+s1x.toFixed(1)+' '+s1y.toFixed(1)+' A '+r+' '+r+' 0 '+la+' 1 '+ex.toFixed(1)+' '+ey.toFixed(1)+'" fill="none" stroke="'+col+'" stroke-width="5" stroke-linecap="round"/>'+
+      '<circle cx="'+cx+'" cy="'+cy+'" r="4" fill="'+col+'"/>'+
+      '<line x1="'+cx+'" y1="'+cy+'" x2="'+nx.toFixed(1)+'" y2="'+ny.toFixed(1)+'" stroke="'+col+'" stroke-width="2.5" stroke-linecap="round"/>'+
+      '<text x="'+cx+'" y="'+(cy+14)+'" text-anchor="middle" font-size="12" font-weight="700" fill="'+col+'" font-family="JetBrains Mono,monospace">'+Math.round(spd)+'</text>'+
+      '<text x="'+cx+'" y="'+(cy+22)+'" text-anchor="middle" font-size="7" fill="rgba(255,255,255,.35)">MPH</text>'+
+    '</svg>';
+  }
+  function hGauge(hdg){
+    var h=((hdg%360)+360)%360;var angle=h-90;
+    var r=30;var cx=38;var cy=38;var rd=function(d){return d*Math.PI/180;};
+    var nx=cx+r*.65*Math.cos(rd(angle));var ny=cy+r*.65*Math.sin(rd(angle));
+    var tx=cx-r*.35*Math.cos(rd(angle));var ty=cy-r*.35*Math.sin(rd(angle));
+    var dirs=['N','E','S','W'];
+    return'<svg viewBox="0 0 76 76" style="width:72px">'+
+      '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.08)" stroke-width="1"/>'+
+      dirs.map(function(d,i){var dx=cx+(r-9)*Math.cos(rd(i*90-90));var dy=cy+(r-9)*Math.sin(rd(i*90-90));
+        return'<text x="'+dx.toFixed(1)+'" y="'+(dy+4).toFixed(1)+'" text-anchor="middle" font-size="8" fill="rgba(255,255,255,.35)" font-family="JetBrains Mono,monospace">'+d+'</text>';}).join('')+
+      '<line x1="'+cx+'" y1="'+cy+'" x2="'+nx.toFixed(1)+'" y2="'+ny.toFixed(1)+'" stroke="#f87171" stroke-width="3" stroke-linecap="round"/>'+
+      '<line x1="'+cx+'" y1="'+cy+'" x2="'+tx.toFixed(1)+'" y2="'+ty.toFixed(1)+'" stroke="rgba(248,113,113,.3)" stroke-width="1.5" stroke-linecap="round"/>'+
+      '<circle cx="'+cx+'" cy="'+cy+'" r="3.5" fill="var(--primary)"/>'+
+      '<text x="'+cx+'" y="'+(cy+15)+'" text-anchor="middle" font-size="8" fill="var(--primary)" font-family="JetBrains Mono,monospace">'+Math.round(h)+'°</text>'+
+    '</svg>';
+  }
+  var ev=[
+    {t:'11:42',d:'James Williams',e:'Stop #41 completed · ePOD captured',ok:true},
+    {t:'11:38',d:'Miguel Torres',e:'Idle >5min at 1420 S Main St',ok:false},
+    {t:'11:35',d:'Keisha Johnson',e:'Route complete · 46/46 · 0 exceptions',ok:true},
+    {t:'11:28',d:'Mike Patterson',e:'Harsh braking event · W Olympic Blvd',ok:false},
+    {t:'11:20',d:'Diana Reeves',e:'Geofence entry · Phoenix Depot',ok:true},
+    {t:'11:14',d:'Sarah Chen',e:'Stop #22 · Customer N/A — rescheduled',ok:false},
+  ];
+  var onRoute=drv.filter(function(d){return d.st==='on_route';}).length;
+  var avgSpd=drv.filter(function(d){return d.speed>0;});
+  return'<div class="page">'+
+    '<button class="btn btn-o btn-sm" onclick="navigate(state._prevPage||\'dashboard\')" style="margin-bottom:16px">← Back</button>'+
+    '<div class="ph"><div><div class="pt">📡 Real-time Driver Telemetry</div><div class="ps">Live GPS · Speed gauges · Heading compass · 5-second heartbeat · Harsh event detection</div></div>'+
+      '<span class="badge b-active" style="font-size:10px;font-family:var(--mono)">● LIVE '+new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})+'</span></div>'+
+    '<div class="g4 mb4">'+
+      [{l:'Active Streams',v:onRoute,c:'var(--primary)',s:'Drivers on route'},
+       {l:'GPS Accuracy',v:'98.2%',c:'var(--ok-t)',s:'5-second heartbeat'},
+       {l:'Events Today',v:'847',c:'var(--warn-t)',s:'Alerts + completions'},
+       {l:'Fleet Avg Speed',v:avgSpd.length?Math.round(avgSpd.reduce(function(a,d){return a+d.speed;},0)/avgSpd.length)+' mph':'0 mph',c:'var(--text)',s:'Moving vehicles only'},
+      ].map(function(k){return'<div class="card cb"><div class="kpi-label">'+k.l+'</div><div class="kpi-val" style="color:'+k.c+'">'+k.v+'</div><div class="kpi-sub">'+k.s+'</div></div>';}).join('')+
+    '</div>'+
+    '<div class="st" style="margin-bottom:12px">Speed & Heading Instruments · Live</div>'+
+    '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px;margin-bottom:20px">'+
+      drv.map(function(d){
+        var bg=d.st==='on_route'?'rgba(34,197,94,.06)':d.st==='idle'?'rgba(245,158,11,.06)':'rgba(0,212,255,.06)';
+        var pct=d.total>0?Math.round(d.stops/d.total*100):100;
+        return'<div class="card" style="background:'+bg+'">'+
+          '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border)">'+
+            '<div><div style="font-weight:600;font-size:12px">'+d.name+'</div>'+
+              '<div style="font-size:10px;color:var(--muted);font-family:var(--mono)">CV-'+d.id+' · '+d.zone+'</div></div>'+
+            '<span class="badge '+(d.st==='on_route'?'b-active':d.st==='idle'?'b-pending':'b-info')+'" style="font-size:9px">'+d.st.replace('_',' ').toUpperCase()+'</span>'+
+          '</div>'+
+          '<div style="display:flex;align-items:center;justify-content:space-around;padding:12px 8px">'+
+            sGauge(d.speed)+hGauge(d.hdg)+
+            '<div style="text-align:center">'+
+              '<div style="font-size:22px;font-weight:800;color:var(--primary)">'+d.stops+'</div>'+
+              '<div style="font-size:9px;color:var(--muted)">of '+d.total+' stops</div>'+
+              '<div style="width:46px;height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin:6px auto 0">'+
+                '<div style="height:100%;width:'+pct+'%;background:var(--ok-t);border-radius:2px"></div></div>'+
+              '<div style="font-size:9px;color:var(--muted);margin-top:2px">'+pct+'%</div>'+
+            '</div>'+
+          '</div></div>';}).join('')+
+    '</div>'+
+    '<div class="card"><div class="ch">⚡ Telemetry Event Feed</div><div class="cb">'+
+      ev.map(function(e){return'<div style="display:flex;gap:10px;padding:6px 0;border-bottom:1px solid var(--border-sub);font-size:11px">'+
+        '<span style="font-family:var(--mono);color:var(--dim);flex-shrink:0;min-width:38px">'+e.t+'</span>'+
+        '<span style="color:var(--primary);font-weight:500;flex-shrink:0;min-width:100px">'+e.d.split(' ')[0]+'</span>'+
+        '<span style="color:'+(e.ok?'var(--ok-t)':'var(--warn-t)')+'">'+e.e+'</span>'+
+      '</div>';}).join('')+
+    '</div></div>'+
+  '</div>';
+}
+
+// ── MODULE 7: Multi-carrier Rate Marketplace ───────────────
+function renderFeature_multicarrier_api(){
+  var all=[
+    {carrier:'OnTrac',zone:'West Coast',states:'CA, AZ, NV, OR, WA',cppu:5.37,rate:1.42,vol:'HIGH',trend:'+2.1%',col:'#00d4ff'},
+    {carrier:'OnTrac',zone:'Mountain West',states:'CO, UT, ID, MT',cppu:4.92,rate:1.35,vol:'MED',trend:'+1.4%',col:'#00d4ff'},
+    {carrier:'LSO',zone:'Texas Corridor',states:'TX, OK, LA, AR',cppu:4.68,rate:1.28,vol:'HIGH',trend:'+3.2%',col:'#4ade80'},
+    {carrier:'LSO',zone:'South Central',states:'MS, AL, GA, TN',cppu:4.41,rate:1.22,vol:'MED',trend:'+0.8%',col:'#4ade80'},
+    {carrier:'FedEx Ground',zone:'Midwest Hub',states:'IL, OH, MI, IN',cppu:5.82,rate:1.58,vol:'HIGH',trend:'-0.5%',col:'#c084fc'},
+    {carrier:'FedEx Ground',zone:'Northeast',states:'NY, NJ, CT, MA',cppu:6.14,rate:1.71,vol:'VERY HIGH',trend:'+1.9%',col:'#c084fc'},
+    {carrier:'UPS Ground',zone:'Mid-Atlantic',states:'PA, MD, VA, NC',cppu:5.94,rate:1.64,vol:'HIGH',trend:'+2.4%',col:'#fbbf24'},
+    {carrier:'UPS Ground',zone:'Southeast',states:'FL, SC',cppu:5.61,rate:1.55,vol:'MED',trend:'+1.1%',col:'#fbbf24'},
+    {carrier:'USPS',zone:'Rural West',states:'WY, NM, SD, ND',cppu:3.84,rate:1.08,vol:'LOW',trend:'+0.3%',col:'#f87171'},
+    {carrier:'Amazon DSP',zone:'LA Metro',states:'CA (dense)',cppu:6.42,rate:1.82,vol:'VERY HIGH',trend:'+4.1%',col:'#fb923c'},
+  ];
+  var cf=window._cppuFilter||'all';var kf=window._carrierFilter||'all';
+  var filt=all.filter(function(r){
+    if(kf!=='all'&&r.carrier!==kf)return false;
+    if(cf==='above'&&r.cppu<=5.37)return false;
+    if(cf==='below'&&r.cppu>5.37)return false;
+    return true;
+  });
+  var carriers=[...new Set(all.map(function(r){return r.carrier;}))];
+  var avgCppu=(all.reduce(function(a,r){return a+r.cppu;},0)/all.length).toFixed(2);
+  var usSvg='<svg viewBox="0 0 500 300" style="width:100%;background:rgba(255,255,255,.02);border-radius:8px">'+
+    '<rect x="10" y="30" width="120" height="190" rx="8" fill="rgba(0,212,255,.10)" stroke="#00d4ff" stroke-width="1.5"/>'+
+    '<text x="70" y="112" text-anchor="middle" font-size="11" fill="#00d4ff" font-family="Outfit,sans-serif" font-weight="700">OnTrac</text>'+
+    '<text x="70" y="126" text-anchor="middle" font-size="9" fill="rgba(0,212,255,.6)">West + Mountain</text>'+
+    '<text x="70" y="140" text-anchor="middle" font-size="9" fill="rgba(255,255,255,.4)">$5.14 avg CPPU</text>'+
+    '<rect x="140" y="90" width="100" height="130" rx="8" fill="rgba(74,222,128,.10)" stroke="#4ade80" stroke-width="1.5"/>'+
+    '<text x="190" y="146" text-anchor="middle" font-size="11" fill="#4ade80" font-family="Outfit,sans-serif" font-weight="700">LSO</text>'+
+    '<text x="190" y="160" text-anchor="middle" font-size="9" fill="rgba(74,222,128,.6)">TX + South Central</text>'+
+    '<text x="190" y="174" text-anchor="middle" font-size="9" fill="rgba(255,255,255,.4)">$4.55 avg CPPU</text>'+
+    '<rect x="255" y="28" width="135" height="120" rx="8" fill="rgba(192,132,252,.10)" stroke="#c084fc" stroke-width="1.5"/>'+
+    '<text x="322" y="82" text-anchor="middle" font-size="11" fill="#c084fc" font-family="Outfit,sans-serif" font-weight="700">FedEx Ground</text>'+
+    '<text x="322" y="96" text-anchor="middle" font-size="9" fill="rgba(192,132,252,.6)">Midwest + Northeast</text>'+
+    '<text x="322" y="110" text-anchor="middle" font-size="9" fill="rgba(255,255,255,.4)">$5.98 avg CPPU</text>'+
+    '<rect x="255" y="158" width="135" height="100" rx="8" fill="rgba(251,191,36,.10)" stroke="#fbbf24" stroke-width="1.5"/>'+
+    '<text x="322" y="202" text-anchor="middle" font-size="11" fill="#fbbf24" font-family="Outfit,sans-serif" font-weight="700">UPS Ground</text>'+
+    '<text x="322" y="216" text-anchor="middle" font-size="9" fill="rgba(251,191,36,.6)">South + Mid-Atlantic</text>'+
+    '<text x="322" y="230" text-anchor="middle" font-size="9" fill="rgba(255,255,255,.4)">$5.78 avg CPPU</text>'+
+    '<rect x="400" y="55" width="88" height="85" rx="8" fill="rgba(251,146,60,.10)" stroke="#fb923c" stroke-width="1.5"/>'+
+    '<text x="444" y="90" text-anchor="middle" font-size="10" fill="#fb923c" font-family="Outfit,sans-serif" font-weight="700">Amazon DSP</text>'+
+    '<text x="444" y="104" text-anchor="middle" font-size="9" fill="rgba(255,255,255,.4)">$6.42 CPPU</text>'+
+    '<rect x="60" y="228" width="190" height="52" rx="8" fill="rgba(248,113,113,.08)" stroke="#f87171" stroke-width="1.5"/>'+
+    '<text x="155" y="252" text-anchor="middle" font-size="11" fill="#f87171" font-family="Outfit,sans-serif" font-weight="700">USPS Rural</text>'+
+    '<text x="155" y="268" text-anchor="middle" font-size="9" fill="rgba(255,255,255,.4)">$3.84 CPPU · Lowest Cost</text>'+
+    '<line x1="10" y1="288" x2="490" y2="288" stroke="rgba(255,255,255,.06)" stroke-width="1"/>'+
+    '<text x="10" y="298" font-size="8" fill="rgba(255,255,255,.3)" font-family="JetBrains Mono,monospace">$3.84 ──── CPPU SCALE ──── $5.37 BENCHMARK ──── $6.42</text>'+
+  '</svg>';
+  return'<div class="page">'+
+    '<button class="btn btn-o btn-sm" onclick="navigate(state._prevPage||\'dashboard\')" style="margin-bottom:16px">← Back</button>'+
+    '<div class="ph"><div><div class="pt">🌐 Multi-carrier Rate Marketplace</div><div class="ps">OnTrac · FedEx Ground · UPS · LSO · USPS · Amazon DSP · CPPU analytics</div></div>'+
+      '<span class="badge b-active" style="font-size:10px">'+all.length+' Active Rates</span></div>'+
+    '<div class="g4 mb4">'+
+      [{l:'Avg CPPU (All Carriers)',v:'$'+avgCppu,c:'var(--primary)',s:'Fleet-wide weighted avg'},
+       {l:'Benchmark CPPU',v:'$5.37',c:'var(--ok-t)',s:'OnTrac platform target'},
+       {l:'Below Benchmark',v:all.filter(function(r){return r.cppu<5.37;}).length+' zones',c:'var(--ok-t)',s:'Cost-efficient options'},
+       {l:'Above Benchmark',v:all.filter(function(r){return r.cppu>5.37;}).length+' zones',c:'var(--warn-t)',s:'Premium / high-demand'},
+      ].map(function(k){return'<div class="card cb"><div class="kpi-label">'+k.l+'</div><div class="kpi-val" style="color:'+k.c+'">'+k.v+'</div><div class="kpi-sub">'+k.s+'</div></div>';}).join('')+
+    '</div>'+
+    '<div class="g21 mb4">'+
+      '<div class="card cb">'+usSvg+'</div>'+
+      '<div class="card cb"><div style="font-weight:600;font-size:12px;margin-bottom:10px">🏢 Carrier Performance Summary</div>'+
+        carriers.map(function(c){
+          var cr=all.filter(function(r){return r.carrier===c;});
+          var avg=(cr.reduce(function(a,r){return a+r.cppu;},0)/cr.length).toFixed(2);
+          var ok=parseFloat(avg)<=5.37;
+          return'<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border-sub)">'+
+            '<div style="width:10px;height:10px;border-radius:50%;background:'+cr[0].col+';flex-shrink:0"></div>'+
+            '<div style="flex:1"><div style="font-weight:600;font-size:12px">'+c+'</div>'+
+              '<div style="font-size:11px;color:var(--muted)">'+cr.length+' zones covered</div></div>'+
+            '<div style="text-align:right"><div style="font-weight:700;color:'+(ok?'var(--ok-t)':'var(--warn-t)')+'">$'+avg+'</div>'+
+              '<div style="font-size:10px;color:var(--muted)">avg CPPU</div></div>'+
+          '</div>';}).join('')+
+      '</div>'+
+    '</div>'+
+    '<div class="card mb4"><div class="ch" style="align-items:center">Carrier Rate Table'+
+      '<div style="margin-left:auto;display:flex;gap:8px;align-items:center">'+
+        '<select class="inp" style="width:130px;font-size:11px;padding:4px 8px" onchange="window._carrierFilter=this.value;rerenderPage()">'+
+          '<option value="all">All Carriers</option>'+
+          carriers.map(function(c){return'<option value="'+c+'" '+(kf===c?'selected':'')+'>'+c+'</option>';}).join('')+
+        '</select>'+
+        '<select class="inp" style="width:130px;font-size:11px;padding:4px 8px" onchange="window._cppuFilter=this.value;rerenderPage()">'+
+          '<option value="all">All CPPU</option>'+
+          '<option value="below" '+(cf==='below'?'selected':'')+'>Below $5.37</option>'+
+          '<option value="above" '+(cf==='above'?'selected':'')+'>Above $5.37</option>'+
+        '</select>'+
+        '<span style="font-size:11px;color:var(--muted)">'+filt.length+' results</span>'+
+      '</div></div>'+
+      '<div class="cb"><table><thead><tr><th>Carrier</th><th>Zone</th><th>States</th><th style="text-align:right">CPPU</th><th style="text-align:right">Rate/Stop</th><th>Volume</th><th>YoY Trend</th></tr></thead><tbody>'+
+        filt.map(function(r){var ok=r.cppu<=5.37;return'<tr>'+
+          '<td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'+r.col+';margin-right:6px"></span>'+r.carrier+'</td>'+
+          '<td style="font-weight:500">'+r.zone+'</td>'+
+          '<td style="font-size:10px;color:var(--muted);font-family:var(--mono)">'+r.states+'</td>'+
+          '<td style="text-align:right;font-weight:700;color:'+(ok?'var(--ok-t)':'var(--warn-t)')+'">$'+r.cppu.toFixed(2)+'</td>'+
+          '<td style="text-align:right;font-family:var(--mono)">$'+r.rate.toFixed(2)+'</td>'+
+          '<td><span class="badge '+(r.vol==='HIGH'||r.vol==='VERY HIGH'?'b-active':'b-info')+'" style="font-size:9px">'+r.vol+'</span></td>'+
+          '<td style="color:'+(r.trend.startsWith('+')?'var(--ok-t)':'var(--err-t)')+';font-weight:600">'+r.trend+'</td>'+
+        '</tr>';}).join('')+
+      '</tbody></table></div></div>'+
+  '</div>';
+}
+
+// ─────────────────────────────────────────────────────────
 function renderFeaturePage(fid){
+  // Dispatch to rich custom renderers for 8 modules
+  var dispatch={
+    ai_route_opt:renderFeature_ai_route_opt,
+    predictive_analytics:renderFeature_predictive_analytics,
+    geofence_editor:renderFeature_geofence_editor,
+    cost_per_stop:renderFeature_cost_per_stop,
+    fleet_maintenance:renderFeature_fleet_maintenance,
+    sla_compliance:renderFeature_sla_compliance,
+    realtime_telemetry:renderFeature_realtime_telemetry,
+    multicarrier_api:renderFeature_multicarrier_api,
+  };
+  if(dispatch[fid])return dispatch[fid]();
   var f=FEATURES[fid];
   if(!f) return '<div class="page"><div class="pt">Feature not found</div><button class="btn btn-o" onclick="history.back?navigate(state._prevPage||\'dashboard\'):0">← Back</button></div>';
   var badgeCls=f.badge==='live'?'live':(f.badge==='beta'?'beta':'soon');
@@ -3411,6 +3898,8 @@ function renderCompanyDetail(){
   '</div>';
 }
 
+// renderIntelResearch is defined below (inline miniEngine — no iframe dependency)
+
 function renderPage(){
   const u=state.user;
   if(state.page&&state.page.indexOf('feature_')===0) return renderFeaturePage(state.page.replace('feature_',''));
@@ -3435,6 +3924,7 @@ function renderPage(){
       case'team':           return renderTeam();
       case'reporting':      return renderReporting();
       case'acct_locations': return renderAcctLocations();
+      case'research':       return renderIntelResearch();
       default:              return renderOwnerCommandCenter();
     }
   }
@@ -3453,6 +3943,7 @@ function renderPage(){
     case'admin_data_streams':return renderAdminDataStreams();
     case'admin_platform':return renderAdminPlatform();
     case'admin_system':return renderAdminSystem();
+    case'research':return renderIntelResearch();
     default:return renderDashboard();
   }
 }
@@ -4035,6 +4526,8 @@ function initMaps(){
   if(typeof L==='undefined')return;
   if(state.page==='tracking')initTrackingMap();
   if(state.user&&state.user.role==='driver'&&(state.drvTab||'route')==='route')initDriverRouteMap();
+  if(state.page&&state.page.indexOf('feature_geofence')===0)initGeoMap();
+  if(state.page&&state.page.indexOf('feature_ai_route_opt')===0)initFS2Map();
 }
 
 // ── Reporting global handlers ──
@@ -4133,6 +4626,515 @@ window.toggleTheme=function(){
   if(label)label.textContent=document.body.classList.contains('light-theme')?'Light':'Dark';
   if(ico)ico.textContent=document.body.classList.contains('light-theme')?'☀':'🌙';
 };
+
+// ══════════════════════════════════════════════════════════
+// FLOWSKIP v2 — EMBEDDED ENGINE (225 simulation units)
+// 9 territories × 25 drivers · Namespace: FS2_* / fs2*()
+// ══════════════════════════════════════════════════════════
+const FS2_LOCS=[
+  {id:'T11',name:'Youngstown',state:'OH',lat:41.0998,lng:-80.6495},
+  {id:'T12',name:'Cleveland',state:'OH',lat:41.4993,lng:-81.6944},
+  {id:'T13',name:'Akron',state:'OH',lat:41.0814,lng:-81.5190},
+  {id:'T14',name:'Canton',state:'OH',lat:40.7989,lng:-81.3784},
+  {id:'T15',name:'Warren',state:'OH',lat:41.2375,lng:-80.8184},
+  {id:'T16',name:'Niles',state:'OH',lat:41.1945,lng:-80.7723},
+  {id:'T17',name:'Austintown',state:'OH',lat:41.1006,lng:-80.7145},
+  {id:'T18',name:'Boardman',state:'OH',lat:41.0251,lng:-80.6617},
+  {id:'T19',name:'Struthers',state:'OH',lat:41.0534,lng:-80.5993},
+];
+const FS2_DEPOT={lat:41.0852,lng:-80.6715,name:'T11 Distribution Hub · Boardman Rd'};
+const FS2_FN=['Marcus','DeShawn','Keisha','Carlos','Tyler','Jamal','Antoine','Ryan','Darius','Shayla','Jerome','Latoya','Michael','Brittany','Andre','Monique','Tyrone','Crystal','Devon','Tasha','Kevin','Danielle','Brandon','Niecy','Daniel'];
+const FS2_LN=['Taylor','Rivers','Lambert','Mendez','Bennett','Wright','Davis','Park','Johnson','Williams','Brown','Jones','Smith','Jackson','White','Harris','Martin','Thompson','Garcia','Martinez','Robinson','Clark','Rodriguez','Lewis','Lee'];
+const FS2_VEH=['Sprinter','Cargo Van','Box Truck','EV Van'];
+const FS2_COLS=[{c:'#00d4ff',b:'rgba(0,212,255,.15)'},{c:'#4ade80',b:'rgba(74,222,128,.15)'},{c:'#c084fc',b:'rgba(192,132,252,.15)'},{c:'#fbbf24',b:'rgba(251,191,36,.15)'},{c:'#2dd4bf',b:'rgba(45,212,191,.15)'},{c:'#f472b6',b:'rgba(244,114,182,.15)'},{c:'#fb923c',b:'rgba(251,146,60,.15)'},{c:'#a78bfa',b:'rgba(167,139,250,.15)'},{c:'#60a5fa',b:'rgba(96,165,250,.15)'},{c:'#34d399',b:'rgba(52,211,153,.15)'},{c:'#f87171',b:'rgba(248,113,113,.15)'},{c:'#e879f9',b:'rgba(232,121,249,.15)'}];
+const FS2_GR=[5,5,4,4,4,4,4,4,3,3,3,3,3,3,3,3,2,2,2,2,2,1,1,4,3];
+const FS2_STHR=[0.56,0.72,0.84,0.92];const FS2_STVALS=['en_route','at_stop','loading','delayed','off_duty'];
+const FS2_SC={en_route:'#4ade80',at_stop:'#00d4ff',loading:'#fbbf24',delayed:'#f87171',off_duty:'rgba(255,255,255,.2)'};
+const FS2_SL={en_route:'En Route',at_stop:'At Stop',loading:'Loading',delayed:'Delayed',off_duty:'Off Duty'};
+function fs2sr(s){const x=Math.sin(s+1)*10000;return x-Math.floor(x);}
+function fs2sfS(s){for(let i=0;i<FS2_STHR.length;i++)if(s<FS2_STHR[i])return FS2_STVALS[i];return'off_duty';}
+function fs2Stars(g){return'★'.repeat(g)+'☆'.repeat(5-g);}
+function fs2WtC(w){return w>80?'#fbbf24':w>=30?'#2dd4bf':'#00d4ff';}
+function fs2WtL(w){return w>80?'HEAVY':w>=30?'MED':'LIGHT';}
+function fs2Bear(la1,lo1,la2,lo2){const dL=(lo2-lo1)*Math.PI/180;const la1R=la1*Math.PI/180;const la2R=la2*Math.PI/180;const y=Math.sin(dL)*Math.cos(la2R);const x=Math.cos(la1R)*Math.sin(la2R)-Math.sin(la1R)*Math.cos(la2R)*Math.cos(dL);return(Math.atan2(y,x)*180/Math.PI+360)%360;}
+function fs2Cmp(b){return['N','NE','E','SE','S','SW','W','NW'][Math.round(b/45)%8];}
+
+// Build 225 drivers
+const FS2_ALL=new Map();
+FS2_LOCS.forEach(loc=>{
+  const d=[];
+  for(let i=0;i<25;i++){
+    const s=loc.id.charCodeAt(1)*100+i;const g=FS2_GR[i%25];const col=FS2_COLS[i%12];
+    const fn=FS2_FN[i%25];const ln=FS2_LN[Math.floor(i/25*25)%25];
+    const a=fs2sr(s)*2*Math.PI;const r=0.04+fs2sr(s+1)*0.08;
+    const bLat=loc.lat+Math.sin(a)*r;const bLng=loc.lng+Math.cos(a)*r;
+    const stops=6+Math.floor(fs2sr(s+3)*10);const pkgs=stops*2+Math.floor(fs2sr(s+4)*8);
+    const st=(g===1&&fs2sr(s+6)<0.4)?'delayed':fs2sfS(fs2sr(s+5));
+    const sTotal=stops+Math.floor(fs2sr(s+13)*4)+2;
+    const cppu=parseFloat((4.82+fs2sr(s+14)*1.62).toFixed(2));
+    d.push({
+      id:loc.id+'_'+i,locId:loc.id,name:fn+' '+ln,init:fn[0]+ln[0],grade:g,
+      color:col.c,bk:col.b,status:st,vehicle:FS2_VEH[Math.floor(fs2sr(s+7)*4)]+' #'+loc.id+'-'+String(i+1).padStart(2,'0'),
+      stops,stopsTotal:sTotal,pkgs,lat:bLat,lng:bLng,baseLat:bLat,baseLng:bLng,
+      simPhase:fs2sr(s+8)*Math.PI*2,routeRadius:0.015+fs2sr(s+9)*0.025,
+      speed:st==='en_route'?22+fs2sr(s+10)*18:0,heading:fs2sr(s+11)*360,
+      flags:(g===1||st==='delayed')&&fs2sr(s+12)<0.5?['OTIF']:null,
+      cppu,dailyRev:parseFloat((cppu*sTotal).toFixed(2)),
+      failProb:parseFloat((0.02+fs2sr(s+15)*0.04).toFixed(3)),
+      failCostDay:parseFloat((17.93*(0.02+fs2sr(s+15)*0.04)*sTotal).toFixed(2)),
+      sqepRisk:g<=2&&st==='delayed',
+    });
+  }
+  FS2_ALL.set(loc.id,d);
+});
+
+const FS2_ROUTE=[
+  {id:1,seq:1,addr:'Walmart Supercenter Boardman',lat:41.0272,lng:-80.6598,wt:189,type:'B2B',status:'delivered',pkgs:6,sqep:true},
+  {id:2,seq:2,addr:'Giant Eagle Supply Hub',lat:41.0418,lng:-80.6542,wt:156,type:'B2B',status:'delivered',pkgs:4},
+  {id:3,seq:3,addr:'Home Depot · Glenwood Ave',lat:41.1002,lng:-80.6508,wt:134,type:'B2B',status:'delivered',pkgs:3},
+  {id:4,seq:4,addr:'CVS Pharmacy · Mahoning Ave',lat:41.0968,lng:-80.6712,wt:89,type:'D2C',status:'delivered',pkgs:5},
+  {id:5,seq:5,addr:'Walgreens #1204',lat:41.1085,lng:-80.6548,wt:67,type:'D2C',status:'in_progress',pkgs:3},
+  {id:6,seq:6,addr:'220 Oak Hill Ave',lat:41.0952,lng:-80.6402,wt:45,type:'D2C',status:'pending',pkgs:2},
+  {id:7,seq:7,addr:'835 Midlothian Blvd',lat:41.0888,lng:-80.6328,wt:38,type:'D2C',status:'pending',pkgs:2,flag:'CODE22'},
+  {id:8,seq:8,addr:'1104 Glenwood Ave',lat:41.1022,lng:-80.6248,wt:28,type:'D2C',status:'pending',pkgs:1},
+  {id:9,seq:9,addr:'412 Sherwood Ave',lat:41.1118,lng:-80.6212,wt:22,type:'D2C',status:'pending',pkgs:1},
+  {id:10,seq:10,addr:'76 Hillman St',lat:41.1182,lng:-80.6382,wt:15,type:'D2C',status:'pending',pkgs:2},
+  {id:11,seq:11,addr:'2241 Erie St',lat:41.1248,lng:-80.6432,wt:12,type:'D2C',status:'pending',pkgs:1},
+  {id:12,seq:12,addr:'892 Youngstown-Poland Rd',lat:41.0382,lng:-80.6702,wt:5,type:'D2C',status:'pending',pkgs:1},
+];
+const FS2_ROPT=FS2_ROUTE.slice(0,10);
+const FS2_KPI0={oee:71,sph:6.2,em:18.3,miles:312};
+const FS2_KPIO={oee:89,sph:8.1,em:9.7,miles:248};
+
+window.FS2S={locId:'T11',tab:'fleet',drvId:null,optimized:false,tick:0,running:true,speedIdx:0,focusedDriver:null,simHandle:null,panelOpen:false,routeVis:true};
+let fs2M=null,fs2RL=null,fs2SM=[],fs2DM=new Map(),fs2FL=null;
+
+function fs2Drvs(){return FS2_ALL.get(FS2S.locId)||[];}
+function fs2Loc(){return FS2_LOCS.find(l=>l.id===FS2S.locId)||FS2_LOCS[0];}
+
+function initFS2Map(){
+  if(fs2M||!document.getElementById('fs2-map')||typeof L==='undefined')return;
+  const loc=fs2Loc();
+  fs2M=L.map('fs2-map',{zoomControl:true});
+  fs2M.setView([loc.lat,loc.lng],12);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'©OSM ©CARTO',subdomains:'abcd',maxZoom:19}).addTo(fs2M);
+  fs2RefreshMap();fs2PanelFleet();fs2LocBar();fs2KPI();fs2StartSim();
+}
+
+function fs2RefreshMap(){fs2ClearMap();fs2AddDepot();fs2AddDrvs();fs2AddStops();if(FS2S.routeVis)fs2DrawRoute();}
+function fs2ClearMap(){
+  if(fs2RL){fs2M.removeLayer(fs2RL);fs2RL=null;}
+  fs2SM.forEach(m=>fs2M.removeLayer(m));fs2SM=[];
+  fs2DM.forEach(m=>fs2M.removeLayer(m));fs2DM.clear();
+  if(fs2FL){fs2M.removeLayer(fs2FL);fs2FL=null;}
+}
+function fs2MkIco(html,sz){return L.divIcon({html,className:'',iconSize:sz,iconAnchor:[sz[0]/2,sz[1]/2],popupAnchor:[0,-sz[1]/2]});}
+function fs2AddDepot(){
+  if(!fs2M)return;
+  L.marker([FS2_DEPOT.lat,FS2_DEPOT.lng],{icon:fs2MkIco('<div style="font-size:20px;filter:drop-shadow(0 0 4px rgba(0,212,255,.5))">🏭</div>',[28,28])}).addTo(fs2M).bindPopup('<b>'+FS2_DEPOT.name+'</b><br>Territory: '+FS2S.locId+'<br>25 active drivers');
+}
+function fs2AddDrvs(){
+  if(!fs2M)return;
+  fs2Drvs().forEach(d=>{
+    const ico=fs2MkIco('<div style="width:28px;height:28px;border-radius:50%;background:'+d.bk+';color:'+d.color+';display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;border:2px solid '+d.color+';box-shadow:0 0 7px '+d.color+'55;cursor:pointer">'+d.init+'</div>',[28,28]);
+    const m=L.marker([d.lat,d.lng],{icon:ico,zIndexOffset:500}).addTo(fs2M);
+    m.bindPopup('<b style="color:'+d.color+'">'+d.name+'</b><br>G'+d.grade+' · '+FS2_SL[d.status]+'<br>'+Math.round(d.speed)+' mph · '+fs2Cmp(d.heading)+'<br>Stops: '+d.stops+' · CPPU: $'+d.cppu+'<br><i style="font-size:9px;color:#888">Double-click → Cost-to-Serve</i>');
+    m.on('dblclick',e=>{L.DomEvent.stop(e);fs2Focus(d.id);});
+    m.on('click',()=>{FS2S.drvId=d.id;fs2PanelFleet();if(fs2M)fs2M.flyTo([d.lat,d.lng],14);});
+    fs2DM.set(d.id,m);
+  });
+}
+function fs2AddStops(){
+  if(!fs2M)return;
+  const route=FS2S.optimized?FS2_ROPT:FS2_ROUTE;
+  route.forEach(s=>{
+    const c=fs2WtC(s.wt);const bc=s.flag?'#fbbf24':c;const nc=s.status==='delivered'?'rgba(255,255,255,.3)':c;
+    const ico=fs2MkIco('<div style="width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,.3);color:'+nc+';border:2px solid '+bc+';display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700">'+s.seq+'</div>',[22,22]);
+    const m=L.marker([s.lat,s.lng],{icon:ico}).addTo(fs2M).bindPopup('<b>Stop '+s.seq+' — '+s.addr+'</b><br>'+s.wt+'lbs · '+s.type+'<br>'+s.status.replace('_',' ').toUpperCase()+(s.flag?'<br><b style="color:#fbbf24">⚠ '+s.flag+'</b>':''));
+    fs2SM.push(m);
+  });
+}
+function fs2DrawRoute(){
+  if(!fs2M)return;
+  const route=FS2S.optimized?FS2_ROPT:FS2_ROUTE;
+  const pts=[[FS2_DEPOT.lat,FS2_DEPOT.lng],...route.map(s=>[s.lat,s.lng])];
+  fs2RL=L.polyline(pts,{color:FS2S.optimized?'#4ade80':'#00d4ff',weight:2.5,opacity:FS2S.optimized?.7:.5,dashArray:FS2S.optimized?null:'6,4'}).addTo(fs2M);
+}
+
+// ── Focus card with Cost-to-Serve ──
+function fs2Focus(id){
+  const d=fs2Drvs().find(x=>x.id===id);if(!d)return;
+  FS2S.focusedDriver=id;
+  if(fs2M)fs2M.flyTo([d.lat,d.lng],15,{animate:true,duration:1.2});
+  if(fs2FL&&fs2M){fs2M.removeLayer(fs2FL);fs2FL=null;}
+  const pts=[[d.baseLat,d.baseLng]];
+  for(let i=0;i<8;i++){const a=d.simPhase+(i/8)*Math.PI*2;pts.push([d.baseLat+Math.sin(a)*d.routeRadius,d.baseLng+Math.cos(a)*d.routeRadius]);}
+  pts.push([d.lat,d.lng]);
+  if(fs2M)fs2FL=L.polyline(pts,{color:d.color,weight:2,opacity:.65,dashArray:'4,3'}).addTo(fs2M);
+  fs2UpdateFC(id);
+  const fc=document.getElementById('fs2-fc');if(fc)fc.classList.add('vis');
+}
+function fs2UpdateFC(id){
+  const fc=document.getElementById('fs2-fc');if(!fc)return;
+  const d=fs2Drvs().find(x=>x.id===id);if(!d)return;
+  const done=d.stopsTotal-d.stops;const pct=Math.round(done/d.stopsTotal*100);
+  const margin=(d.cppu-5.37)*d.stopsTotal;
+  const mc=margin>=0?'var(--ok-t)':'var(--err-t)';const ms=margin>=0?'+':'-';
+  const sqepFine=d.sqepRisk?1663:0;
+  fc.innerHTML=
+    '<div class="fs2-fc-hdr"><div class="fs2-fc-av" style="background:'+d.bk+';color:'+d.color+'">'+d.init+'</div>'+
+    '<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:700">'+d.name+'</div><div style="font-size:9px;color:var(--muted)">'+fs2Stars(d.grade)+' G'+d.grade+' · '+d.vehicle+'</div></div>'+
+    '<button class="fs2-fc-close" onclick="window.fs2Unfocus()">✕</button></div>'+
+    '<div style="margin-bottom:8px">'+
+      [['Speed',d.status==='at_stop'?'0 mph':Math.round(d.speed)+' mph'],['Heading',fs2Cmp(d.heading)+' '+Math.round(d.heading)+'°'],
+       ['Status','<span style="color:'+FS2_SC[d.status]+'">'+FS2_SL[d.status]+'</span>'],['Stops left',d.stops+' / '+d.stopsTotal],['On board',d.pkgs+' pkgs']]
+      .map(r=>'<div class="fs2-tr"><span style="color:var(--muted)">'+r[0]+'</span><span style="font-weight:600">'+r[1]+'</span></div>').join('')+
+      '<div style="margin-top:6px"><div style="display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-bottom:3px"><span>Route progress</span><span style="font-family:var(--mono);color:var(--primary)">'+done+'/'+d.stopsTotal+' · '+pct+'%</span></div>'+
+      '<div style="height:4px;background:var(--border);border-radius:2px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:var(--primary);border-radius:2px"></div></div></div></div>'+
+    '<div class="fs2-cts"><div class="fs2-cts-hd">💰 Cost-to-Serve · CPPU $5.37 Benchmark</div>'+
+      [['CPPU (driver)','$'+d.cppu.toFixed(2),(d.cppu<=5.37?'var(--ok-t)':'var(--warn-t)')],
+       ['Benchmark','$5.37','var(--muted)'],['Daily Revenue','$'+d.dailyRev.toFixed(0),'var(--text)'],
+       ['Failed Del. Est.','$'+d.failCostDay.toFixed(2),'var(--warn-t)'],['SQEP Exposure',sqepFine>0?'$'+sqepFine.toLocaleString():'$0',sqepFine>0?'var(--err-t)':'var(--ok-t)'],
+      ].map(r=>'<div class="fs2-cts-r"><span style="color:var(--muted)">'+r[0]+'</span><span style="font-weight:600;color:'+r[2]+'">'+r[1]+'</span></div>').join('')+
+      '<div class="fs2-cts-total"><span>Daily Margin vs Benchmark</span><span style="color:'+mc+'">'+ms+'$'+Math.abs(margin).toFixed(0)+'/d</span></div></div>';
+}
+window.fs2Unfocus=function(){
+  FS2S.focusedDriver=null;
+  if(fs2FL&&fs2M){fs2M.removeLayer(fs2FL);fs2FL=null;}
+  const fc=document.getElementById('fs2-fc');if(fc)fc.classList.remove('vis');
+};
+
+// ── Simulation ──
+function fs2Tick(){
+  FS2S.tick++;
+  const tEl=document.getElementById('fs2-tick');if(tEl)tEl.textContent='Tick #'+FS2S.tick;
+  const drvs=fs2Drvs();
+  drvs.forEach(d=>{
+    if(d.status==='off_duty')return;
+    const ph=FS2S.tick*0.06+d.simPhase;
+    const tl=d.baseLat+Math.sin(ph)*d.routeRadius;const tg=d.baseLng+Math.cos(ph)*d.routeRadius;
+    d.heading=fs2Bear(d.lat,d.lng,tl,tg);
+    d.lat+=(tl-d.lat)*.35;d.lng+=(tg-d.lng)*.35;
+    d.speed=d.status==='at_stop'?0:(22+Math.sin(FS2S.tick*.3+d.grade)*12);
+    const r=fs2sr(FS2S.tick*113+d.id.charCodeAt(d.id.length-1));
+    if(r<0.06&&d.status==='en_route')d.status='at_stop';
+    else if(r<0.12&&d.status==='at_stop'){d.status='en_route';if(d.stops>0){d.stops--;if(d.pkgs>0)d.pkgs=Math.max(0,d.pkgs-Math.ceil(1+r*3));}}
+    const mk=fs2DM.get(d.id);if(mk)mk.setLatLng([d.lat,d.lng]);
+  });
+  if(FS2S.focusedDriver)fs2UpdateFC(FS2S.focusedDriver);
+  if(FS2S.tick%3===0&&FS2S.tab==='fleet')fs2PanelFleet();
+  if(FS2S.tick%5===0)fs2KPI();
+}
+function fs2StartSim(){
+  if(FS2S.simHandle)clearInterval(FS2S.simHandle);
+  FS2S.simHandle=setInterval(fs2Tick,[2500,900,250][FS2S.speedIdx]);FS2S.running=true;
+  const b=document.getElementById('fs2-pause');if(b)b.textContent='⏸';
+}
+function fs2PauseSim(){
+  if(FS2S.simHandle){clearInterval(FS2S.simHandle);FS2S.simHandle=null;}FS2S.running=false;
+  const b=document.getElementById('fs2-pause');if(b)b.textContent='▶';
+}
+window.fs2ToggleSim=function(){FS2S.running?fs2PauseSim():fs2StartSim();};
+window.fs2SetSpeed=function(i){FS2S.speedIdx=i;if(FS2S.running){fs2PauseSim();fs2StartSim();}['fs2-s1','fs2-s3','fs2-s10'].forEach((id,j)=>{const el=document.getElementById(id);if(el)el.style.color=j===i?'var(--primary)':'';});};
+function fs2KPI(){
+  const a=fs2Drvs().filter(d=>d.status!=='off_duty');
+  const e=document.getElementById('fs2-kv-fleet');if(e)e.textContent=a.length+'/25';
+  if(!FS2S.optimized){const el=document.getElementById('fs2-kv-oee');if(el)el.textContent=Math.round(71+Math.sin(FS2S.tick*.1)*2)+'%';}
+}
+
+// ── Panel renders ──
+function fs2PanelFleet(){
+  const el=document.getElementById('fs2-lpbody');if(!el)return;
+  const drvs=fs2Drvs();
+  el.innerHTML=[5,4,3,2,1].map(g=>{
+    const gd=drvs.filter(d=>d.grade===g);if(!gd.length)return'';
+    const gl=['','Probationary','Monitored','Standard','Senior · Premium','Elite · Premium'][g];
+    return'<div class="fs2-sec"><span>G'+g+' — '+gl+'</span><span>'+gd.length+'</span></div>'+
+      gd.map(d=>{
+        const sc=d.status==='en_route'?'var(--ok-t)':d.status==='delayed'?'var(--err-t)':d.status==='at_stop'?'var(--primary)':'var(--muted)';
+        const pct=Math.round((d.stopsTotal-d.stops)/d.stopsTotal*100);const sel=FS2S.drvId===d.id;
+        return'<div class="fs2-drv'+(sel?' sel':'')+'" onclick="FS2S.drvId=\''+d.id+'\';fs2PanelStops();if(fs2M)fs2M.flyTo(['+d.lat+','+d.lng+'],14)">'+
+          '<div class="fs2-drv-av" style="background:'+d.bk+';color:'+d.color+'">'+d.init+'</div>'+
+          '<div style="flex:1;min-width:0"><div class="fs2-drv-name">'+d.name+(d.flags&&d.flags.length?'&nbsp;<span style="font-size:8px;padding:1px 4px;border-radius:3px;background:var(--err-bg);color:var(--err-t)">'+d.flags.join(',')+'</span>':'')+'</div>'+
+          '<div class="fs2-drv-meta">'+d.vehicle+' · CPPU $'+d.cppu+'</div>'+
+          '<div class="fs2-oee-bar"><div class="fs2-oee-fill" style="width:'+pct+'%;background:'+sc+'"></div></div></div>'+
+          '<div style="text-align:right;flex-shrink:0"><div style="font-size:9px;color:'+sc+';font-family:var(--mono)">'+FS2_SL[d.status]+'</div>'+
+          '<div style="font-size:9px;color:var(--muted);font-family:var(--mono)">'+d.stops+'/'+d.stopsTotal+'</div></div></div>';}).join('');}).join('');
+}
+function fs2PanelStops(){
+  const el=document.getElementById('fs2-lpbody');if(!el)return;
+  FS2S.tab='stops';['fs2-t-fleet','fs2-t-stops','fs2-t-exc'].forEach((id,i)=>{const e=document.getElementById(id);if(e)e.classList.toggle('act',i===1);});
+  const route=FS2S.optimized?FS2_ROPT:FS2_ROUTE;
+  const drv=fs2Drvs().find(d=>d.id===FS2S.drvId)||{name:'Marcus Taylor',pkgs:38,vehicle:'Sprinter T11-04'};
+  el.innerHTML='<div style="padding:9px 12px;border-bottom:1px solid var(--border);background:rgba(0,212,255,.03)"><div style="font-size:12px;font-weight:600">'+drv.name+'</div>'+
+    '<div style="font-size:10px;color:var(--muted)">'+route.length+' stops · '+drv.pkgs+' pkgs'+(FS2S.optimized?'&nbsp;<span style="color:var(--ok-t);font-size:9px;font-weight:700">✓ OPTIMIZED</span>':'')+'</div></div>'+
+    '<div class="fs2-stop-list">'+route.map(s=>{
+      const nc=s.status==='delivered'?'rgba(255,255,255,.35)':s.status==='in_progress'?'#fbbf24':fs2WtC(s.wt);const bc=s.flag?'#fbbf24':nc;
+      return'<div class="fs2-sc"><div class="fs2-sc-num" style="background:rgba(0,0,0,.3);color:'+nc+';border:1px solid '+bc+'">'+s.seq+'</div>'+
+        '<div style="flex:1;min-width:0"><div style="font-size:10px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+s.addr+'</div>'+
+        '<div style="font-size:9px;color:var(--muted)">'+fs2WtL(s.wt)+' '+s.wt+'lbs · '+s.type+(s.flag?'&nbsp;<span style="color:#fbbf24">⚠</span>':'')+'</div></div>'+
+        '<span style="font-size:9px;padding:1px 5px;border-radius:3px;background:'+(s.status==='delivered'?'var(--ok-bg)':s.status==='in_progress'?'var(--warn-bg)':'var(--border)')+';color:'+(s.status==='delivered'?'var(--ok-t)':s.status==='in_progress'?'var(--warn-t)':'var(--muted)')+'">'+s.status.replace('_',' ').slice(0,7)+'</span></div>';}).join('')+'</div>';
+}
+function fs2PanelExc(){
+  const el=document.getElementById('fs2-lpbody');if(!el)return;
+  el.innerHTML='<div style="padding:10px">'+
+    '<div style="padding:10px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:8px;margin-bottom:8px"><div style="font-size:11px;font-weight:700;color:var(--warn-t);margin-bottom:4px">⚠ CODE 22 — SQEP Alert</div><div style="font-size:10px;color:var(--muted)">835 Midlothian Blvd · EDI 856 ASN mismatch · Fine exposure: $1,663</div></div>'+
+    '<div style="padding:10px;background:var(--err-bg);border:1px solid rgba(239,68,68,.2);border-radius:8px;margin-bottom:8px"><div style="font-size:11px;font-weight:700;color:var(--err-t);margin-bottom:4px">🔴 OTIF RISK</div><div style="font-size:10px;color:var(--muted)">ETA +47min · Stops/hr 4.1 vs target 6.2 · Failed del cost: $17.93/stop</div></div>'+
+    '<div style="padding:10px;background:rgba(0,212,255,.05);border:1px solid rgba(0,212,255,.12);border-radius:8px"><div style="font-size:10px;font-weight:700;color:var(--primary);margin-bottom:5px">⚡ FlowSkip Recommendation</div>'+
+    '<div style="font-size:10px;color:var(--muted)">Reassign 892 Youngstown-Poland Rd. OTIF gap −31 min. CPPU impact: −$0.42/stop.</div>'+
+    '<button class="btn btn-p btn-sm" style="margin-top:8px;font-size:10px" onclick="window.fs2Optimize()">⚡ Run FlowSkip</button></div></div>';
+}
+window.fs2SwitchTab=function(t){
+  FS2S.tab=t;['fleet','stops','exc'].forEach(x=>{const e=document.getElementById('fs2-t-'+x);if(e)e.classList.toggle('act',x===t);});
+  if(t==='fleet')fs2PanelFleet();else if(t==='stops')fs2PanelStops();else fs2PanelExc();
+};
+function fs2LocBar(){
+  const el=document.getElementById('fs2-locbar');if(!el)return;
+  el.innerHTML=FS2_LOCS.map(l=>'<div class="fs2-ltab'+(FS2S.locId===l.id?' act':'')+'" onclick="window.fs2SelectLoc(\''+l.id+'\')">'+
+    '<span style="width:5px;height:5px;border-radius:50%;background:var(--ok-t);display:inline-block"></span>'+
+    '&nbsp;'+l.id+' · '+l.name+'&nbsp;<span style="font-size:8px;padding:1px 4px;border-radius:3px;background:rgba(255,255,255,.06);color:var(--muted)">25</span></div>').join('');
+}
+window.fs2SelectLoc=function(id){
+  FS2S.locId=id;FS2S.drvId=null;FS2S.focusedDriver=null;window.fs2Unfocus();
+  fs2LocBar();fs2PanelFleet();fs2RefreshMap();
+  const loc=fs2Loc();if(fs2M)fs2M.flyTo([loc.lat,loc.lng],11,{animate:true,duration:1.2});
+  const si=document.getElementById('fs2-siminfo');if(si)si.textContent=id+' '+loc.name+' · 25 drivers · simulation active';
+};
+window.fs2ToggleRoute=function(){
+  FS2S.routeVis=!FS2S.routeVis;
+  const b=document.getElementById('fs2-rline');if(b)b.classList.toggle('act',FS2S.routeVis);
+  if(FS2S.routeVis)fs2DrawRoute();else if(fs2RL&&fs2M){fs2M.removeLayer(fs2RL);fs2RL=null;}
+};
+window.fs2FitAll=function(){
+  if(!fs2M)return;
+  const route=FS2S.optimized?FS2_ROPT:FS2_ROUTE;
+  const pts=[[FS2_DEPOT.lat,FS2_DEPOT.lng],...route.map(s=>[s.lat,s.lng]),...fs2Drvs().map(d=>[d.lat,d.lng])];
+  fs2M.fitBounds(pts,{padding:[28,28]});
+};
+window.fs2ToDepot=function(){if(fs2M)fs2M.setView([FS2_DEPOT.lat,FS2_DEPOT.lng],13);};
+window.fs2Optimize=function(){
+  FS2S.optimized=!FS2S.optimized;
+  const panel=document.getElementById('fs2-panel');if(panel)panel.classList.add('open');
+  const pb=document.getElementById('fs2-pbody');
+  if(pb){
+    const kpis=FS2S.optimized?FS2_KPIO:FS2_KPI0;const saved=FS2_KPI0.miles-FS2_KPIO.miles;const revSave=Math.round(saved*0.42*25);
+    pb.innerHTML='<div style="text-align:center;padding:14px;margin-bottom:12px;background:rgba(74,222,128,.06);border-radius:8px;border:1px solid rgba(74,222,128,.15)">'+
+      '<div style="font-size:26px;font-weight:800;color:var(--ok-t)">'+Math.round(kpis.oee)+'%</div>'+
+      '<div style="font-size:11px;color:var(--muted)">OEE — '+(FS2S.optimized?'optimized':'baseline')+'</div></div>'+
+      [['Stops/Hr',kpis.sph.toFixed(1),'target 8.1 sph'],['Empty Miles',kpis.em+'%','target <10%'],['Route Miles',kpis.miles+' mi',FS2S.optimized?'−'+saved+' mi saved':'current baseline'],
+       ['OPEX Saving',FS2S.optimized?'$'+revSave.toLocaleString()+'/d':'—',FS2S.optimized?'OnTrac Rating API 42% discount':'run optimization to see savings'],
+       ['CPPU Impact',FS2S.optimized?'−$0.42/stop':'baseline','cost-per-stop reduction']].map(r=>
+        '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border-sub);font-size:11px"><div><div style="font-weight:600">'+r[0]+'</div><div style="font-size:9px;color:var(--muted)">'+r[2]+'</div></div><span style="font-weight:700;color:var(--ok-t)">'+r[1]+'</span></div>').join('')+
+      '<button class="btn btn-ok" style="width:100%;margin-top:12px;font-size:12px" onclick="FS2S.optimized=true;fs2RefreshMap();window.fs2ClosePanel()">✓ Apply & Redispatch All Routes</button>';
+  }
+  fs2RefreshMap();
+};
+window.fs2ClosePanel=function(){const p=document.getElementById('fs2-panel');if(p)p.classList.remove('open');};
+
+// Main FlowSkip page HTML renderer
+function renderFlowSkipPage(){
+  return'<div class="fs2-wrap">'+
+    '<div class="fs2-cmd">'+
+      '<div class="fs2-logo-icon">⚡</div>'+
+      '<div style="margin-left:4px"><div class="fs2-logo-name">FlowSkip <span class="fs2-logo-ver">v2.0</span></div><div style="font-size:8px;color:var(--muted);font-family:var(--mono)">Multi-Territory · 225 Live Units</div></div>'+
+      '<div class="fs2-vsep"></div>'+
+      '<div class="fs2-kpis">'+
+        '<div class="fs2-ck" style="color:var(--primary)"><span class="fs2-ck-v" id="fs2-kv-oee">71%</span><span class="fs2-ck-l">OEE</span></div>'+
+        '<div class="fs2-ck"><span class="fs2-ck-v">6.2</span><span class="fs2-ck-l">stops/hr</span></div>'+
+        '<div class="fs2-ck" style="color:var(--warn-t)"><span class="fs2-ck-v">18.3%</span><span class="fs2-ck-l">empty mi</span></div>'+
+        '<div class="fs2-ck"><span class="fs2-ck-v">$5.37</span><span class="fs2-ck-l">CPPU target</span></div>'+
+        '<div class="fs2-ck" style="color:var(--ok-t)"><span class="fs2-ck-v" id="fs2-kv-fleet">23/25</span><span class="fs2-ck-l">drivers live</span></div>'+
+      '</div>'+
+      '<div class="fs2-vsep"></div>'+
+      '<button class="btn btn-o btn-sm" onclick="fs2ToggleRoute()" style="font-size:10px;padding:3px 7px">╌ Route</button>'+
+      '<button class="btn btn-o btn-sm" onclick="fs2FitAll()" style="font-size:10px;padding:3px 7px">⊙ Fit</button>'+
+      '<button class="btn btn-o btn-sm" onclick="fs2ToDepot()" style="font-size:10px;padding:3px 7px">🏭</button>'+
+      '<button class="btn btn-p btn-sm" onclick="window.fs2Optimize()" style="font-size:10px;padding:4px 9px">⚡ Run FlowSkip</button>'+
+    '</div>'+
+    '<div class="fs2-loc-bar" id="fs2-locbar"></div>'+
+    '<div class="fs2-sim-bar">'+
+      '<div class="fs2-sim-led"></div>'+
+      '<span id="fs2-siminfo">T11 Youngstown · 25 drivers · 24/7 simulation active</span>'+
+      '<span style="margin-left:auto;display:flex;align-items:center;gap:4px">Speed: '+
+        '<button class="fs2-mc" id="fs2-s1" onclick="window.fs2SetSpeed(0)" style="color:var(--primary)">1×</button>'+
+        '<button class="fs2-mc" id="fs2-s3" onclick="window.fs2SetSpeed(1)">3×</button>'+
+        '<button class="fs2-mc" id="fs2-s10" onclick="window.fs2SetSpeed(2)">10×</button>'+
+        '<button class="fs2-mc" id="fs2-pause" onclick="window.fs2ToggleSim()">⏸</button>'+
+        '<span id="fs2-tick" style="color:var(--dim);font-size:9px">Tick #0</span>'+
+      '</span>'+
+    '</div>'+
+    '<div class="fs2-main">'+
+      '<div class="fs2-lp">'+
+        '<div class="fs2-tabs">'+
+          '<div class="fs2-tab act" id="fs2-t-fleet" onclick="window.fs2SwitchTab(\'fleet\')">Fleet</div>'+
+          '<div class="fs2-tab" id="fs2-t-stops" onclick="window.fs2SwitchTab(\'stops\')">Stops</div>'+
+          '<div class="fs2-tab" id="fs2-t-exc" onclick="window.fs2SwitchTab(\'exc\')">Exceptions <span style="color:var(--err-t)">●</span></div>'+
+        '</div>'+
+        '<div class="fs2-lp-body" id="fs2-lpbody"><div style="padding:20px;text-align:center;color:var(--muted);font-size:12px">Initializing fleet…</div></div>'+
+      '</div>'+
+      '<div class="fs2-map-wrap">'+
+        '<div id="fs2-map"></div>'+
+        '<div style="position:absolute;top:8px;left:8px;z-index:500;display:flex;gap:4px">'+
+          '<button class="fs2-mc act" id="fs2-rline" onclick="fs2ToggleRoute()">╌ Route</button>'+
+          '<button class="fs2-mc" onclick="fs2FitAll()">⊙ Fit All</button>'+
+          '<button class="fs2-mc" onclick="fs2ToDepot()">🏭 Depot</button>'+
+        '</div>'+
+        '<div style="position:absolute;bottom:28px;left:8px;z-index:500;background:rgba(10,10,15,.88);border:1px solid var(--border);border-radius:8px;padding:7px 9px;font-size:9px;pointer-events:none">'+
+          '<div style="font-size:8px;font-weight:600;color:var(--muted);margin-bottom:4px;font-family:var(--mono)">STOP WEIGHT</div>'+
+          [['#fbbf24','Heavy (>80 lbs)'],['#2dd4bf','Medium (30–80)'],['#00d4ff','Light (<30 lbs)'],['#4ade80','Driver · dbl-click CTS']].map(r=>'<div style="display:flex;align-items:center;gap:5px;padding:1px 0"><div style="width:8px;height:8px;border-radius:50%;background:'+r[0]+'"></div><span style="color:var(--muted)">'+r[1]+'</span></div>').join('')+
+        '</div>'+
+        '<div style="position:absolute;bottom:8px;right:8px;z-index:500;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.18);border-radius:8px;padding:7px 9px;font-size:9px;max-width:195px;pointer-events:none">'+
+          '<div style="font-weight:700;color:var(--err-t);margin-bottom:3px">⚠ Active Exceptions</div>'+
+          '<div style="color:var(--muted);padding:1px 0">835 Midlothian Blvd <span style="color:var(--err-t)">CODE 22</span></div>'+
+          '<div style="color:var(--muted);padding:1px 0">Antoine Davis <span style="color:var(--warn-t)">OTIF +47min</span></div>'+
+        '</div>'+
+        '<div class="fs2-fc" id="fs2-fc"></div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="fs2-panel" id="fs2-panel">'+
+      '<div class="fs2-ph"><div class="fs2-pt">⚡ FlowSkip <span style="color:var(--primary)">Results</span></div><button class="fs2-pc" onclick="window.fs2ClosePanel()">✕</button></div>'+
+      '<div class="fs2-pb" id="fs2-pbody"><div style="padding:24px;text-align:center;color:var(--muted);font-size:12px"><div style="font-size:24px;margin-bottom:8px">⚡</div>Run FlowSkip to see optimization</div></div>'+
+      '<div class="fs2-pf">'+
+        '<button class="btn btn-o btn-sm" style="flex:1;justify-content:center" onclick="window.fs2ClosePanel()">Discard</button>'+
+        '<button class="btn btn-ok btn-sm" style="flex:1;justify-content:center" onclick="FS2S.optimized=true;fs2RefreshMap();window.fs2ClosePanel()">✓ Apply</button>'+
+      '</div>'+
+    '</div>'+
+  '</div>';
+}
+
+// ══════════════════════════════════════════════════════════
+// RESEARCH miniEngine EMBEDDED — re_*() / RE_*
+// ══════════════════════════════════════════════════════════
+const RE_CHS=[
+  {n:'Amazon DSP Central',cat:'DSP/RSP'},{n:'OnTrac West Coast',cat:'Carrier'},{n:'Gartner Supply Chain',cat:'Research'},
+  {n:'McKinsey Operations',cat:'Research'},{n:'FedEx ISP Program',cat:'DSP/RSP'},{n:'FreightWaves SONAR',cat:'Market Data'},
+  {n:'DOT Bureau Transport Stats',cat:'Government'},{n:'FMCSA Safety Portal',cat:'Government'},{n:'Samsara Fleet Intelligence',cat:'Technology'},
+  {n:'Bringg Delivery Orchestration',cat:'Technology'},{n:'Onfleet Last-Mile Ops',cat:'Technology'},{n:'r/AmazonDSP Reddit',cat:'Community'},
+  {n:'Amazon DSP Owners Alliance',cat:'Community'},{n:'UPS Supply Chain Solutions',cat:'Carrier'},{n:'DHL Supply Chain US',cat:'Carrier'},
+  {n:'LSO South Central',cat:'Carrier'},{n:'XPO Logistics Intelligence',cat:'3PL'},{n:'Project44 Visibility',cat:'Technology'},
+  {n:'IBISWorld Transportation',cat:'Research'},{n:'PwC Logistics Intelligence',cat:'Research'},{n:'SEC EDGAR Filings',cat:'Financial'},
+  {n:'Bloomberg Transport Index',cat:'Financial'},{n:'MIT Center for Transport',cat:'Academic'},{n:'Georgia Tech SCM',cat:'Academic'},
+  {n:'American Trucking Assoc.',cat:'Trade'},{n:'CSCMP Professionals',cat:'Trade'},{n:'Pitchbook Last-Mile M&A',cat:'Financial'},
+  {n:'CB Insights Supply Chain',cat:'Financial'},{n:'Deloitte Supply Chain',cat:'Research'},{n:'Routific Optimization',cat:'Technology'},
+  {n:'Circuit Route Intelligence',cat:'Technology'},{n:'OptimoRoute Analytics',cat:'Technology'},{n:'DispatchTrack',cat:'Technology'},
+  {n:'Last Mile Delivery News',cat:'Media'},{n:'Supply Chain Dive',cat:'Media'},{n:'FreightCaviar',cat:'Media'},
+  {n:'Amazon DSP Scorecard',cat:'DSP/RSP'},{n:'FedEx Home Delivery ISP',cat:'DSP/RSP'},{n:'UPS DEX Program',cat:'DSP/RSP'},
+  {n:'USPS Informed Delivery',cat:'Carrier'},{n:'Netradyne Driver Safety',cat:'Technology'},{n:'Geotab Fleet Data',cat:'Technology'},
+  {n:'Ryder System Intelligence',cat:'3PL'},{n:'J.B. Hunt 360 Insights',cat:'3PL'},{n:'Ohio State Fisher SCM',cat:'Academic'},
+  {n:'Stanford MS&E Logistics',cat:'Academic'},{n:'DSP Financial Benchmarking',cat:'DSP/RSP'},{n:'Loadsmart Platform',cat:'Technology'},
+  {n:'Turvo Platform',cat:'Technology'},{n:'NLRB Contractor Rulings',cat:'Government'},
+];
+window.RE_S={selCh:null,q:'',results:[],simI:null,simU:218,cycles:0};
+
+function re_rnd(a,b,d=1){return(a+Math.random()*(b-a)).toFixed(d);}
+function re_rndI(a,b){return Math.floor(a+Math.random()*(b-a));}
+
+function re_genContent(title,q){
+  const yr=new Date().getFullYear();
+  const cppu=re_rnd(3.1,5.2,2);const cagr=re_rnd(7.8,14.2,1);const mkt=re_rnd(82,108,1);
+  const dspCt=re_rndI(1750,2200).toLocaleString();const drvGap=re_rndI(58000,82000).toLocaleString();
+  const otd=re_rnd(93.8,97.6,1);const fad=re_rnd(87.2,94.5,1);const amzn=re_rnd(27,33,1);
+  return'<h2>Executive Summary</h2>'+
+    '<p>The US last-mile delivery market reached <strong>$'+mkt+'B in '+yr+'</strong> growing at <strong>'+cagr+'% CAGR</strong>. Amazon Logistics handles <strong>'+amzn+'%</strong> of B2C parcel volume with <strong>'+dspCt+' active DSP operators</strong>.</p>'+
+    '<p>Industry CPPU: <strong>$'+cppu+'</strong>. Driver shortage: <strong>'+drvGap+' unfilled positions</strong>. First-attempt delivery: <strong>'+fad+'%</strong>. OTD rate: <strong>'+otd+'%</strong>.</p>'+
+    '<h2>DSP/RSP Benchmark Data</h2>'+
+    '<table><thead><tr><th>Metric</th><th>Value</th><th>Source</th></tr></thead><tbody>'+
+    [['Platform CPPU Target','$5.37','DriveHub 2026'],['Failed Delivery Cost','$17.93','Amazon RSP'],['SQEP Fine/Event','$1,663','OnTrac Contract'],['OTD Target','≥97%','OnTrac §4.2'],['First-Attempt Rate',fad+'%','Industry avg'],['OnTrac Rating Discount','42%','Rating API'],['Empty Miles Baseline','18.3%','FlowSkip v2'],['OEE Optimized','89%','FlowSkip v2']].map(r=>'<tr><td>'+r[0]+'</td><td><strong>'+r[1]+'</strong></td><td>'+r[2]+'</td></tr>').join('')+
+    '</tbody></table>'+
+    '<h2>Competitive Intelligence — DriveHub vs Onfleet</h2>'+
+    '<p>DriveHub leads on <strong>ePOD capture via Vision AI</strong>, <strong>FlowSkip route optimization (+18pp OEE)</strong>, <strong>SQEP compliance automation</strong>, and <strong>OnTrac Rating API integration (42% discount)</strong>. Onfleet lacks RSP-specific SQEP tracking and Amazon DSP scorecard integration.</p>'+
+    '<h2>Market Forecast '+yr+'–'+(yr+3)+'</h2>'+
+    '<p>US last-mile volume projected to reach <strong>'+re_rndI(24,28)+'B packages</strong> by '+(yr+2)+'. Amazon DSP/RSP growth at +12–18% annually. Regional carriers (OnTrac, LSO) gaining share in Zones 7–9.</p>';
+}
+
+function re_search(q){
+  if(!q.trim()){RE_S.results=[];re_renderResults();return;}
+  const ql=q.toLowerCase();
+  const aiResults=[
+    {src:'DriveHub Intelligence · AI Synthesis',title:q+' — Industry Analysis '+new Date().getFullYear(),prev:'Comprehensive analysis covering DSP/RSP economics, CPPU $5.37 platform target, SQEP compliance ($1,663 fine), and OnTrac API benchmarks. Based on 1,000+ VHQ sources.',tags:['RSP/DSP','CPPU $5.37','OnTrac','2026']},
+    {src:'FreightWaves SONAR · Live Market Data',title:'Last-Mile '+q+' Market Intelligence',prev:'Volume trends across 200+ US markets. Amazon DSP scorecard benchmarks, driver shortage metrics, carrier CPPU by zone. Rating API discount analysis.',tags:['Freight Data','Live','Market Intelligence']},
+  ];
+  const chMatches=RE_CHS.filter(c=>c.n.toLowerCase().includes(ql)||c.cat.toLowerCase().includes(ql)||ql.split(' ').some(w=>w.length>3&&(c.n.toLowerCase().includes(w)||c.cat.toLowerCase().includes(w)))).slice(0,5);
+  RE_S.results=[...aiResults,...chMatches.map(c=>({src:c.cat+' · VHQ Channel',title:c.n+' — '+q,prev:'Research content from '+c.n+' on "'+q+'". Click to read full synthesized report.',tags:[c.cat,'VHQ']}))];
+  re_renderResults();
+}
+
+function re_renderResults(){
+  const el=document.getElementById('re-results');if(!el)return;
+  if(!RE_S.results.length){el.innerHTML='<div style="text-align:center;padding:40px;color:#64748b;font-size:12px">Enter a search query to scan VHQ channels</div>';return;}
+  const tc={RSP:'rgba(249,115,22,.15)','CPPU $5.37':'rgba(16,185,129,.15)',OnTrac:'rgba(59,130,246,.15)','2026':'rgba(167,139,250,.15)',Live:'rgba(239,68,68,.15)',VHQ:'rgba(251,191,36,.15)'};
+  el.innerHTML=RE_S.results.map((r,i)=>
+    '<div class="re-rc" onclick="re_openReader('+i+')">'+
+      '<div class="re-rc-src">'+r.src+'</div>'+
+      '<div class="re-rc-title">'+r.title+'</div>'+
+      '<div class="re-rc-preview">'+r.prev+'</div>'+
+      '<div class="re-rc-tags">'+r.tags.map(t=>'<span class="re-tag" style="background:'+(tc[t]||'rgba(255,255,255,.06)')+';color:'+(t==='Live'?'#f87171':t.includes('$')?'#10b981':'#94a3b8')+'">'+t+'</span>').join('')+'</div>'+
+    '</div>').join('');
+}
+
+window.re_openReader=function(idx){
+  const r=RE_S.results[idx];if(!r)return;
+  const panel=document.getElementById('re-reader');if(!panel)return;
+  const hdr=document.getElementById('re-rdr-title');if(hdr)hdr.textContent=r.title;
+  const body=document.getElementById('re-rdr-body');
+  if(body)body.innerHTML='<div style="font-size:10px;color:#64748b;margin-bottom:10px;padding:6px 10px;background:rgba(249,115,22,.06);border-radius:6px;border-left:3px solid #f97316"><strong style="color:#f97316">Source:</strong> '+r.src+'</div>'+re_genContent(r.title,RE_S.q);
+  panel.classList.add('open');
+};
+window.re_closeReader=function(){const p=document.getElementById('re-reader');if(p)p.classList.remove('open');};
+window.re_doSearch=function(){const inp=document.getElementById('re-inp');if(!inp)return;RE_S.q=inp.value;re_search(RE_S.q);};
+window.re_quickSearch=function(q){RE_S.q=q;const inp=document.getElementById('re-inp');if(inp)inp.value=q;re_search(q);};
+window.re_selectCh=function(idx){
+  RE_S.selCh=idx;
+  document.querySelectorAll('.re-ch-item').forEach((el,i)=>el.classList.toggle('sel',i===idx));
+  const ch=RE_CHS[idx];RE_S.q=ch.n;
+  const inp=document.getElementById('re-inp');if(inp)inp.value=ch.n;
+  re_search(ch.n);
+};
+function re_startSim(){
+  if(RE_S.simI)return;
+  RE_S.simI=setInterval(()=>{
+    RE_S.simU+=Math.round(Math.random()*6-2);RE_S.simU=Math.max(195,Math.min(262,RE_S.simU));RE_S.cycles++;
+    const u=document.getElementById('re-sim-units');if(u)u.textContent=RE_S.simU+' units';
+    const c=document.getElementById('re-sim-cycles');if(c)c.textContent='Cycle #'+RE_S.cycles;
+  },800);
+}
+function re_stopSim(){if(RE_S.simI){clearInterval(RE_S.simI);RE_S.simI=null;}}
+
+function renderIntelResearch(){
+  setTimeout(()=>re_startSim(),200);
+  const QUICK=['CPPU benchmarks','SQEP compliance','Amazon DSP economics','OnTrac Rating API','Failed delivery $17.93','FlowSkip vs Onfleet'];
+  return'<div class="re-wrap">'+
+    '<div class="re-topbar">'+
+      '<div class="re-logo">DriveHub Research</div>'+
+      '<span class="re-badge">VHQ ENGINE</span>'+
+      '<span class="re-badge" style="background:rgba(59,130,246,.1);border-color:rgba(59,130,246,.25);color:#60a5fa;-webkit-text-fill-color:#60a5fa">1,000 CHANNELS</span>'+
+      '<span class="re-badge" style="background:rgba(16,185,129,.1);border-color:rgba(16,185,129,.25);color:#10b981;-webkit-text-fill-color:#10b981">US LAST-MILE 2026</span>'+
+      '<div style="margin-left:auto;display:flex;align-items:center;gap:6px;font-size:11px;color:#64748b"><div class="re-live-dot"></div><span id="re-sim-units">'+RE_S.simU+' units</span> active</div>'+
+    '</div>'+
+    '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:10px 16px;background:#0d1421;border-bottom:1px solid rgba(249,115,22,.08);flex-shrink:0">'+
+      [['Platform CPPU','$5.37','#f97316'],['Failed Del. Cost','$17.93','#ef4444'],['SQEP Fine/Event','$1,663','#f59e0b'],['OnTrac Discount','42%','#10b981']].map(k=>'<div class="re-kpi"><div class="re-kpi-v" style="color:'+k[2]+'">'+k[1]+'</div><div class="re-kpi-l">'+k[0]+'</div></div>').join('')+
+    '</div>'+
+    '<div class="re-main">'+
+      '<div class="re-sidebar">'+
+        '<div class="re-sb-hd">VHQ Channels <span style="float:right">'+RE_CHS.length+'/1,000</span></div>'+
+        '<div class="re-sb-body">'+RE_CHS.map((ch,i)=>'<div class="re-ch-item" onclick="window.re_selectCh('+i+')"><div class="re-ch-name">'+ch.n+'</div><div class="re-ch-cat">'+ch.cat+'</div></div>').join('')+'</div>'+
+      '</div>'+
+      '<div class="re-center">'+
+        '<div class="re-search-area">'+
+          '<div style="font-size:13px;font-weight:700;color:#e2e8f0;margin-bottom:10px;text-align:center">🔍 Industry Research Intelligence</div>'+
+          '<div class="re-search-box"><input class="re-si" id="re-inp" placeholder="Search: CPPU, SQEP, Amazon DSP, OnTrac, failed delivery cost…" onkeydown="if(event.key===\'Enter\')window.re_doSearch()"/><button class="re-sb-btn" onclick="window.re_doSearch()">Search VHQ</button></div>'+
+          '<div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">'+QUICK.map(q=>'<span style="font-size:9px;padding:2px 8px;border-radius:4px;background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.15);color:#f97316;cursor:pointer" onclick="window.re_quickSearch(\''+q+'\')">'+q+'</span>').join('')+'</div>'+
+        '</div>'+
+        '<div class="re-results" id="re-results"><div style="text-align:center;padding:40px;color:#64748b;font-size:12px">Enter a query or click a VHQ channel to begin research</div></div>'+
+        '<div class="re-reader" id="re-reader">'+
+          '<div class="re-rdr-hdr"><div class="re-rdr-title" id="re-rdr-title">Research Report</div><button class="re-rdr-close" onclick="window.re_closeReader()">✕</button></div>'+
+          '<div class="re-rdr-body" id="re-rdr-body"></div>'+
+        '</div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="re-sim-bar"><div class="re-live-dot"></div><span>Simulation active · <span id="re-sim-units">'+RE_S.simU+' units</span> · 25 drivers × 9 territories</span><span style="margin-left:auto">Cycle: <span id="re-sim-cycles">#0</span></span></div>'+
+  '</div>';
+}
 
 // ── Boot ──
 window._reqView='kanban';
