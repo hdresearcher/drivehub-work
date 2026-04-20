@@ -219,7 +219,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .mctrl.act{border-color:rgba(0,212,255,.4);color:var(--primary);background:rgba(0,212,255,.08)}
 .mctrl svg{width:12px;height:12px;stroke-width:2.2;fill:none}
 
-.map-legend{position:absolute;bottom:14px;left:12px;z-index:10;
+.map-legend{position:absolute;bottom:56px;left:12px;z-index:10;
   background:rgba(10,10,15,.92);backdrop-filter:blur(12px);border:1px solid var(--border);
   border-radius:10px;padding:10px 12px;min-width:180px}
 .ml-title{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--muted);font-family:var(--mono);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
@@ -228,11 +228,11 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .ml-d{width:10px;height:10px;border-radius:50%;flex-shrink:0;box-shadow:0 0 6px currentColor}
 .ml-row-v{margin-left:auto;color:var(--muted);font-size:9px}
 
-.hint-chip{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);z-index:10;
+.hint-chip{position:absolute;bottom:56px;left:50%;transform:translateX(-50%);z-index:10;
   background:rgba(10,10,15,.92);backdrop-filter:blur(12px);border:1px solid rgba(0,212,255,.25);
   border-radius:99px;padding:6px 14px;font-size:10px;font-family:var(--mono);color:var(--primary);
   display:flex;align-items:center;gap:6px;letter-spacing:.5px;animation:hintBob 3s ease-in-out infinite}
-@keyframes hintBob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-3px)}}
+@keyframes hintBob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-4px)}}
 .hint-kbd{background:rgba(0,212,255,.15);padding:2px 6px;border-radius:4px;font-size:9px;font-weight:700;border:1px solid rgba(0,212,255,.25)}
 
 /* ── NAVIGATOR MODE ── */
@@ -910,6 +910,60 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .nav-flare{position:fixed;border-radius:50%;background:radial-gradient(circle,rgba(0,212,255,.9),rgba(0,212,255,.2) 40%,transparent 70%);z-index:850;pointer-events:none;mix-blend-mode:screen;transform:translate(-50%,-50%) scale(0);animation:flareExpand .9s ease-out forwards}
 @keyframes flareExpand{0%{transform:translate(-50%,-50%) scale(0);opacity:1}50%{opacity:1}100%{transform:translate(-50%,-50%) scale(140);opacity:0}}
 
+/* ── Custom map zoom buttons ── */
+.map-zoom-btns{display:flex;gap:2px;pointer-events:auto}
+.map-zoom-btn{width:30px;height:30px;background:rgba(14,15,24,.92);border:1px solid var(--border);border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-size:16px;font-weight:300;transition:all .18s;backdrop-filter:blur(12px);line-height:1;user-select:none}
+.map-zoom-btn:hover{border-color:rgba(0,212,255,.35);color:var(--primary);background:rgba(0,212,255,.08)}
+.map-zoom-btn:active{transform:scale(.93)}
+
+/* ── Dark/light map theme toggle ── */
+.map-theme-toggle{display:flex;align-items:center;gap:6px;padding:5px 10px;background:rgba(14,15,24,.92);border:1px solid var(--border);border-radius:7px;cursor:pointer;font-size:10px;font-family:var(--mono);color:var(--muted);transition:all .18s;pointer-events:auto;width:100%;justify-content:flex-start;gap:7px;letter-spacing:.4px}
+.map-theme-toggle:hover{border-color:rgba(0,212,255,.3);color:var(--text)}
+.map-theme-toggle.dark-on{border-color:rgba(0,212,255,.28);color:var(--primary);background:rgba(0,212,255,.06)}
+.map-theme-toggle svg{width:11px;height:11px;stroke:currentColor;stroke-width:2;fill:none;flex-shrink:0}
+
+/* ── Perspective nav road overlay in center stage ── */
+.nc-nav-road-svg{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+@keyframes roadDash{0%{stroke-dashoffset:0}100%{stroke-dashoffset:-80px}}
+@keyframes roadDashSlow{0%{stroke-dashoffset:0}100%{stroke-dashoffset:-200px}}
+.nc-nav-cline{animation:roadDash 0.9s linear infinite}
+.nc-nav-laneline{animation:roadDashSlow 2.2s linear infinite}
+
+/* ── FSD center: speedometer ring ── */
+.nc-fsd-speedo-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;position:relative;overflow:hidden}
+.nc-fsd-speedo-svg{width:118px;height:118px;position:relative;z-index:2;flex-shrink:0}
+.nc-fsd-spd-val{font-size:26px;font-weight:200;letter-spacing:-.04em;color:#fff;line-height:1}
+.nc-fsd-spd-unit{font-size:9px;font-family:var(--mono);letter-spacing:2px;color:rgba(255,255,255,.4);margin-top:1px}
+.nc-fsd-spd-lim{font-size:8px;font-family:var(--mono);color:rgba(255,255,255,.3);letter-spacing:1px;margin-top:3px}
+.nc-fsd-spd-lim b{color:#fbbf24}
+/* Route alert banner inside center FSD */
+.nc-fsd-alert{position:absolute;bottom:6px;left:8px;right:8px;background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.2);border-radius:7px;padding:4px 9px;display:flex;align-items:center;gap:6px;font-size:9px;font-family:var(--mono);letter-spacing:.6px;color:#00d4ff;z-index:3;animation:fadeInUp .3s var(--spring)}
+.nc-fsd-alert svg{width:10px;height:10px;stroke:currentColor;stroke-width:2;fill:none;flex-shrink:0}
+.nc-fsd-alert.warn{background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.25);color:#fbbf24}
+.nc-fsd-alert.ok{background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.25);color:#4ade80}
+@keyframes fadeInUp{0%{opacity:0;transform:translateY(8px)}100%{opacity:1;transform:none}}
+
+/* ── Animated route dot in FSD mini-map ── */
+.nc-fsd-veh-dot{transition:cx .8s var(--ease),cy .8s var(--ease)}
+
+/* ── Earnings dashboard panel ── */
+.nc-earn-hd{font-size:8px;font-family:var(--mono);letter-spacing:2px;color:rgba(0,212,255,.7);text-transform:uppercase;margin-bottom:4px}
+.nc-earn-ring-wrap{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:6px}
+.nc-earn-ring-svg{width:70px;height:70px;flex-shrink:0}
+.nc-earn-ring-pct{font-size:16px;font-weight:700;font-family:var(--mono);color:#4ade80}
+.nc-earn-ring-lbl{font-size:7px;font-family:var(--mono);letter-spacing:1.5px;color:rgba(255,255,255,.38);text-transform:uppercase;margin-top:1px}
+.nc-earn-stats{display:flex;flex-direction:column;gap:4px;flex:1}
+.nc-earn-row{display:flex;justify-content:space-between;align-items:baseline;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.nc-earn-row:last-child{border-bottom:0}
+.nc-earn-lbl{font-size:7.5px;font-family:var(--mono);letter-spacing:.8px;color:rgba(255,255,255,.38);text-transform:uppercase}
+.nc-earn-val{font-size:12px;font-weight:700;font-family:var(--mono)}
+.nc-earn-val.green{color:#4ade80}
+.nc-earn-val.cyan{color:#00d4ff}
+.nc-earn-val.amber{color:#fbbf24}
+.nc-earn-bar-wrap{margin-top:4px}
+.nc-earn-bar{height:3px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden}
+.nc-earn-bar-fill{height:100%;background:linear-gradient(90deg,#4ade80,#00d4ff);border-radius:2px;transition:width 1s var(--spring)}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.001s!important;animation-delay:0s!important;transition-duration:.05s!important}
@@ -1139,10 +1193,18 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
           <span id="mapStatus">LIVE · 28 agents · Presence 95%</span>
         </div>
         <div class="map-ctrl-group" data-cc-id="cc-54">
+          <div class="map-zoom-btns">
+            <button class="map-zoom-btn" onclick="mapZoomIn()" title="Zoom in">+</button>
+            <button class="map-zoom-btn" onclick="mapZoomOut()" title="Zoom out">−</button>
+          </div>
           <div class="mlayer-panel">
             <div class="mlp-sec">
               <div class="mlp-sec-h">BASEMAP</div>
               <div class="mlp-sec-body">
+                <button class="map-theme-toggle dark-on" id="mapThemeToggle" onclick="toggleMapTheme()">
+                  <svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+                  <span id="mapThemeLabel">Dark Theme</span>
+                </button>
                 <button class="mctrl mctrl-sm act" id="baseStreets" onclick="setBasemap('streets')">
                   <svg viewBox="0 0 24 24"><path d="M4 20l4-16M10 20l-2-16M16 20l2-16M4 10h16M4 14h16"/></svg>
                   Streets
@@ -1619,7 +1681,7 @@ function drvCardHtml(d){
                    d.flag==='c22'?'<span class="exc-flag f-c22">C22</span>':
                    d.flag==='otif'?'<span class="exc-flag f-otif">OTIF</span>':'';
   return `
-    <div class="drv-card ${S.selectedId===d.id?'sel':''}" onclick="selectDriver('${d.id}')" ondblclick="magicZoom('${d.id}')">
+    <div class="drv-card ${S.selectedId===d.id?'sel':''}" onclick="magicZoom('${d.id}')" title="Open driver cockpit">
       <div class="drv-av st-${d.status}" style="background:${d.color}22;color:${d.color}">${d.initials}</div>
       <div class="drv-info">
         <div class="drv-name">${d.name}</div>
@@ -1751,12 +1813,33 @@ function switchLoc(l){
    MAP
    ═══════════════════════════════════════════════════════ */
 let map, drvMarkers={}, depotMarker, costCircles=[], asnPulseMarkers=[], trafficLines=[], predictLines=[], congestCircles=[], baseTile=null, currentBase='streets';
+let _mapDark = true;
 
 const BASEMAPS = {
   streets: {url:'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', attribution:'© OpenStreetMap · CartoDB', dark:true},
+  light:   {url:'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', attribution:'© OpenStreetMap · CartoDB', dark:false},
   sat:     {url:'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', attribution:'© Esri · World Imagery', dark:false},
   '3d':    {url:'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', attribution:'© OpenStreetMap · CartoDB · 3D tilt view', dark:true}
 };
+
+function toggleMapTheme(){
+  _mapDark = !_mapDark;
+  const btn = document.getElementById('mapThemeToggle');
+  const lbl = document.getElementById('mapThemeLabel');
+  if(_mapDark){
+    btn?.classList.add('dark-on');
+    if(lbl) lbl.textContent = 'Dark Theme';
+    if(currentBase==='streets'||currentBase==='light') setBasemap('streets');
+  } else {
+    btn?.classList.remove('dark-on');
+    if(lbl) lbl.textContent = 'Light Theme';
+    if(currentBase==='streets'||currentBase==='light') setBasemap('light');
+  }
+  toast('Map · '+(_mapDark?'Dark':'Light')+' theme','ok');
+}
+
+function mapZoomIn(){ if(map) map.zoomIn(); }
+function mapZoomOut(){ if(map) map.zoomOut(); }
 
 function setBasemap(kind){
   if(!map) return;
@@ -1934,7 +2017,6 @@ function navAction(kind){
 function initMap(){
   map = L.map('lmap',{zoomControl:false,attributionControl:true,preferCanvas:true})
          .setView([DEPOT.lat, DEPOT.lng], 10);
-  L.control.zoom({position:'bottomright'}).addTo(map);
   setBasemap('streets');
 
   /* Depot */
@@ -2116,6 +2198,16 @@ let currentModel = 'sprinter';
 let _navSimTimer = null;
 let _navDriver = null;
 let _navEtaEnd = 0;
+let _navRouteStep = 0;   // animated route position (0..nmp-1)
+let _navAlertIdx  = 0;   // current alert rotating
+const _NAV_ALERTS = [
+  {t:'stop',  msg:'Stop #'+0+' · 0.4 mi ahead', cls:'cyan'},
+  {t:'traffic',msg:'Slow traffic · +3 min delay', cls:'warn'},
+  {t:'stop',  msg:'Delivery confirmed · #'+0,    cls:'ok'},
+  {t:'limit', msg:'Speed zone ahead · 25 mph',   cls:'warn'},
+  {t:'stop',  msg:'Next stop · 0.8 mi',          cls:'cyan'},
+  {t:'ok',    msg:'Traffic clear ahead',          cls:'ok'},
+];
 
 /* SVG rear-view renderers per model */
 function vehicleSVG(modelId, bodyColor){
@@ -2211,6 +2303,10 @@ function openNavCockpit(driverId, fromPoint){
   const d = DRIVERS.find(x=>x.id===driverId);
   if(!d) return;
   _navDriver = d;
+  _navTickCount = 0;
+  /* initialise animated route position from driver's current progress */
+  const _mpts0 = [{x:80,y:182},{x:54,y:158},{x:28,y:138},{x:28,y:106},{x:55,y:82},{x:86,y:56},{x:124,y:34}];
+  _navRouteStep = Math.min(Math.round(d.done / Math.max(d.stops,1) * (_mpts0.length-1)), _mpts0.length-1);
   /* set ETA end-time for FSD countdown (≈3 min per remaining stop + 8 min base) */
   _navEtaEnd = Date.now() + Math.max(300, (d.stops - d.done) * 185 + 480) * 1000;
   /* flare from marker position */
@@ -2371,16 +2467,67 @@ function renderNavCockpit(d){
 
       <!-- CENTER STAGE -->
       <div class="nc-stage">
-        <div class="nc-road"></div>
-        <div class="nc-road-lines"></div>
+        <!-- Perspective nav-road SVG: continues visually from the FSD strip bottom -->
+        <svg class="nc-nav-road-svg" viewBox="0 0 520 420" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="ncSkyG" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#060812"/>
+              <stop offset="0.55" stop-color="#0a0e1e"/>
+              <stop offset="1" stop-color="#111728"/>
+            </linearGradient>
+            <linearGradient id="ncRoadG" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#0d1018"/>
+              <stop offset="1" stop-color="#181c28"/>
+            </linearGradient>
+            <linearGradient id="ncRouteG" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="rgba(0,212,255,0)"/>
+              <stop offset="0.25" stop-color="rgba(0,212,255,0.22)"/>
+              <stop offset="1" stop-color="rgba(0,212,255,0.85)"/>
+            </linearGradient>
+            <linearGradient id="ncFadeBottom" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="transparent"/>
+              <stop offset="1" stop-color="rgba(6,8,16,0.95)"/>
+            </linearGradient>
+          </defs>
+          <!-- Sky -->
+          <rect x="0" y="0" width="520" height="420" fill="url(#ncSkyG)"/>
+          <!-- Horizon glow -->
+          <ellipse cx="260" cy="222" rx="220" ry="22" fill="rgba(0,212,255,0.055)"/>
+          <!-- Road surface (perspective trapezoid) -->
+          <polygon points="90,420 430,420 322,222 198,222" fill="url(#ncRoadG)"/>
+          <!-- Left curb line -->
+          <line x1="198" y1="222" x2="90" y2="420" stroke="rgba(255,255,255,0.18)" stroke-width="2"/>
+          <!-- Right curb line -->
+          <line x1="322" y1="222" x2="430" y2="420" stroke="rgba(255,255,255,0.18)" stroke-width="2"/>
+          <!-- Left lane marker -->
+          <line x1="240" y1="222" x2="165" y2="420" stroke="rgba(255,255,255,0.09)" stroke-width="1.4" stroke-dasharray="22 16" class="nc-nav-laneline"/>
+          <!-- Right lane marker -->
+          <line x1="280" y1="222" x2="355" y2="420" stroke="rgba(255,255,255,0.09)" stroke-width="1.4" stroke-dasharray="22 16" class="nc-nav-laneline"/>
+          <!-- Center route line (cyan) from horizon to FSD strip — animates toward viewer -->
+          <line x1="260" y1="222" x2="260" y2="420" stroke="url(#ncRouteG)" stroke-width="3.5" stroke-dasharray="28 18" class="nc-nav-cline"/>
+          <!-- Route waypoint ahead (glowing dot at horizon) -->
+          <circle cx="260" cy="240" r="5" fill="rgba(74,222,128,0.7)" filter="url(#dotGlow)"/>
+          <circle cx="260" cy="240" r="9" fill="rgba(74,222,128,0.18)"/>
+          <!-- Next-stop indicator -->
+          <circle cx="260" cy="295" r="4" fill="rgba(0,212,255,0.6)"/>
+          <circle cx="260" cy="295" r="8" fill="rgba(0,212,255,0.12)"/>
+          <!-- Buildings left side -->
+          <rect x="12" y="168" width="48" height="55" rx="2" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+          <rect x="64" y="182" width="30" height="41" rx="2" fill="rgba(255,255,255,0.025)" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+          <rect x="98" y="172" width="38" height="51" rx="2" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.035)" stroke-width="1"/>
+          <rect x="14" y="158" width="12" height="12" rx="1" fill="rgba(251,191,36,0.18)"/>
+          <rect x="70" y="174" width="10" height="10" rx="1" fill="rgba(251,191,36,0.12)"/>
+          <!-- Buildings right side -->
+          <rect x="460" y="168" width="48" height="55" rx="2" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+          <rect x="426" y="182" width="30" height="41" rx="2" fill="rgba(255,255,255,0.025)" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+          <rect x="384" y="172" width="38" height="51" rx="2" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.035)" stroke-width="1"/>
+          <rect x="478" y="158" width="12" height="12" rx="1" fill="rgba(251,191,36,0.18)"/>
+          <!-- Fade to FSD strip at bottom -->
+          <rect x="0" y="350" width="520" height="70" fill="url(#ncFadeBottom)"/>
+        </svg>
 
         <div class="nc-hud">
           <div class="nc-autopilot"><span class="dot"></span>ASSIST ACTIVE</div>
-          <div class="nc-speedo">
-            <div class="nc-speedo-v" id="ncSpeed">${speed}</div>
-            <div class="nc-speedo-u">MPH</div>
-            <div class="nc-speedo-lim">LIMIT <b>${speedLimit}</b></div>
-          </div>
           <div class="nc-compass">
             <div class="nc-compass-ring"></div>
             <div class="nc-compass-n">N</div>
@@ -2389,13 +2536,13 @@ function renderNavCockpit(d){
           </div>
         </div>
 
-        <!-- ── Tesla FSD-style window ── -->
+        <!-- ── Tesla FSD strip ── -->
         <div class="nc-fsd-win" id="ncFsdWin">
 
-          <!-- LEFT: Mini route map -->
+          <!-- LEFT: Animated route journey tracker -->
           <div class="nc-fsd-map">
             <div class="nc-fsd-map-hd">Route · Progress</div>
-            <svg class="nc-fsd-map-svg" viewBox="0 0 160 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <svg class="nc-fsd-map-svg" id="ncRouteSvg" viewBox="0 0 160 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
               <!-- street grid -->
               <line x1="0" y1="50"  x2="160" y2="50"  stroke="rgba(255,255,255,.045)" stroke-width="1"/>
               <line x1="0" y1="100" x2="160" y2="100" stroke="rgba(255,255,255,.045)" stroke-width="1"/>
@@ -2407,60 +2554,84 @@ function renderNavCockpit(d){
               <path fill="none" stroke="rgba(255,255,255,.14)" stroke-width="1.5" stroke-dasharray="5 4" d="${_mapFull}"/>
               <!-- completed portion (solid cyan) -->
               ${_mapDoneHtml}
-              <!-- stop dots + current ring -->
+              <!-- stop dots -->
               ${_mapDots}
-              <!-- depot start (green square) -->
+              <!-- depot start -->
               <rect x="${_mpts[0].x-5}" y="${_mpts[0].y-5}" width="10" height="10" rx="2" fill="rgba(74,222,128,.45)" stroke="#4ade80" stroke-width="1.2"/>
-              <!-- destination (amber triangle) -->
+              <!-- destination -->
               <path d="M${_mpts[_nmp-1].x},${_mpts[_nmp-1].y-8} L${_mpts[_nmp-1].x+5},${_mpts[_nmp-1].y+3} L${_mpts[_nmp-1].x-5},${_mpts[_nmp-1].y+3}Z" fill="rgba(251,191,36,.6)" stroke="#fbbf24" stroke-width="1.2"/>
+              <!-- Animated vehicle position (will be updated by tickNavCockpit) -->
+              <circle id="ncRouteVeh" class="nc-fsd-veh-dot" cx="${_mpts[_dIdx].x}" cy="${_mpts[_dIdx].y}" r="6" fill="#00d4ff" stroke="rgba(0,212,255,.35)" stroke-width="5" opacity=".95"/>
+              <circle id="ncRouteVehGlow" cx="${_mpts[_dIdx].x}" cy="${_mpts[_dIdx].y}" r="10" fill="none" stroke="rgba(0,212,255,.2)" stroke-width="1.5"/>
             </svg>
-            <div class="nc-fsd-map-ft">${d.done} of ${d.stops} delivered</div>
+            <div class="nc-fsd-map-ft" id="ncMapFt">${d.done} of ${d.stops} delivered</div>
           </div>
 
-          <!-- CENTER: Road view (transparent — stage road bg visible) -->
+          <!-- CENTER: FSD speedometer view with real-time route info -->
           <div class="nc-fsd-road">
-            <!-- speed limit sign -->
-            <div class="nc-fsd-spd-sign">
-              <div class="nc-fsd-spd-sign-circle">${speedLimit}</div>
-              <div class="nc-fsd-spd-sign-post"></div>
+            <div class="nc-fsd-speedo-wrap">
+              <svg class="nc-fsd-speedo-svg" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                <!-- background ring -->
+                <circle cx="60" cy="60" r="50" fill="rgba(0,0,0,.45)" stroke="rgba(255,255,255,.07)" stroke-width="1"/>
+                <!-- speed arc background -->
+                <circle cx="60" cy="60" r="44" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="8"/>
+                <!-- speed arc fill -->
+                <circle cx="60" cy="60" r="44" fill="none" stroke="${speed > speedLimit + 3 ? '#f87171' : '#4ade80'}"
+                  stroke-width="8" stroke-linecap="round"
+                  stroke-dasharray="${(2*Math.PI*44).toFixed(1)}"
+                  stroke-dashoffset="${((2*Math.PI*44)*(1-Math.min(1,speed/70))).toFixed(1)}"
+                  transform="rotate(-90 60 60)" id="ncFsdSpeedArc"
+                  style="filter:drop-shadow(0 0 5px ${speed > speedLimit + 3 ? '#f87171' : '#4ade80'})"/>
+                <!-- speed value -->
+                <text x="60" y="55" text-anchor="middle" font-size="26" font-weight="200" font-family="'Outfit',sans-serif" fill="${speed > speedLimit + 3 ? '#f87171' : '#fff'}" id="ncFsdSpd">${speed}</text>
+                <text x="60" y="67" text-anchor="middle" font-size="9" font-family="'JetBrains Mono',monospace" fill="rgba(255,255,255,.38)" letter-spacing="2">MPH</text>
+                <!-- limit indicator -->
+                <text x="60" y="80" text-anchor="middle" font-size="8" font-family="'JetBrains Mono',monospace" fill="rgba(255,255,255,.28)">LIMIT <tspan fill="#fbbf24" font-weight="700">${speedLimit}</tspan></text>
+              </svg>
             </div>
-            <!-- delivery van silhouette — top-down -->
-            <svg class="nc-fsd-veh-sil" width="84" height="58" viewBox="0 0 84 58">
-              <rect x="10" y="6" width="64" height="46" rx="9" fill="rgba(0,212,255,.12)" stroke="rgba(0,212,255,.62)" stroke-width="1.5"/>
-              <rect x="19" y="12" width="46" height="15" rx="3.5" fill="rgba(0,212,255,.17)" stroke="rgba(0,212,255,.32)" stroke-width="1"/>
-              <rect x="23" y="32" width="38" height="14" rx="3" fill="rgba(0,212,255,.07)" stroke="rgba(0,212,255,.15)" stroke-width=".8"/>
-              <circle cx="16" cy="7"  r="5.5" fill="rgba(14,22,40,.85)" stroke="rgba(0,212,255,.48)" stroke-width="1.5"/>
-              <circle cx="68" cy="7"  r="5.5" fill="rgba(14,22,40,.85)" stroke="rgba(0,212,255,.48)" stroke-width="1.5"/>
-              <circle cx="16" cy="51" r="5.5" fill="rgba(14,22,40,.85)" stroke="rgba(0,212,255,.48)" stroke-width="1.5"/>
-              <circle cx="68" cy="51" r="5.5" fill="rgba(14,22,40,.85)" stroke="rgba(0,212,255,.48)" stroke-width="1.5"/>
-              <circle cx="42" cy="29" r="3.5" fill="rgba(0,212,255,.55)"/>
-            </svg>
-            <!-- lane detect lines -->
-            <div class="nc-fsd-lane nc-fsd-lane-l"></div>
-            <div class="nc-fsd-lane nc-fsd-lane-r"></div>
+            <!-- Rotating alert banner -->
+            <div class="nc-fsd-alert ${_NAV_ALERTS[0].cls}" id="ncFsdAlert">
+              <svg viewBox="0 0 24 24"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zM12 8v4M12 16h.01"/></svg>
+              <span id="ncFsdAlertTxt">${_NAV_ALERTS[0].msg.replace('#0','#'+(d.done+1))}</span>
+            </div>
           </div>
 
-          <!-- RIGHT: Driver operations info -->
-          <div class="nc-fsd-info">
-            <div class="nc-fsd-stat">
-              <div class="nc-fsd-stat-l">Time to Arrival</div>
-              <div class="nc-fsd-stat-v cyan big" id="ncFsdEta">--:--</div>
-            </div>
-            <div class="nc-fsd-stat">
-              <div class="nc-fsd-stat-l">Parcels Today</div>
-              <div class="nc-fsd-stat-v">${d.done}<span style="color:rgba(255,255,255,.3);font-size:12px;font-weight:400"> / ${d.stops}</span></div>
-              <div class="nc-fsd-parcel-wrap">
-                <div class="nc-fsd-parcel-bar"><div class="nc-fsd-parcel-fill" style="width:${parcelPct}%"></div></div>
-                <span class="nc-fsd-parcel-pct">${parcelPct}%</span>
+          <!-- RIGHT: Earnings dashboard -->
+          <div class="nc-fsd-info" style="width:31%;padding:10px 11px">
+            <div class="nc-earn-hd">Earnings · Route</div>
+            <div class="nc-earn-ring-wrap">
+              <svg class="nc-earn-ring-svg" viewBox="0 0 70 70" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="35" cy="35" r="28" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="7"/>
+                <circle cx="35" cy="35" r="28" fill="none" stroke="#4ade80" stroke-width="7"
+                  stroke-linecap="round" stroke-dasharray="${(2*Math.PI*28).toFixed(1)}"
+                  stroke-dashoffset="${((2*Math.PI*28)*(1-parcelPct/100)).toFixed(1)}"
+                  transform="rotate(-90 35 35)" id="ncEarnRing"
+                  style="filter:drop-shadow(0 0 5px rgba(74,222,128,.4))"/>
+                <text x="35" y="32" text-anchor="middle" font-size="13" font-weight="700" font-family="'JetBrains Mono',monospace" fill="#4ade80" id="ncEarnPct">${parcelPct}</text>
+                <text x="35" y="42" text-anchor="middle" font-size="7" font-family="'JetBrains Mono',monospace" fill="rgba(255,255,255,.35)" letter-spacing="1">DONE %</text>
+              </svg>
+              <div style="display:flex;flex-direction:column;gap:3px">
+                <div class="nc-earn-ring-pct" id="ncEarnVal">${fmtMoney(totalEarned)}</div>
+                <div class="nc-earn-ring-lbl">earned today</div>
+                <div style="font-size:10px;font-weight:600;font-family:var(--mono);color:#fbbf24;margin-top:2px" id="ncEarnLeft">${fmtMoney(totalLeft)}</div>
+                <div class="nc-earn-ring-lbl">left to earn</div>
               </div>
             </div>
-            <div class="nc-fsd-stat">
-              <div class="nc-fsd-stat-l">Earned · Today</div>
-              <div class="nc-fsd-stat-v green">${fmtMoney(totalEarned)}</div>
+            <div class="nc-earn-bar-wrap">
+              <div style="display:flex;justify-content:space-between;font-size:7.5px;font-family:var(--mono);color:rgba(255,255,255,.35);margin-bottom:3px">
+                <span>${d.done} stops done</span><span id="ncEarnStops">${d.stops - d.done} left</span>
+              </div>
+              <div class="nc-earn-bar"><div class="nc-earn-bar-fill" id="ncEarnBar" style="width:${parcelPct}%"></div></div>
             </div>
-            <div class="nc-fsd-stat">
-              <div class="nc-fsd-stat-l">Left to Earn</div>
-              <div class="nc-fsd-stat-v amber">${fmtMoney(totalLeft)}</div>
+            <div style="margin-top:5px;padding-top:5px;border-top:1px solid rgba(255,255,255,.05)">
+              <div style="display:flex;justify-content:space-between;font-size:8px;font-family:var(--mono)">
+                <span style="color:rgba(255,255,255,.38)">Rate/stop</span>
+                <span style="color:#00d4ff" id="ncEarnRate">${fmtMoney(earnedPer)}</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:8px;font-family:var(--mono);margin-top:3px">
+                <span style="color:rgba(255,255,255,.38)">ETA Arrival</span>
+                <span style="color:#4ade80 " id="ncFsdEta">--:--</span>
+              </div>
             </div>
           </div>
 
@@ -2549,19 +2720,34 @@ function gaugeSVG(pct, color, label, unit, unitAsText){
   </div>`;
 }
 
+let _navTickCount = 0;
 function tickNavCockpit(){
   if(!_navDriver) return;
   const d = _navDriver;
-  /* light jitter on speed + heading */
+  _navTickCount++;
+
+  /* ── Speed / heading jitter ── */
   d.speed = Math.max(0, Math.min(55, d.speed + Math.round((Math.random()-.5)*4)));
   d.heading = (d.heading + Math.round((Math.random()-.5)*8) + 360)%360;
-  const sp = document.getElementById('ncSpeed');
   const nd = document.getElementById('ncNeedle');
   const hd = document.getElementById('ncHdg');
-  if(sp) sp.textContent = d.speed;
   if(nd) nd.style.transform = 'rotate('+d.heading+'deg)';
   if(hd) hd.textContent = d.heading+'°';
-  /* FSD ETA countdown */
+
+  /* ── FSD speedometer ring update ── */
+  const spdEl  = document.getElementById('ncFsdSpd');
+  const arcEl  = document.getElementById('ncFsdSpeedArc');
+  const lim = 45;
+  if(spdEl) spdEl.textContent = d.speed;
+  if(arcEl){
+    const circ = 2*Math.PI*44;
+    arcEl.setAttribute('stroke-dashoffset', (circ*(1-Math.min(1,d.speed/70))).toFixed(1));
+    const over = d.speed > lim + 3;
+    arcEl.setAttribute('stroke', over ? '#f87171' : '#4ade80');
+    if(spdEl) spdEl.setAttribute('fill', over ? '#f87171' : '#fff');
+  }
+
+  /* ── FSD ETA countdown ── */
   const etaEl = document.getElementById('ncFsdEta');
   if(etaEl && _navEtaEnd > 0){
     const rem = Math.max(0, _navEtaEnd - Date.now());
@@ -2571,6 +2757,58 @@ function tickNavCockpit(){
     etaEl.textContent = hh > 0
       ? hh + ':' + String(mm).padStart(2,'0') + ':' + String(ss).padStart(2,'0')
       : String(mm).padStart(2,'0') + ':' + String(ss).padStart(2,'0');
+  }
+
+  /* ── Animated route vehicle dot — advances every 4 ticks ── */
+  if(_navTickCount % 4 === 0){
+    const mpts = [{x:80,y:182},{x:54,y:158},{x:28,y:138},{x:28,y:106},{x:55,y:82},{x:86,y:56},{x:124,y:34}];
+    const nmp = mpts.length;
+    _navRouteStep = (_navRouteStep + 1) % nmp;
+    const veh  = document.getElementById('ncRouteVeh');
+    const glow = document.getElementById('ncRouteVehGlow');
+    if(veh && glow){
+      const pt = mpts[_navRouteStep];
+      veh.setAttribute('cx',  pt.x);
+      veh.setAttribute('cy',  pt.y);
+      glow.setAttribute('cx', pt.x);
+      glow.setAttribute('cy', pt.y);
+    }
+  }
+
+  /* ── Rotate route alert every 5 ticks ── */
+  if(_navTickCount % 5 === 0){
+    _navAlertIdx = (_navAlertIdx + 1) % _NAV_ALERTS.length;
+    const al  = _NAV_ALERTS[_navAlertIdx];
+    const box = document.getElementById('ncFsdAlert');
+    const txt = document.getElementById('ncFsdAlertTxt');
+    if(box && txt){
+      box.className = 'nc-fsd-alert ' + al.cls;
+      txt.textContent = al.msg.replace('#0', '#'+(d.done+1));
+    }
+  }
+
+  /* ── Earnings panel pulse (every 7 ticks advance earned by one micro-delivery) ── */
+  if(_navTickCount % 7 === 0){
+    const earnedPer = 9.26 * 0.58;
+    const rateEl  = document.getElementById('ncEarnRate');
+    const barEl   = document.getElementById('ncEarnBar');
+    const ringEl  = document.getElementById('ncEarnRing');
+    const pctEl   = document.getElementById('ncEarnPct');
+    // Advance partial stop count for live feel
+    const partialDone = d.done + Math.min(d.stops - d.done, _navTickCount * 0.014);
+    const pct = d.stops ? Math.round(partialDone / d.stops * 100) : 0;
+    const earned = earnedPer * partialDone;
+    const left   = earnedPer * Math.max(0, d.stops - partialDone);
+    const valEl  = document.getElementById('ncEarnVal');
+    const leftEl = document.getElementById('ncEarnLeft');
+    if(valEl)  valEl.textContent  = fmtMoney(earned);
+    if(leftEl) leftEl.textContent = fmtMoney(left);
+    if(barEl)  barEl.style.width  = pct+'%';
+    if(pctEl)  pctEl.textContent  = pct;
+    if(ringEl){
+      const circ = (2*Math.PI*28).toFixed(1);
+      ringEl.setAttribute('stroke-dashoffset', ((2*Math.PI*28)*(1-pct/100)).toFixed(1));
+    }
   }
 }
 
