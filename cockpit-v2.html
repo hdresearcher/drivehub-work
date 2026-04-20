@@ -1,0 +1,2817 @@
+<!DOCTYPE html><html lang="en"><head>
+
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Drivehub Cockpit · drivehub.work</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0f;--surface:#12131e;--surface2:#0e0f18;
+  --border:hsla(0,0%,100%,.06);--border-sub:rgba(255,255,255,.03);--border-hi:rgba(0,212,255,.22);
+  --text:#fff;--muted:rgba(255,255,255,.48);--dim:rgba(255,255,255,.28);
+  --primary:#00d4ff;--primary-bg:rgba(0,212,255,.10);--primary-glow:rgba(0,212,255,.25);
+  --ok-bg:rgba(34,197,94,.12);--ok-t:#4ade80;
+  --warn-bg:rgba(245,158,11,.12);--warn-t:#fbbf24;
+  --err-bg:rgba(239,68,68,.12);--err-t:#f87171;
+  --pur-bg:rgba(167,139,250,.12);--pur-t:#c084fc;
+  --teal-bg:rgba(45,212,191,.12);--teal-t:#2dd4bf;
+  --money:#34d399;
+  --mono:'JetBrains Mono','SF Mono',monospace;
+  --spring:cubic-bezier(.34,1.56,.64,1);
+  --ease:cubic-bezier(.16,1,.3,1);
+  font-family:'Outfit',-apple-system,sans-serif;font-size:13px;line-height:1.5;color:var(--text);
+}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse at 15% 20%,rgba(0,212,255,.08) 0,transparent 55%),
+    radial-gradient(ellipse at 85% 15%,rgba(167,139,250,.05) 0,transparent 50%),
+    radial-gradient(ellipse at 50% 85%,rgba(52,211,153,.04) 0,transparent 55%)}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:radial-gradient(rgba(255,255,255,.025) 1px,transparent 1px);
+  background-size:28px 28px;mask-image:radial-gradient(ellipse at center,#000 30%,transparent 80%)}
+#app{height:100vh;display:flex;flex-direction:column;position:relative;z-index:1}
+::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(0,212,255,.22);border-radius:2px}
+::selection{background:var(--primary);color:var(--bg)}
+
+/* ───── CMD BAR ───── */
+.cmd{height:56px;display:flex;align-items:center;gap:14px;padding:0 16px;
+  background:rgba(10,10,15,.95);border-bottom:1px solid var(--border);flex-shrink:0;
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.cmd-logo{display:flex;align-items:center;gap:9px;flex-shrink:0}
+.cmd-icon{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#00d4ff,#0088bb);
+  display:flex;align-items:center;justify-content:center;box-shadow:0 0 18px rgba(0,212,255,.35)}
+.cmd-icon svg{width:16px;height:16px;stroke:#0a0a0f;stroke-width:2.5;fill:none}
+.cmd-name{font-size:14px;font-weight:700;letter-spacing:-.02em}
+.cmd-ver{font-size:9px;color:var(--primary);font-family:var(--mono);padding:2px 6px;border-radius:4px;background:var(--primary-bg);letter-spacing:.5px}
+.vsep{width:1px;height:28px;background:var(--border);flex-shrink:0}
+.cmd-rail{flex:1;display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;padding:2px}
+.cmd-rail::-webkit-scrollbar{height:0}
+.ck{display:flex;flex-direction:column;gap:1px;padding:5px 11px;border-radius:7px;
+  background:rgba(255,255,255,.025);border:1px solid var(--border);flex-shrink:0;
+  transition:all .2s var(--ease);cursor:default;min-width:0}
+.ck:hover{border-color:rgba(0,212,255,.2);background:rgba(0,212,255,.04);transform:translateY(-1px)}
+.ck-l{font-size:8px;color:var(--muted);font-family:var(--mono);letter-spacing:1.2px;text-transform:uppercase;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.ck-v{font-family:var(--mono);font-weight:700;font-size:13px;white-space:nowrap}
+.ck.cyan .ck-v{color:var(--primary)}.ck.ok .ck-v{color:var(--ok-t)}
+.ck.warn .ck-v{color:var(--warn-t)}.ck.err .ck-v{color:var(--err-t)}
+.ck.money .ck-v{color:var(--money)}.ck.pur .ck-v{color:var(--pur-t)}
+.ck-delta{font-size:9px;font-family:var(--mono);opacity:.75}
+.cmd-acts{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.role-pill{display:flex;align-items:center;gap:6px;padding:5px 10px;border-radius:7px;
+  background:rgba(255,255,255,.04);border:1px solid var(--border);cursor:pointer;
+  font-size:11px;font-weight:600;transition:all .15s}
+.role-pill:hover{border-color:rgba(0,212,255,.25);background:rgba(0,212,255,.05)}
+.role-dot{width:7px;height:7px;border-radius:50%;background:var(--ok-t);box-shadow:0 0 6px var(--ok-t);transition:all .2s}
+.persona-switch{display:flex;gap:2px;padding:2px;border-radius:8px;background:rgba(255,255,255,.03);border:1px solid var(--border)}
+.ps-btn{display:flex;align-items:center;gap:5px;padding:4px 9px;border-radius:6px;font-size:10px;font-weight:600;background:transparent;color:var(--muted);border:none;cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap;letter-spacing:.2px}
+.ps-btn:hover{color:var(--text);background:rgba(255,255,255,.04)}
+.ps-btn.act{color:var(--text);background:rgba(0,212,255,.1);box-shadow:inset 0 0 0 1px rgba(0,212,255,.22)}
+.ps-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+
+/* ───── MARGIN RIBBON ───── */
+.ribbon{height:44px;display:flex;align-items:stretch;background:linear-gradient(90deg,rgba(52,211,153,.06) 0%,rgba(0,212,255,.05) 50%,rgba(167,139,250,.06) 100%);
+  border-bottom:1px solid var(--border);flex-shrink:0;overflow:hidden;position:relative}
+.ribbon::before{content:'';position:absolute;inset:0;background-image:linear-gradient(90deg,transparent 0%,rgba(0,212,255,.15) 50%,transparent 100%);background-size:200% 100%;animation:rbnSweep 8s linear infinite;opacity:.4;pointer-events:none}
+@keyframes rbnSweep{0%{background-position:-100% 0}100%{background-position:100% 0}}
+.rb-cell{flex:1;display:flex;align-items:center;justify-content:center;gap:10px;padding:0 14px;border-right:1px solid var(--border-sub);min-width:0;position:relative;z-index:1}
+.rb-cell:last-child{border-right:none}
+.rb-icon{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.rb-icon svg{width:13px;height:13px;stroke-width:2.2;fill:none}
+.rb-content{display:flex;flex-direction:column;gap:0;line-height:1.1;min-width:0}
+.rb-label{font-size:8px;font-family:var(--mono);letter-spacing:1.3px;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.rb-value{font-family:var(--mono);font-weight:700;font-size:14px;letter-spacing:-.02em;white-space:nowrap}
+.rb-sub{font-size:9px;color:var(--muted);font-family:var(--mono);white-space:nowrap}
+
+/* ───── LOC BAR ───── */
+.loc-bar{height:34px;display:flex;align-items:center;padding:0 12px;gap:1px;
+  background:rgba(10,10,15,.75);border-bottom:1px solid var(--border);flex-shrink:0;overflow-x:auto}
+.loc-bar::-webkit-scrollbar{height:0}
+.loc-tab{display:flex;align-items:center;gap:6px;padding:6px 12px;cursor:pointer;
+  font-size:10px;font-weight:600;color:var(--muted);white-space:nowrap;
+  border-bottom:2px solid transparent;transition:all .15s;font-family:var(--mono);letter-spacing:.7px;flex-shrink:0;border-radius:6px 6px 0 0}
+.loc-tab:hover{color:var(--text);background:rgba(255,255,255,.025)}
+.loc-tab.act{color:var(--primary);border-bottom-color:var(--primary);background:rgba(0,212,255,.04)}
+.loc-dot{width:6px;height:6px;border-radius:50%;background:var(--ok-t);flex-shrink:0}
+.loc-count{font-size:8px;padding:1px 5px;border-radius:3px;background:rgba(255,255,255,.07);color:var(--muted)}
+.loc-sep{width:1px;height:18px;background:var(--border);margin:0 4px;flex-shrink:0}
+
+/* ───── MAIN LAYOUT ───── */
+.main{flex:1;display:flex;min-height:0;overflow:hidden}
+
+.lp{width:340px;min-width:340px;display:flex;flex-direction:column;
+  border-right:1px solid var(--border);background:rgba(10,10,15,.55);overflow:hidden;
+  backdrop-filter:blur(8px)}
+.lp-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
+.ltab{flex:1;padding:10px 4px;text-align:center;font-size:10px;font-weight:600;color:var(--muted);
+  cursor:pointer;transition:all .15s;text-transform:uppercase;letter-spacing:1px;
+  font-family:var(--mono);border-bottom:2px solid transparent;display:flex;align-items:center;justify-content:center;gap:5px}
+.ltab.act{color:var(--primary);border-bottom-color:var(--primary);background:rgba(0,212,255,.04)}
+.ltab:hover:not(.act){color:var(--text);background:rgba(255,255,255,.02)}
+.ltab-count{font-size:8px;background:rgba(255,255,255,.08);padding:1px 5px;border-radius:3px;color:inherit}
+.ltab.act .ltab-count{background:var(--primary-bg);color:var(--primary)}
+.ltab.warn .ltab-count{background:var(--warn-bg);color:var(--warn-t)}
+.lp-body{flex:1;overflow-y:auto;overflow-x:hidden}
+
+.sec-head{padding:9px 14px 6px;font-size:8px;font-weight:700;text-transform:uppercase;
+  letter-spacing:2px;color:var(--muted);font-family:var(--mono);
+  border-bottom:1px solid var(--border-sub);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:rgba(10,10,15,.92);backdrop-filter:blur(12px);z-index:5}
+.sec-head-count{font-size:8px;color:var(--primary);font-weight:700}
+
+/* ── DRIVER CARDS ── */
+.drv-card{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;
+  transition:background .15s,border-left-color .15s;border-bottom:1px solid var(--border-sub);
+  border-left:2px solid transparent;position:relative}
+.drv-card:hover{background:rgba(255,255,255,.025)}
+.drv-card.sel{background:rgba(0,212,255,.06);border-left-color:var(--primary)}
+.drv-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;border:1.5px solid rgba(255,255,255,.1);position:relative}
+.drv-av::after{content:'';position:absolute;right:-1px;bottom:-1px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg)}
+.drv-av.st-en::after{background:#4ade80}
+.drv-av.st-load::after{background:#fbbf24}
+.drv-av.st-stop::after{background:#00d4ff;animation:pulse 1.4s infinite}
+.drv-av.st-late::after{background:#f87171;animation:pulse .7s infinite}
+.drv-av.st-off::after{background:rgba(255,255,255,.25)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.drv-info{flex:1;min-width:0}
+.drv-name{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.drv-meta{display:flex;align-items:center;gap:5px;margin-top:2px;flex-wrap:wrap}
+.grade{display:inline-flex;align-items:center;font-size:8px;font-weight:700;
+  padding:1px 5px;border-radius:3px;font-family:var(--mono);letter-spacing:.5px}
+.g5{background:rgba(0,212,255,.12);color:var(--primary);border:1px solid rgba(0,212,255,.25)}
+.g4{background:rgba(74,222,128,.1);color:var(--ok-t);border:1px solid rgba(74,222,128,.22)}
+.g3{background:rgba(251,191,36,.1);color:var(--warn-t);border:1px solid rgba(251,191,36,.22)}
+.g2{background:rgba(251,146,60,.1);color:#fb923c;border:1px solid rgba(251,146,60,.22)}
+.drv-mini{font-size:9px;color:var(--muted);font-family:var(--mono)}
+.drv-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.drv-cost{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--money)}
+.exc-flag{font-size:7px;font-weight:700;padding:1px 4px;border-radius:3px;font-family:var(--mono);animation:fp 2s infinite}
+.f-otif{background:var(--err-bg);color:var(--err-t)}
+.f-c22{background:var(--warn-bg);color:var(--warn-t)}
+.f-asn{background:var(--pur-bg);color:var(--pur-t)}
+@keyframes fp{0%,100%{opacity:1}50%{opacity:.5}}
+.oee-mini-track{height:3px;background:rgba(255,255,255,.07);border-radius:2px;margin-top:6px;overflow:hidden}
+.oee-mini-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,#00d4ff,#4ade80);transition:width 1.2s var(--ease)}
+
+/* ── SQEP tab ── */
+.asn-card{margin:9px 12px;border-radius:10px;padding:12px 13px;position:relative;overflow:hidden;
+  transition:transform .25s var(--spring),border-color .2s}
+.asn-card:hover{transform:translateY(-1px)}
+.asn-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px}
+.asn-card.ok{background:rgba(52,211,153,.04);border:1px solid rgba(52,211,153,.18)}
+.asn-card.ok::before{background:var(--ok-t)}
+.asn-card.warn{background:rgba(251,191,36,.04);border:1px solid rgba(251,191,36,.22)}
+.asn-card.warn::before{background:var(--warn-t)}
+.asn-card.err{background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.25);
+  box-shadow:0 0 0 1px rgba(239,68,68,.08),0 4px 18px rgba(239,68,68,.1)}
+.asn-card.err::before{background:var(--err-t);animation:barPulse 1.2s infinite}
+@keyframes barPulse{0%,100%{opacity:1;box-shadow:0 0 8px var(--err-t)}50%{opacity:.55;box-shadow:0 0 2px var(--err-t)}}
+.asn-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
+.asn-id{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.3px}
+.asn-carrier{font-size:9px;color:var(--muted);font-family:var(--mono)}
+.asn-status-tag{font-size:8px;font-weight:700;padding:2px 6px;border-radius:4px;font-family:var(--mono);letter-spacing:.5px}
+.s-ok{background:var(--ok-bg);color:var(--ok-t)}
+.s-warn{background:var(--warn-bg);color:var(--warn-t)}
+.s-err{background:var(--err-bg);color:var(--err-t)}
+.asn-row{display:flex;justify-content:space-between;font-size:10px;padding:3px 0;font-family:var(--mono)}
+.asn-row-lbl{color:var(--muted)}
+.asn-row-val{color:var(--text);font-weight:600}
+.asn-fine{margin-top:8px;padding:7px 9px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:7px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.asn-fine-lbl{font-size:9px;color:var(--err-t);font-weight:600;font-family:var(--mono);letter-spacing:.5px;display:flex;align-items:center;gap:5px}
+.asn-fine-val{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--err-t)}
+.asn-actions{margin-top:8px;display:flex;gap:6px}
+.asn-btn{flex:1;padding:5px 8px;border-radius:6px;font-size:10px;font-weight:600;border:1px solid var(--border);background:rgba(255,255,255,.03);color:var(--text);cursor:pointer;font-family:inherit;transition:all .15s}
+.asn-btn:hover{border-color:rgba(0,212,255,.3);background:var(--primary-bg)}
+.asn-btn.primary{background:var(--primary);color:var(--bg);border-color:var(--primary)}
+
+/* ── MAP ── */
+.map-wrap{flex:1;position:relative;min-width:0;display:flex;flex-direction:column}
+#lmap{flex:1;min-height:0;z-index:1;background:#0a0a0f}
+.map-top{position:absolute;top:12px;left:12px;right:12px;z-index:10;display:flex;justify-content:space-between;align-items:flex-start;gap:10px;pointer-events:none}
+.map-chip{pointer-events:auto;background:rgba(14,15,24,.92);backdrop-filter:blur(12px);border:1px solid var(--border);
+  border-radius:9px;padding:7px 11px;font-size:10px;color:var(--text);display:flex;align-items:center;gap:6px;font-family:var(--mono)}
+.map-chip-dot{width:7px;height:7px;border-radius:50%;background:var(--primary);box-shadow:0 0 8px var(--primary);animation:pulse 1.8s infinite}
+.map-ctrl-group{pointer-events:auto;display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+.mlayer-panel{background:rgba(10,11,20,.88);backdrop-filter:blur(14px);border:1px solid var(--border);border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:8px;min-width:178px;box-shadow:0 12px 32px rgba(0,0,0,.55)}
+.mlp-sec{display:flex;flex-direction:column;gap:5px}
+.mlp-sec-h{font-size:8px;font-family:var(--mono);letter-spacing:1.6px;color:var(--muted);padding:2px 4px 4px;border-bottom:1px solid var(--border-sub)}
+.mlp-sec-body{display:flex;flex-direction:column;gap:4px}
+.mctrl-sm{padding:6px 9px;font-size:10px;width:100%;justify-content:flex-start;gap:7px;position:relative}
+.mctrl-sm svg{width:11px;height:11px;stroke-width:2.1;fill:none;stroke:currentColor;flex-shrink:0}
+.mctrl-live{margin-left:auto;font-size:7px;font-weight:800;padding:1px 5px;border-radius:3px;background:rgba(239,68,68,.18);color:#f87171;font-family:var(--mono);letter-spacing:.8px;animation:breathe 1.4s ease-in-out infinite}
+.mctrl-fwd{margin-left:auto;font-size:7px;font-weight:800;padding:1px 5px;border-radius:3px;background:rgba(167,139,250,.18);color:#c084fc;font-family:var(--mono);letter-spacing:.5px}
+#lmap.tilt-3d{transform:perspective(1100px) rotateX(42deg) scale(1.08);transform-origin:50% 70%}
+#lmap.tilt-3d .leaflet-tile-pane{filter:brightness(.55) contrast(1.15) saturate(.7) hue-rotate(180deg) invert(.94) drop-shadow(0 6px 10px rgba(0,0,0,.4))}
+#lmap{transition:transform .9s var(--ease)}
+@keyframes trafficFlow{to{stroke-dashoffset:-40}}
+.leaflet-overlay-pane path.traf-live{animation:trafficFlow 1.6s linear infinite}
+.leaflet-overlay-pane path.traf-pred{animation:trafficFlow 3s linear infinite reverse;opacity:.75}
+.mctrl{background:rgba(14,15,24,.92);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:8px;
+  padding:7px 11px;font-size:10px;font-weight:600;cursor:pointer;color:var(--muted);
+  transition:all .15s;font-family:inherit;display:flex;align-items:center;gap:6px;white-space:nowrap;letter-spacing:.3px}
+.mctrl:hover{border-color:rgba(0,212,255,.3);color:var(--text)}
+.mctrl.act{border-color:rgba(0,212,255,.4);color:var(--primary);background:rgba(0,212,255,.08)}
+.mctrl svg{width:12px;height:12px;stroke-width:2.2;fill:none}
+
+.map-legend{position:absolute;bottom:14px;left:12px;z-index:10;
+  background:rgba(10,10,15,.92);backdrop-filter:blur(12px);border:1px solid var(--border);
+  border-radius:10px;padding:10px 12px;min-width:180px}
+.ml-title{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--muted);font-family:var(--mono);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+.ml-row{display:flex;align-items:center;gap:7px;font-size:10px;color:var(--text);margin-bottom:4px;font-family:var(--mono)}
+.ml-row:last-child{margin-bottom:0}
+.ml-d{width:10px;height:10px;border-radius:50%;flex-shrink:0;box-shadow:0 0 6px currentColor}
+.ml-row-v{margin-left:auto;color:var(--muted);font-size:9px}
+
+.hint-chip{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);z-index:10;
+  background:rgba(10,10,15,.92);backdrop-filter:blur(12px);border:1px solid rgba(0,212,255,.25);
+  border-radius:99px;padding:6px 14px;font-size:10px;font-family:var(--mono);color:var(--primary);
+  display:flex;align-items:center;gap:6px;letter-spacing:.5px;animation:hintBob 3s ease-in-out infinite}
+@keyframes hintBob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-3px)}}
+.hint-kbd{background:rgba(0,212,255,.15);padding:2px 6px;border-radius:4px;font-size:9px;font-weight:700;border:1px solid rgba(0,212,255,.25)}
+
+/* ── NAVIGATOR MODE ── */
+.nav-overlay{position:absolute;inset:0;z-index:30;display:none;pointer-events:none;font-family:'Outfit',sans-serif}
+.nav-overlay.on{display:block}
+.nav-overlay.on .nav-top,.nav-overlay.on .nav-bottom,.nav-overlay.on .nav-lanes{pointer-events:auto}
+
+/* Top banner */
+.nav-top{position:absolute;top:14px;left:50%;transform:translateX(-50%);width:min(680px,calc(100% - 28px));
+  background:linear-gradient(180deg,rgba(14,20,14,.96),rgba(10,14,10,.92));
+  border:1px solid rgba(74,222,128,.35);border-radius:14px;padding:14px 16px;
+  display:flex;align-items:center;gap:14px;box-shadow:0 18px 48px rgba(0,0,0,.6),0 0 0 1px rgba(74,222,128,.08),0 0 40px rgba(74,222,128,.15);
+  backdrop-filter:blur(18px);animation:navSlideDown .55s var(--spring) both}
+@keyframes navSlideDown{from{opacity:0;transform:translate(-50%,-18px)}to{opacity:1;transform:translateX(-50%)}}
+.nav-maneuver{width:64px;height:64px;border-radius:12px;background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;overflow:hidden}
+.nav-maneuver::before{content:'';position:absolute;inset:-20% -40%;background:conic-gradient(from 0deg,transparent 0deg,rgba(74,222,128,.25) 60deg,transparent 120deg);animation:rotate360 3.5s linear infinite}
+.nav-maneuver svg{width:42px;height:42px;position:relative;z-index:1;animation:navArrowBob 1.4s ease-in-out infinite}
+@keyframes navArrowBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.nav-instr{flex:1;min-width:0}
+.nav-dist{font-family:var(--mono);font-size:26px;font-weight:800;color:#4ade80;letter-spacing:-.02em;line-height:1;text-shadow:0 0 20px rgba(74,222,128,.35)}
+.nav-step{font-size:15px;font-weight:600;margin-top:3px;color:#fff}
+.nav-sub{font-size:11px;color:var(--muted);margin-top:2px;font-family:var(--mono);letter-spacing:.3px}
+.nav-close{width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--muted);cursor:pointer;font-size:14px;flex-shrink:0;transition:all .2s}
+.nav-close:hover{background:rgba(239,68,68,.12);color:var(--err-t);border-color:rgba(239,68,68,.3)}
+
+/* Lanes */
+.nav-lanes{position:absolute;top:110px;left:50%;transform:translateX(-50%);display:flex;gap:6px;padding:7px 10px;border-radius:10px;background:rgba(10,10,15,.85);border:1px solid var(--border);backdrop-filter:blur(12px);animation:navSlideDown .7s var(--spring) .15s both}
+.nav-lane{width:34px;height:34px;border-radius:7px;background:rgba(255,255,255,.04);color:rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;border:1px solid transparent;transition:all .3s}
+.nav-lane svg{width:20px;height:20px}
+.nav-lane.act{background:rgba(74,222,128,.14);color:#4ade80;border-color:rgba(74,222,128,.4);box-shadow:0 0 14px rgba(74,222,128,.2);animation:navLanePulse 1.8s ease-in-out infinite}
+@keyframes navLanePulse{0%,100%{box-shadow:0 0 14px rgba(74,222,128,.2)}50%{box-shadow:0 0 22px rgba(74,222,128,.45)}}
+
+/* Bottom HUD */
+.nav-bottom{position:absolute;bottom:0;left:0;right:0;padding:0 14px 14px;animation:navSlideUp .55s var(--spring) both}
+@keyframes navSlideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+.nav-hud{background:linear-gradient(180deg,rgba(10,11,20,.92),rgba(8,10,18,.96));border:1px solid rgba(0,212,255,.2);border-radius:14px;padding:14px;display:flex;align-items:center;gap:16px;backdrop-filter:blur(18px);box-shadow:0 -18px 48px rgba(0,0,0,.55)}
+.nav-speedo{position:relative;width:96px;height:96px;flex-shrink:0}
+.nav-speed-ring{width:100%;height:100%;filter:drop-shadow(0 0 10px rgba(74,222,128,.3))}
+.nav-speed-ring circle:nth-child(2){transition:stroke-dashoffset .8s var(--ease),stroke .3s}
+.nav-speed-val{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.nav-speed-n{font-family:var(--mono);font-size:30px;font-weight:800;color:#fff;letter-spacing:-.03em;line-height:1}
+.nav-speed-u{font-size:8px;font-family:var(--mono);letter-spacing:2px;color:var(--muted);margin-top:1px}
+.nav-limit{position:absolute;top:-6px;right:-6px;width:34px;height:34px;border-radius:50%;background:#fff;color:#0a0a0f;border:3px solid #f87171;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.5)}
+.nav-limit-n{font-family:var(--mono);font-size:14px;font-weight:800;line-height:1}
+.nav-limit-u{font-size:5px;font-weight:700;letter-spacing:.8px;color:#666;line-height:1}
+.nav-metrics{flex:1;display:grid;grid-template-columns:repeat(4,1fr);gap:10px;min-width:0}
+.nav-m{padding:7px 10px;border-radius:8px;background:rgba(255,255,255,.025);border:1px solid var(--border);min-width:0}
+.nav-m-l{font-size:8px;font-family:var(--mono);letter-spacing:1.4px;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+.nav-m-v{font-family:var(--mono);font-size:15px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav-m-s{font-size:9px;color:var(--muted);font-family:var(--mono);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav-actions{display:flex;flex-direction:column;gap:6px;flex-shrink:0}
+.nav-act{width:38px;height:38px;border-radius:9px;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.nav-act svg{width:16px;height:16px}
+.nav-act:hover{border-color:rgba(0,212,255,.4);color:var(--primary);background:rgba(0,212,255,.08);transform:translateY(-1px)}
+.nav-act.danger:hover{border-color:rgba(239,68,68,.4);color:var(--err-t);background:rgba(239,68,68,.08)}
+
+/* Progress rail */
+.nav-rail{height:4px;margin:10px 6px 0;background:rgba(255,255,255,.06);border-radius:2px;position:relative;overflow:visible}
+.nav-rail-fill{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,#00d4ff,#4ade80);border-radius:2px;transition:width 1s var(--ease);box-shadow:0 0 10px rgba(74,222,128,.4)}
+.nav-rail-dot{position:absolute;top:50%;transform:translate(-50%,-50%);width:10px;height:10px;border-radius:50%;background:#0a0a0f;border:2px solid rgba(255,255,255,.25)}
+.nav-rail-dot.act{background:#4ade80;border-color:#4ade80;box-shadow:0 0 0 3px rgba(74,222,128,.25),0 0 12px rgba(74,222,128,.6);animation:navDotPulse 1.5s ease-in-out infinite}
+@keyframes navDotPulse{0%,100%{box-shadow:0 0 0 3px rgba(74,222,128,.25),0 0 12px rgba(74,222,128,.6)}50%{box-shadow:0 0 0 6px rgba(74,222,128,.1),0 0 18px rgba(74,222,128,.8)}}
+
+/* Map filter when navigator on */
+#lmap.nav-active .leaflet-tile-pane{filter:brightness(.4) contrast(1.2) saturate(.8) hue-rotate(180deg) invert(.94) blur(.5px)}
+#lmap.nav-active{transform:perspective(1600px) rotateX(28deg) scale(1.1);transition:transform 1.2s var(--ease)}
+.leaflet-overlay-pane path.nav-route{stroke:#4ade80;stroke-width:6;fill:none;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 8px rgba(74,222,128,.55));animation:navRouteGlow 2.4s ease-in-out infinite}
+.leaflet-overlay-pane path.nav-route-done{stroke:rgba(74,222,128,.35);stroke-width:5;fill:none;stroke-linecap:round;stroke-dasharray:2 6}
+@keyframes navRouteGlow{0%,100%{filter:drop-shadow(0 0 8px rgba(74,222,128,.55))}50%{filter:drop-shadow(0 0 16px rgba(74,222,128,.85))}}
+.nav-car-icon{width:36px;height:36px;border-radius:50%;background:radial-gradient(circle,#4ade80,#16a34a);border:3px solid #fff;box-shadow:0 0 0 4px rgba(74,222,128,.3),0 0 24px rgba(74,222,128,.6),0 4px 12px rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;animation:navCarPulse 1.4s ease-in-out infinite;position:relative}
+.nav-car-icon::before{content:'';position:absolute;inset:-10px;border-radius:50%;border:2px solid #4ade80;opacity:.5;animation:presenceRing 1.8s ease-out infinite}
+.nav-car-icon svg{width:18px;height:18px;stroke:#0a0a0f;stroke-width:2.5;fill:none}
+@keyframes navCarPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+
+/* ── FOCUS CARD ── */
+.focus-card{position:absolute;bottom:14px;right:12px;z-index:20;width:280px;
+  box-shadow:0 12px 36px rgba(0,0,0,.7),0 0 0 1px rgba(0,212,255,.08),0 0 40px rgba(0,212,255,.08);
+  animation:focusIn .35s var(--spring)}
+@keyframes focusIn{from{opacity:0;transform:translateY(12px) scale(.96)}to{opacity:1;transform:none}}
+.focus-card.vis{display:block}
+.fc-hdr{display:flex;align-items:center;gap:10px;padding:11px 13px;border-bottom:1px solid var(--border)}
+.fc-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.fc-info{flex:1;min-width:0}
+.fc-name{font-size:12px;font-weight:700}
+.fc-sub{font-size:9px;color:var(--muted);font-family:var(--mono);letter-spacing:.4px}
+.fc-close{background:none;border:none;cursor:pointer;color:var(--muted);padding:4px;font-size:14px;border-radius:4px;line-height:0}
+.fc-close:hover{color:var(--text);background:rgba(255,255,255,.05)}
+.fc-tele{padding:10px 13px;display:grid;grid-template-columns:1fr 1fr;gap:5px;border-bottom:1px solid var(--border)}
+.fc-tele-row{padding:6px 8px;border-radius:6px;background:rgba(255,255,255,.025);border:1px solid var(--border-sub)}
+.fc-tele-label{font-size:7px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);font-family:var(--mono);margin-bottom:2px}
+.fc-tele-val{font-size:11px;font-weight:700;font-family:var(--mono);color:var(--primary)}
+
+/* ── COST-TO-SERVE PANEL ── */
+.cts-panel{position:fixed;top:0;right:-520px;width:500px;height:100vh;z-index:200;
+  background:#0c0d16;border-left:1px solid var(--border);
+  display:flex;flex-direction:column;transition:right .42s var(--ease);
+  box-shadow:-28px 0 80px rgba(0,0,0,.7)}
+.cts-panel.open{right:0}
+.cts-hdr{padding:16px 18px;border-bottom:1px solid var(--border);flex-shrink:0;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  background:linear-gradient(135deg,rgba(0,212,255,.04),rgba(52,211,153,.04))}
+.cts-hdr-l{display:flex;align-items:center;gap:10px}
+.cts-hdr-icon{width:32px;height:32px;border-radius:8px;background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.25);display:flex;align-items:center;justify-content:center;color:var(--money)}
+.cts-hdr-icon svg{width:16px;height:16px;stroke-width:2.2;fill:none}
+.cts-title{font-size:14px;font-weight:700}
+.cts-sub{font-size:10px;color:var(--muted);font-family:var(--mono)}
+.cts-close{background:none;border:none;cursor:pointer;color:var(--muted);font-size:18px;padding:4px;border-radius:5px;line-height:1}
+.cts-close:hover{color:var(--text);background:rgba(255,255,255,.05)}
+.cts-body{flex:1;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:14px}
+.cts-hero{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:12px;padding:14px;position:relative;overflow:hidden}
+.cts-hero::before{content:'';position:absolute;right:-30px;top:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(52,211,153,.12),transparent 70%);border-radius:50%}
+.cts-hero-l{font-size:8px;font-family:var(--mono);color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px}
+.cts-hero-v{font-size:32px;font-weight:800;font-family:var(--mono);color:var(--money);letter-spacing:-.03em;line-height:1}
+.cts-hero-sub{font-size:11px;color:var(--muted);margin-top:4px}
+.cts-hero-delta{display:inline-flex;align-items:center;gap:4px;margin-top:8px;font-size:10px;font-family:var(--mono);padding:2px 8px;border-radius:99px;background:rgba(52,211,153,.1);color:var(--money);font-weight:700}
+.cts-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.cts-cell{background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:10px;padding:11px}
+.cts-cell-l{font-size:8px;font-family:var(--mono);color:var(--muted);letter-spacing:1.3px;text-transform:uppercase;margin-bottom:5px}
+.cts-cell-v{font-size:17px;font-weight:700;font-family:var(--mono);letter-spacing:-.02em}
+.cts-cell-s{font-size:9px;color:var(--muted);margin-top:2px;font-family:var(--mono)}
+.cts-cell.err .cts-cell-v{color:var(--err-t)}
+.cts-cell.ok .cts-cell-v{color:var(--money)}
+.cts-cell.cy .cts-cell-v{color:var(--primary)}
+
+.cts-section-lbl{font-size:9px;font-weight:700;font-family:var(--mono);color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.cts-section-lbl::after{content:'';flex:1;height:1px;background:var(--border)}
+
+.cts-waterfall{background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:10px;padding:13px;display:flex;flex-direction:column;gap:7px}
+.wf-row{display:flex;align-items:center;gap:10px}
+.wf-label{font-size:11px;color:var(--text);width:100px;flex-shrink:0}
+.wf-bar-wrap{flex:1;height:18px;position:relative;border-radius:5px;background:rgba(255,255,255,.04);overflow:hidden}
+.wf-bar{position:absolute;top:0;bottom:0;border-radius:5px;transition:width 1.4s var(--ease)}
+.wf-bar.pos{background:linear-gradient(90deg,rgba(52,211,153,.3),rgba(52,211,153,.7))}
+.wf-bar.neg{background:linear-gradient(90deg,rgba(239,68,68,.3),rgba(239,68,68,.7))}
+.wf-bar.hero{background:linear-gradient(90deg,rgba(0,212,255,.3),rgba(0,212,255,.7))}
+.wf-val{font-family:var(--mono);font-weight:700;font-size:11px;width:72px;text-align:right;flex-shrink:0}
+.wf-val.pos{color:var(--money)}.wf-val.neg{color:var(--err-t)}.wf-val.hero{color:var(--primary)}
+
+.cts-discount{background:linear-gradient(135deg,rgba(0,212,255,.06),rgba(167,139,250,.06));border:1px solid rgba(0,212,255,.18);border-radius:10px;padding:13px}
+.cd-row{display:flex;align-items:center;justify-content:space-between;padding:5px 0;font-size:11px;font-family:var(--mono)}
+.cd-row.big{padding:7px 0;border-top:1px solid var(--border-sub);margin-top:4px}
+.cd-lbl{color:var(--muted)}
+.cd-v{font-weight:700;color:var(--text)}
+.cd-v.strike{text-decoration:line-through;color:var(--dim);font-weight:500}
+.cd-v.hero{color:var(--money);font-size:15px}
+.cd-pct{display:inline-flex;align-items:center;font-size:10px;font-weight:800;padding:3px 8px;border-radius:99px;background:var(--primary);color:var(--bg);font-family:var(--mono);letter-spacing:.3px}
+
+.cts-footer{padding:12px 18px;border-top:1px solid var(--border);flex-shrink:0;display:flex;gap:8px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 14px;border-radius:8px;
+  font-size:12px;font-weight:600;border:none;cursor:pointer;transition:all .15s;font-family:inherit;line-height:1}
+.btn-p{background:linear-gradient(135deg,#00d4ff,#0099cc);color:#0a0a0f;box-shadow:0 2px 12px var(--primary-glow)}
+.btn-p:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(0,212,255,.4)}
+.btn-o{background:transparent;color:var(--text);border:1px solid var(--border)}
+.btn-o:hover{border-color:rgba(0,212,255,.3);background:rgba(0,212,255,.05)}
+.btn-sm{padding:5px 10px;font-size:11px;border-radius:6px}
+.cts-footer .btn{flex:1}
+
+/* ── MODAL ── */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(3px);z-index:500;display:none;align-items:center;justify-content:center}
+.scrim.vis{display:flex;animation:fadeIn .2s}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal-box{background:#0e0f18;border:1px solid rgba(0,212,255,.2);border-radius:14px;width:480px;max-width:95vw;max-height:90vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 24px 80px rgba(0,0,0,.8);animation:modalIn .3s var(--spring)}
+@keyframes modalIn{from{opacity:0;transform:scale(.94) translateY(8px)}to{opacity:1;transform:none}}
+.modal-hdr{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-ttl{font-size:14px;font-weight:700}
+.modal-body{padding:14px 18px;overflow-y:auto;max-height:60vh}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(16px);
+  background:#13141f;border:1px solid rgba(0,212,255,.25);border-radius:10px;
+  padding:10px 18px;font-size:12px;color:var(--text);z-index:9999;
+  transition:all .25s var(--ease);opacity:0;white-space:nowrap;
+  box-shadow:0 8px 32px rgba(0,0,0,.55),0 0 40px rgba(0,212,255,.06);pointer-events:none;display:flex;align-items:center;gap:8px}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#toast.err{border-color:rgba(239,68,68,.3)}
+#toast.ok{border-color:rgba(52,211,153,.3)}
+
+/* ── LEAFLET OVERRIDES ── */
+.leaflet-container{background:#0a0a0f!important}
+.leaflet-tile-pane{filter:brightness(.55) contrast(1.1) saturate(.6) hue-rotate(180deg) invert(.94)}
+.leaflet-popup-content-wrapper{background:#12131e!important;border:1px solid rgba(0,212,255,.2)!important;border-radius:10px!important;box-shadow:0 12px 36px rgba(0,0,0,.7)!important;color:var(--text)!important;font-family:'Outfit',sans-serif!important}
+.leaflet-popup-tip{background:#12131e!important;border:1px solid rgba(0,212,255,.2)!important}
+.leaflet-popup-content{margin:11px 14px!important;font-size:12px!important}
+.leaflet-control-zoom{border:1px solid var(--border)!important;border-radius:8px!important;overflow:hidden;box-shadow:0 4px 14px rgba(0,0,0,.5)!important}
+.leaflet-control-zoom a{background:rgba(14,15,24,.92)!important;color:var(--muted)!important;border-color:var(--border)!important;backdrop-filter:blur(8px)}
+.leaflet-control-zoom a:hover{background:#1a1b2e!important;color:var(--primary)!important}
+.leaflet-control-attribution{background:rgba(10,10,15,.7)!important;color:var(--dim)!important;font-size:9px!important;backdrop-filter:blur(6px)}
+.leaflet-control-attribution a{color:var(--muted)!important}
+
+.lf-drv{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;border:2px solid rgba(255,255,255,.18);box-shadow:0 0 0 0 rgba(0,212,255,.3),0 4px 14px rgba(0,0,0,.6);cursor:pointer;transition:all .3s var(--spring);position:relative}
+.lf-drv:hover{transform:scale(1.15);z-index:1000}
+.lf-drv.sel{box-shadow:0 0 0 4px rgba(0,212,255,.4),0 0 20px rgba(0,212,255,.5),0 4px 14px rgba(0,0,0,.6);border-color:var(--primary);transform:scale(1.1)}
+/* Presence ring */
+.lf-drv::before{content:'';position:absolute;inset:-6px;border-radius:50%;border:1.5px solid currentColor;opacity:.35;animation:presenceRing 2.4s ease-out infinite;pointer-events:none}
+.lf-drv::after{content:'';position:absolute;inset:-10px;border-radius:50%;border:1px solid currentColor;opacity:.2;animation:presenceRing 2.4s ease-out .8s infinite;pointer-events:none}
+@keyframes presenceRing{0%{transform:scale(.6);opacity:.5}100%{transform:scale(1.15);opacity:0}}
+.lf-drv.late{animation:drvLate .8s ease-in-out infinite}
+@keyframes drvLate{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.4),0 4px 14px rgba(0,0,0,.6)}50%{box-shadow:0 0 0 6px rgba(239,68,68,0),0 4px 14px rgba(0,0,0,.6)}}
+.lf-depot{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:#12131e;border:2px solid rgba(0,212,255,.4);box-shadow:0 0 18px rgba(0,212,255,.25),0 4px 14px rgba(0,0,0,.6)}
+.lf-depot svg{width:16px;height:16px;stroke:var(--primary);stroke-width:2.4;fill:none}
+
+.popup-title{font-size:13px;font-weight:700;margin-bottom:6px}
+.popup-row{display:flex;justify-content:space-between;font-size:11px;margin-top:4px;gap:14px;font-family:var(--mono)}
+.popup-label{color:var(--muted)}
+.popup-val{font-weight:700}
+.popup-dblhint{font-size:9px;color:var(--primary);margin-top:8px;padding-top:7px;border-top:1px dashed rgba(0,212,255,.18);font-family:var(--mono);letter-spacing:.3px}
+
+/* ═══════════════════════════════════════════════════════════
+   ANIMATION LAYER — v3.2 (all admin lenses)
+   ═══════════════════════════════════════════════════════════ */
+
+/* Global reveals */
+@keyframes cardIn{0%{opacity:0;transform:translateY(10px) scale(.97);filter:blur(4px)}100%{opacity:1;transform:none;filter:blur(0)}}
+@keyframes slideInLeft{0%{opacity:0;transform:translateX(-14px)}100%{opacity:1;transform:none}}
+@keyframes slideInRight{0%{opacity:0;transform:translateX(14px)}100%{opacity:1;transform:none}}
+@keyframes slideInUp{0%{opacity:0;transform:translateY(14px)}100%{opacity:1;transform:none}}
+@keyframes pop{0%{opacity:0;transform:scale(.8)}60%{transform:scale(1.06)}100%{opacity:1;transform:scale(1)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes gentleFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+@keyframes breathe{0%,100%{opacity:.85;transform:scale(1)}50%{opacity:1;transform:scale(1.03)}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes shineSweep{0%{transform:translateX(-120%) skewX(-18deg)}100%{transform:translateX(320%) skewX(-18deg)}}
+@keyframes rotate360{to{transform:rotate(360deg)}}
+@keyframes wavePulse{0%,100%{box-shadow:0 0 0 0 currentColor}50%{box-shadow:0 0 0 6px transparent}}
+@keyframes nudgeShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-2px)}40%{transform:translateX(2px)}60%{transform:translateX(-1px)}80%{transform:translateX(1px)}}
+@keyframes glowPulse{0%,100%{filter:drop-shadow(0 0 0 currentColor)}50%{filter:drop-shadow(0 0 6px currentColor)}}
+@keyframes countUp{0%{opacity:0;transform:translateY(6px)}100%{opacity:1;transform:none}}
+@keyframes barGrow{from{transform:scaleX(0);transform-origin:left}to{transform:scaleX(1)}}
+@keyframes borderDance{0%,100%{border-color:rgba(0,212,255,.22)}50%{border-color:rgba(0,212,255,.55)}}
+@keyframes haloExpand{0%{box-shadow:0 0 0 0 rgba(0,212,255,.45)}100%{box-shadow:0 0 0 14px rgba(0,212,255,0)}}
+@keyframes liveDotBlink{0%,45%,100%{opacity:1;transform:scale(1)}55%,85%{opacity:.35;transform:scale(.85)}}
+@keyframes scanLine{0%{transform:translateX(-100%)}100%{transform:translateX(200%)}}
+@keyframes textFadeUp{0%{opacity:0;transform:translateY(4px);letter-spacing:0}60%{letter-spacing:.02em}100%{opacity:1;transform:none}}
+@keyframes statusBlip{0%,100%{opacity:0;transform:scale(.4)}50%{opacity:1;transform:scale(1.2)}}
+@keyframes bgHueShift{0%,100%{filter:hue-rotate(0deg)}50%{filter:hue-rotate(14deg)}}
+@keyframes ghostTrail{0%{opacity:0;transform:translateX(-10px)}30%{opacity:.6}100%{opacity:0;transform:translateX(10px)}}
+@keyframes pulseHalo{0%{transform:scale(.9);opacity:.7}100%{transform:scale(1.6);opacity:0}}
+@keyframes emojiSpin{0%{transform:rotateY(0)}100%{transform:rotateY(360deg)}}
+
+/* Staggered-cascade helper */
+.drv-card,.asn-card{animation:cardIn .5s var(--spring) both;will-change:transform,opacity}
+.drv-card:nth-child(1){animation-delay:.04s}
+.drv-card:nth-child(2){animation-delay:.08s}
+.drv-card:nth-child(3){animation-delay:.12s}
+.drv-card:nth-child(4){animation-delay:.16s}
+.drv-card:nth-child(5){animation-delay:.2s}
+.drv-card:nth-child(6){animation-delay:.24s}
+.drv-card:nth-child(7){animation-delay:.28s}
+.drv-card:nth-child(8){animation-delay:.32s}
+.drv-card:nth-child(n+9){animation-delay:.36s}
+.asn-card:nth-child(1){animation-delay:.05s}
+.asn-card:nth-child(2){animation-delay:.11s}
+.asn-card:nth-child(3){animation-delay:.17s}
+.asn-card:nth-child(4){animation-delay:.23s}
+.asn-card:nth-child(5){animation-delay:.29s}
+.asn-card:nth-child(n+6){animation-delay:.35s}
+
+/* Driver card hover polish */
+.drv-card{transition:background .22s var(--ease),border-left-color .22s,transform .28s var(--spring),box-shadow .25s}
+.drv-card:hover{transform:translateX(3px);box-shadow:inset 2px 0 0 rgba(0,212,255,.35)}
+.drv-card.sel{animation:cardIn .5s var(--spring) both,borderDance 3s var(--ease) infinite}
+.drv-av{transition:transform .3s var(--spring),box-shadow .3s}
+.drv-card:hover .drv-av{transform:scale(1.08) rotate(-4deg)}
+.drv-card.sel .drv-av{animation:haloExpand 1.8s ease-out infinite}
+.oee-mini-fill{background:linear-gradient(90deg,#00d4ff,#4ade80,#00d4ff);background-size:200% 100%;animation:shimmer 3s linear infinite}
+.drv-cost{transition:transform .25s var(--spring),color .2s}
+.drv-card:hover .drv-cost{transform:scale(1.08)}
+
+/* Ribbon — ambient scanline + cell pop */
+.ribbon{position:relative}
+.rb-cell{animation:slideInUp .55s var(--spring) both;position:relative;overflow:hidden;transition:background .3s}
+.rb-cell:nth-child(1){animation-delay:.04s}
+.rb-cell:nth-child(2){animation-delay:.09s}
+.rb-cell:nth-child(3){animation-delay:.14s}
+.rb-cell:nth-child(4){animation-delay:.19s}
+.rb-cell:nth-child(5){animation-delay:.24s}
+.rb-cell:nth-child(6){animation-delay:.29s}
+.rb-cell::after{content:'';position:absolute;top:0;bottom:0;left:-30%;width:25%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent);
+  transform:skewX(-18deg);pointer-events:none;opacity:0;transition:opacity .3s}
+.rb-cell:hover::after{opacity:1;animation:shineSweep 1.1s ease-out}
+.rb-cell:hover{background:rgba(255,255,255,.015)}
+.rb-cell:hover .rb-icon{animation:emojiSpin .7s var(--ease)}
+.rb-icon{transition:transform .3s var(--spring)}
+.rb-value{animation:textFadeUp .5s var(--ease) both;display:inline-block}
+.rb-cell:nth-child(1) .rb-value{animation-delay:.12s}
+.rb-cell:nth-child(2) .rb-value{animation-delay:.17s}
+.rb-cell:nth-child(3) .rb-value{animation-delay:.22s}
+.rb-cell:nth-child(4) .rb-value{animation-delay:.27s}
+.rb-cell:nth-child(5) .rb-value{animation-delay:.32s}
+.rb-cell:nth-child(6) .rb-value{animation-delay:.37s}
+
+/* Command rail checks */
+.ck{animation:pop .45s var(--spring) both;will-change:transform}
+.ck:nth-child(1){animation-delay:.02s}
+.ck:nth-child(2){animation-delay:.06s}
+.ck:nth-child(3){animation-delay:.1s}
+.ck:nth-child(4){animation-delay:.14s}
+.ck:nth-child(5){animation-delay:.18s}
+.ck:nth-child(6){animation-delay:.22s}
+.ck:nth-child(7){animation-delay:.26s}
+.ck:nth-child(8){animation-delay:.3s}
+.ck .ck-v{transition:transform .25s var(--spring)}
+.ck:hover .ck-v{transform:scale(1.08)}
+.ck.err .ck-v{animation:glowPulse 2.2s ease-in-out infinite}
+.ck.warn .ck-v{animation:gentleFloat 3s ease-in-out infinite}
+
+/* Persona switch — sliding indicator + dot glow */
+.persona-switch{position:relative}
+.ps-btn{position:relative;transition:all .25s var(--spring)}
+.ps-btn:hover{transform:translateY(-1px)}
+.ps-btn.act{animation:pop .4s var(--spring)}
+.ps-btn.act .ps-dot{animation:breathe 1.8s ease-in-out infinite}
+.ps-dot{transition:transform .2s var(--spring),box-shadow .2s}
+.ps-btn:hover .ps-dot{transform:scale(1.35)}
+
+/* Role pill live heartbeat */
+.role-pill{transition:all .25s var(--spring)}
+.role-pill:hover{transform:translateY(-1px)}
+.role-dot{animation:liveDotBlink 2.4s ease-in-out infinite}
+
+/* Loc bar tab morph */
+.loc-tab{position:relative;transition:all .22s var(--ease)}
+.loc-tab::before{content:'';position:absolute;left:50%;right:50%;bottom:0;height:2px;background:var(--primary);transition:left .35s var(--spring),right .35s var(--spring);opacity:0}
+.loc-tab:hover::before{left:15%;right:15%;opacity:.6}
+.loc-tab.act::before{left:0;right:0;opacity:1;box-shadow:0 0 8px var(--primary)}
+.loc-tab .loc-dot{transition:transform .25s var(--spring),box-shadow .3s}
+.loc-tab:hover .loc-dot,.loc-tab.act .loc-dot{transform:scale(1.3);box-shadow:0 0 8px currentColor}
+.loc-tab.act .loc-dot{background:var(--primary)!important}
+
+/* Left-panel tabs */
+.ltab{position:relative;transition:all .2s var(--ease)}
+.ltab::after{content:'';position:absolute;left:20%;right:20%;bottom:0;height:2px;background:var(--primary);transform:scaleX(0);transform-origin:center;transition:transform .35s var(--spring)}
+.ltab.act::after{transform:scaleX(1);box-shadow:0 0 8px var(--primary)}
+.ltab-count{transition:transform .25s var(--spring),background .2s}
+.ltab:hover .ltab-count{transform:scale(1.15)}
+.ltab.warn .ltab-count{animation:gentleFloat 2.4s ease-in-out infinite}
+
+/* ASN card — breach throbs, warn wiggles */
+.asn-card{transition:transform .3s var(--spring),border-color .25s,box-shadow .35s}
+.asn-card:hover{transform:translateY(-2px) scale(1.005);box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.asn-card.err{animation:cardIn .5s var(--spring) both,borderDance 2.4s ease-in-out infinite}
+.asn-card.err:hover{animation:nudgeShake .5s ease-in-out}
+.asn-fine-val{animation:glowPulse 1.8s ease-in-out infinite}
+.asn-btn{transition:all .22s var(--spring);position:relative;overflow:hidden}
+.asn-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);transform:translateX(-100%)}
+.asn-btn:hover{transform:translateY(-1px)}
+.asn-btn:hover::before{animation:shineSweep .7s ease-out}
+.asn-btn.primary:hover{box-shadow:0 4px 16px var(--primary-glow)}
+
+/* SQEP fine warning pulse */
+.asn-fine{animation:cardIn .45s var(--spring) both;animation-delay:.25s;position:relative;overflow:hidden}
+.asn-fine::before{content:'';position:absolute;top:0;bottom:0;left:-40%;width:30%;background:linear-gradient(90deg,transparent,rgba(239,68,68,.25),transparent);animation:scanLine 3.5s linear infinite}
+
+/* Section headers */
+.sec-head{animation:slideInLeft .4s var(--ease) both}
+.sec-head-count{transition:color .3s}
+
+/* Map chips */
+.map-chip{animation:slideInLeft .5s var(--spring) both;animation-delay:.2s;transition:all .3s}
+.map-chip:hover{transform:translateY(-2px);border-color:rgba(0,212,255,.4)}
+.map-chip-dot{animation:breathe 1.6s ease-in-out infinite}
+.map-ctrl-group{animation:slideInRight .55s var(--spring) both;animation-delay:.25s}
+.mctrl{transition:all .25s var(--spring);position:relative;overflow:hidden}
+.mctrl::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(0,212,255,.18),transparent 60%);opacity:0;transition:opacity .3s}
+.mctrl:hover{transform:translateY(-1px)}
+.mctrl:hover::before{opacity:1}
+.mctrl.act{animation:pop .4s var(--spring)}
+.mctrl.act svg{animation:rotate360 6s linear infinite}
+.mctrl:active{transform:scale(.97)}
+
+/* Map legend */
+.map-legend{animation:slideInUp .55s var(--spring) both;animation-delay:.35s}
+.ml-row{transition:transform .2s}
+.ml-row:hover{transform:translateX(3px)}
+.ml-d{transition:transform .25s var(--spring)}
+.ml-row:hover .ml-d{transform:scale(1.4)}
+.ml-row-v{transition:color .25s}
+
+/* Hint chip already bobs */
+
+/* Focus card — more dramatic entry */
+.focus-card{animation:focusInPro .5s var(--spring)}
+@keyframes focusInPro{0%{opacity:0;transform:translateY(20px) scale(.9);filter:blur(6px)}60%{filter:blur(0)}100%{opacity:1;transform:none;filter:blur(0)}}
+.fc-av{transition:transform .3s var(--spring);animation:breathe 2.4s ease-in-out infinite}
+.fc-tele-row{animation:pop .45s var(--spring) both;transition:background .25s,transform .25s}
+.fc-tele-row:nth-child(1){animation-delay:.1s}
+.fc-tele-row:nth-child(2){animation-delay:.14s}
+.fc-tele-row:nth-child(3){animation-delay:.18s}
+.fc-tele-row:nth-child(4){animation-delay:.22s}
+.fc-tele-row:nth-child(5){animation-delay:.26s}
+.fc-tele-row:nth-child(6){animation-delay:.3s}
+.fc-tele-row:hover{background:rgba(0,212,255,.05);transform:translateY(-1px)}
+.fc-tele-val{transition:color .25s,transform .25s}
+.fc-tele-row:hover .fc-tele-val{transform:scale(1.08)}
+
+/* Cost-to-serve panel — orchestrated entrance */
+.cts-panel.open .cts-hero{animation:pop .55s var(--spring) .15s both}
+.cts-panel.open .cts-cell{animation:pop .5s var(--spring) both}
+.cts-panel.open .cts-cell:nth-child(1){animation-delay:.25s}
+.cts-panel.open .cts-cell:nth-child(2){animation-delay:.3s}
+.cts-panel.open .cts-cell:nth-child(3){animation-delay:.35s}
+.cts-panel.open .cts-cell:nth-child(4){animation-delay:.4s}
+.cts-panel.open .cts-discount{animation:slideInUp .5s var(--spring) .45s both}
+.cts-panel.open .cts-waterfall{animation:slideInUp .5s var(--spring) .5s both}
+.cts-cell{transition:transform .3s var(--spring),border-color .25s}
+.cts-cell:hover{transform:translateY(-2px);border-color:rgba(0,212,255,.25)}
+.cts-cell-v{transition:transform .25s var(--spring)}
+.cts-cell:hover .cts-cell-v{transform:scale(1.05)}
+.cts-hero-v{animation:textFadeUp .6s var(--spring) .25s both;display:inline-block}
+.cts-hero-delta{animation:pop .5s var(--spring) .55s both}
+
+/* Waterfall bars grow sequentially */
+.wf-row{opacity:0;animation:slideInLeft .4s var(--ease) forwards}
+.cts-panel.open .wf-row:nth-child(1){animation-delay:.6s}
+.cts-panel.open .wf-row:nth-child(2){animation-delay:.68s}
+.cts-panel.open .wf-row:nth-child(3){animation-delay:.76s}
+.cts-panel.open .wf-row:nth-child(4){animation-delay:.84s}
+.cts-panel.open .wf-row:nth-child(5){animation-delay:.92s}
+.cts-panel.open .wf-row:nth-child(6){animation-delay:1s}
+.cts-panel.open .wf-row:nth-child(7){animation-delay:1.08s}
+.cts-panel.open .wf-row:nth-child(8){animation-delay:1.14s}
+.cts-panel.open .wf-row:nth-child(9){animation-delay:1.22s}
+.wf-bar{animation:barGrow 1.1s var(--spring) both}
+.cts-panel.open .wf-row:nth-child(1) .wf-bar{animation-delay:.65s}
+.cts-panel.open .wf-row:nth-child(2) .wf-bar{animation-delay:.73s}
+.cts-panel.open .wf-row:nth-child(3) .wf-bar{animation-delay:.81s}
+.cts-panel.open .wf-row:nth-child(4) .wf-bar{animation-delay:.89s}
+.cts-panel.open .wf-row:nth-child(5) .wf-bar{animation-delay:.97s}
+.cts-panel.open .wf-row:nth-child(6) .wf-bar{animation-delay:1.05s}
+.cts-panel.open .wf-row:nth-child(7) .wf-bar{animation-delay:1.13s}
+.cts-panel.open .wf-row:nth-child(8) .wf-bar{animation-delay:1.21s}
+.cts-panel.open .wf-row:nth-child(9) .wf-bar{animation-delay:1.28s}
+
+/* Discount badge */
+.cd-pct{animation:breathe 2s ease-in-out infinite;display:inline-flex;position:relative;overflow:hidden}
+.cd-pct::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);transform:translateX(-100%);animation:scanLine 3s ease-in-out infinite 1.5s}
+
+/* Buttons — universal polish */
+.btn{position:relative;overflow:hidden;transition:all .25s var(--spring)}
+.btn::before{content:'';position:absolute;top:0;bottom:0;left:-100%;width:60%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.22),transparent);transform:skewX(-20deg);pointer-events:none}
+.btn:hover::before{animation:shineSweep .85s ease-out}
+.btn-p:hover{transform:translateY(-1px) scale(1.02)}
+.btn-o:hover{transform:translateY(-1px)}
+.btn:active{transform:scale(.97)}
+
+/* Role pill acts */
+.role-pill{overflow:hidden;position:relative}
+.role-pill::after{content:'';position:absolute;top:0;bottom:0;left:-100%;width:50%;background:linear-gradient(90deg,transparent,rgba(0,212,255,.12),transparent);animation:scanLine 5s ease-in-out infinite 2s;pointer-events:none}
+
+/* Persona switch transitions for lens swap */
+.persona-flash{animation:personaFlash .9s ease-out}
+@keyframes personaFlash{0%{filter:brightness(1)}35%{filter:brightness(1.35) saturate(1.2)}100%{filter:brightness(1)}}
+
+/* Left panel body crossfade on tab change */
+.lp-body{transition:opacity .2s ease}
+.lp-body.swapping{opacity:0}
+
+/* Leaflet swarm — polish */
+.lf-drv{transition:transform .35s var(--spring),box-shadow .3s,border-color .3s}
+.lf-drv:hover{transform:scale(1.25);z-index:1000}
+.lf-drv.sel{animation:haloExpand 1.6s ease-out infinite}
+
+/* Number counter wrapper */
+.num-anim{display:inline-block;animation:countUp .5s var(--ease)}
+
+/* Toast upgrade */
+#toast{transform:translateX(-50%) translateY(20px) scale(.9)}
+#toast.show{transform:translateX(-50%) translateY(0) scale(1);animation:toastBounce .5s var(--spring)}
+@keyframes toastBounce{0%{transform:translateX(-50%) translateY(20px) scale(.85);opacity:0}60%{transform:translateX(-50%) translateY(-4px) scale(1.04);opacity:1}100%{transform:translateX(-50%) translateY(0) scale(1);opacity:1}}
+#toast::before{content:'';position:absolute;inset:-1px;border-radius:10px;background:linear-gradient(90deg,transparent,rgba(0,212,255,.3),transparent);background-size:200% 100%;animation:shimmer 2.4s linear infinite;z-index:-1;opacity:.7;pointer-events:none}
+
+/* Zone cost bars (Cost tab) */
+.zcost-row{animation:slideInUp .5s var(--spring) both}
+.zcost-row:nth-child(1){animation-delay:.05s}
+.zcost-row:nth-child(2){animation-delay:.1s}
+.zcost-row:nth-child(3){animation-delay:.15s}
+.zcost-row:nth-child(4){animation-delay:.2s}
+.zcost-row:nth-child(5){animation-delay:.25s}
+.zcost-row{transition:transform .25s var(--spring),background .25s}
+.zcost-row:hover{transform:translateX(3px);background:rgba(255,255,255,.04)!important}
+.zcost-bar-fill{animation:barGrow 1.1s var(--spring);transform-origin:left}
+
+/* Savings hero */
+.savings-hero{animation:pop .6s var(--spring) .3s both;position:relative;overflow:hidden}
+.savings-hero::after{content:'';position:absolute;top:-50%;left:-20%;width:35%;height:200%;background:linear-gradient(90deg,transparent,rgba(52,211,153,.15),transparent);transform:rotate(18deg);animation:scanLine 5s ease-in-out infinite}
+
+/* Exc-flag pulse accent */
+.exc-flag{animation:fp 2s infinite,pop .4s var(--spring) both}
+
+/* Avatar status dot glow */
+.drv-av.st-late::after{animation:pulse .7s infinite,glowPulse 1.2s ease-in-out infinite}
+
+/* ═══════════════════════════════════════════════════════════
+   TESLA-STYLE DRIVER COCKPIT (Navigator view)
+   ═══════════════════════════════════════════════════════════ */
+.nav-scrim{position:fixed;inset:0;z-index:800;background:radial-gradient(ellipse at center,#0a0f18 0%,#050609 75%);opacity:0;pointer-events:none;transition:opacity .5s var(--ease);backdrop-filter:blur(2px)}
+.nav-scrim.on{opacity:1;pointer-events:auto}
+.nav-cockpit{position:fixed;inset:0;z-index:801;display:flex;flex-direction:column;pointer-events:none;opacity:0;transform:scale(.96);transition:opacity .55s var(--ease),transform .7s var(--spring);color:#fff;font-family:'Outfit',-apple-system,sans-serif}
+.nav-cockpit.on{opacity:1;pointer-events:auto;transform:none}
+
+.nc-top{display:flex;align-items:center;justify-content:space-between;padding:18px 28px;gap:18px;flex-shrink:0}
+.nc-top-l{display:flex;align-items:center;gap:16px}
+.nc-back{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);cursor:pointer;color:#fff;transition:all .2s}
+.nc-back:hover{background:rgba(0,212,255,.12);border-color:rgba(0,212,255,.4);transform:scale(1.05)}
+.nc-back svg{width:18px;height:18px;stroke:currentColor;stroke-width:2.2;fill:none}
+.nc-driver{display:flex;flex-direction:column;gap:2px}
+.nc-driver-nm{font-size:18px;font-weight:600;letter-spacing:-.01em}
+.nc-driver-sub{font-size:11px;color:rgba(255,255,255,.5);font-family:var(--mono);letter-spacing:.4px}
+.nc-top-r{display:flex;align-items:center;gap:10px}
+.nc-badge{padding:5px 11px;border-radius:99px;font-size:10px;font-family:var(--mono);letter-spacing:1px;font-weight:700;background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.25);display:flex;align-items:center;gap:6px}
+.nc-badge .dot{width:6px;height:6px;border-radius:50%;background:currentColor;animation:breathe 1.6s ease-in-out infinite}
+.nc-model-select{position:relative}
+.nc-model-btn{display:flex;align-items:center;gap:9px;padding:7px 13px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#fff;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;transition:all .2s}
+.nc-model-btn:hover{background:rgba(0,212,255,.08);border-color:rgba(0,212,255,.3)}
+.nc-model-btn svg{width:11px;height:11px;stroke:currentColor;stroke-width:2;fill:none}
+.nc-model-menu{position:absolute;top:calc(100% + 6px);right:0;background:#0c0d16;border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:5px;min-width:220px;box-shadow:0 18px 50px rgba(0,0,0,.6);display:none;z-index:10}
+.nc-model-menu.open{display:block;animation:pop .25s var(--spring)}
+.nc-model-opt{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:7px;cursor:pointer;transition:background .15s;font-size:12px}
+.nc-model-opt:hover{background:rgba(0,212,255,.06)}
+.nc-model-opt.sel{background:rgba(0,212,255,.1);color:#00d4ff}
+.nc-model-opt-ic{width:28px;height:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0;opacity:.85}
+.nc-model-opt-nm{flex:1;font-weight:500}
+.nc-model-opt-sub{font-size:9px;font-family:var(--mono);color:rgba(255,255,255,.4);letter-spacing:.4px}
+
+.nc-body{flex:1;display:grid;grid-template-columns:320px 1fr 320px;gap:20px;padding:4px 28px 24px;min-height:0}
+.nc-col{display:flex;flex-direction:column;gap:14px;min-height:0}
+.nc-stage{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;position:relative;min-height:0;overflow:hidden;border-radius:24px;background:radial-gradient(ellipse at 50% 85%,rgba(0,212,255,.08) 0%,transparent 65%),linear-gradient(180deg,rgba(255,255,255,.015) 0%,rgba(0,0,0,.25) 100%);border:1px solid rgba(255,255,255,.05)}
+
+/* road perspective floor */
+.nc-road{position:absolute;bottom:0;left:50%;transform:translateX(-50%) perspective(700px) rotateX(62deg);width:180%;height:360px;background:
+  repeating-linear-gradient(180deg,transparent 0 32px,rgba(0,212,255,.12) 32px 40px),
+  linear-gradient(180deg,transparent 0%,rgba(0,212,255,.04) 50%,transparent 100%);
+  transform-origin:50% 100%;opacity:.55;mask-image:radial-gradient(ellipse at center top,#000 40%,transparent 80%);animation:roadFlow 1.8s linear infinite}
+@keyframes roadFlow{0%{background-position:0 0,0 0}100%{background-position:0 -80px,0 0}}
+.nc-road-lines{position:absolute;bottom:0;left:50%;transform:translateX(-50%) perspective(700px) rotateX(62deg);width:180%;height:360px;transform-origin:50% 100%;pointer-events:none}
+.nc-road-lines::before,.nc-road-lines::after{content:'';position:absolute;top:0;bottom:0;width:3px;background:repeating-linear-gradient(180deg,rgba(255,255,255,.35) 0 30px,transparent 30px 60px);mask-image:linear-gradient(180deg,transparent,#000 30%,#000 60%,transparent);animation:roadFlow 1.2s linear infinite}
+.nc-road-lines::before{left:40%}
+.nc-road-lines::after{right:40%}
+
+.nc-vehicle{position:relative;z-index:2;margin-top:8%;animation:vehicleHover 3.4s ease-in-out infinite}
+@keyframes vehicleHover{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.nc-vehicle svg{filter:drop-shadow(0 20px 40px rgba(0,0,0,.7)) drop-shadow(0 0 30px rgba(0,212,255,.22))}
+.nc-veh-shadow{position:absolute;bottom:18%;left:50%;transform:translateX(-50%);width:240px;height:18px;background:radial-gradient(ellipse,rgba(0,0,0,.6),transparent 70%);filter:blur(6px);z-index:1;animation:shadowPulse 3.4s ease-in-out infinite}
+@keyframes shadowPulse{0%,100%{transform:translateX(-50%) scale(1);opacity:.7}50%{transform:translateX(-50%) scale(.92);opacity:.5}}
+
+/* ── Tesla FSD-style window (replaces 3D vehicle) ─────────────── */
+.nc-fsd-win{position:relative;z-index:3;width:91%;margin-top:5%;display:flex;border-radius:14px;overflow:hidden;border:1px solid rgba(0,212,255,.22);background:rgba(6,8,16,.78);backdrop-filter:blur(12px);box-shadow:0 0 48px rgba(0,212,255,.08),inset 0 1px 0 rgba(255,255,255,.06);flex-shrink:0;height:228px}
+/* map column */
+.nc-fsd-map{width:27%;border-right:1px solid rgba(0,212,255,.1);padding:11px 10px;display:flex;flex-direction:column;gap:5px;background:rgba(0,4,14,.5)}
+.nc-fsd-map-hd{font-size:8px;font-family:var(--mono);letter-spacing:2px;color:rgba(0,212,255,.7);text-transform:uppercase}
+.nc-fsd-map-svg{flex:1;width:100%;display:block;overflow:visible}
+.nc-fsd-map-ft{font-size:8px;font-family:var(--mono);letter-spacing:.7px;color:rgba(255,255,255,.42)}
+/* road center column — transparent, shows the stage road bg */
+.nc-fsd-road{flex:1;position:relative;overflow:hidden;background:transparent}
+.nc-fsd-spd-sign{position:absolute;left:50%;top:18px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;pointer-events:none;z-index:2}
+.nc-fsd-spd-sign-circle{width:40px;height:40px;border-radius:50%;border:3.5px solid #e63946;background:rgba(0,0,0,.82);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:#fff;font-family:'Outfit',sans-serif;line-height:1;box-shadow:0 0 10px rgba(230,57,70,.28)}
+.nc-fsd-spd-sign-post{width:2px;height:13px;background:rgba(255,255,255,.22);margin-top:1px}
+.nc-fsd-veh-sil{position:absolute;bottom:28%;left:50%;transform:translateX(-50%);opacity:.88;filter:drop-shadow(0 6px 18px rgba(0,212,255,.38))}
+.nc-fsd-lane{position:absolute;bottom:0;width:2px;background:linear-gradient(0deg,rgba(0,212,255,.3) 0%,rgba(0,212,255,.06) 100%);pointer-events:none}
+.nc-fsd-lane-l{left:30%;height:65%}
+.nc-fsd-lane-r{right:30%;height:65%}
+/* info column */
+.nc-fsd-info{width:27%;border-left:1px solid rgba(0,212,255,.1);padding:11px 10px;display:flex;flex-direction:column;gap:6px;background:rgba(0,4,14,.5)}
+.nc-fsd-stat{display:flex;flex-direction:column;gap:2px;padding:6px 9px;border-radius:8px;background:rgba(0,212,255,.04);border:1px solid rgba(0,212,255,.08)}
+.nc-fsd-stat-l{font-size:7.5px;font-family:var(--mono);letter-spacing:1.6px;color:rgba(255,255,255,.38);text-transform:uppercase}
+.nc-fsd-stat-v{font-size:15px;font-weight:700;font-family:'Outfit',sans-serif;line-height:1.2}
+.nc-fsd-stat-v.cyan{color:#00d4ff;text-shadow:0 0 10px rgba(0,212,255,.4)}
+.nc-fsd-stat-v.green{color:#4ade80;text-shadow:0 0 8px rgba(74,222,128,.3)}
+.nc-fsd-stat-v.amber{color:#fbbf24}
+.nc-fsd-stat-v.big{font-size:20px!important;animation:etaPulse 2s ease-in-out infinite}
+@keyframes etaPulse{0%,100%{text-shadow:0 0 10px rgba(0,212,255,.4)}50%{text-shadow:0 0 22px rgba(0,212,255,.75),0 0 40px rgba(0,212,255,.2)}}
+.nc-fsd-parcel-wrap{display:flex;align-items:center;gap:5px;margin-top:2px}
+.nc-fsd-parcel-bar{flex:1;height:3px;background:rgba(255,255,255,.07);border-radius:2px;overflow:hidden}
+.nc-fsd-parcel-fill{height:100%;background:linear-gradient(90deg,#00d4ff,#4ade80);border-radius:2px;transition:width 1s var(--spring)}
+.nc-fsd-parcel-pct{font-size:7.5px;font-family:var(--mono);color:rgba(255,255,255,.38);white-space:nowrap}
+/* entry animation */
+.nav-cockpit.on .nc-fsd-win{animation:fsdEntry .85s var(--spring) .18s both}
+@keyframes fsdEntry{0%{opacity:0;transform:translateY(28px) scale(.96)}100%{opacity:1;transform:none}}
+
+/* HUD compass + speedo overlays on stage */
+.nc-hud{position:absolute;inset:0;pointer-events:none;padding:22px}
+.nc-speedo{position:absolute;left:50%;top:22px;transform:translateX(-50%);text-align:center;pointer-events:auto}
+.nc-speedo-v{font-size:76px;font-weight:200;letter-spacing:-.04em;font-family:'Outfit',sans-serif;line-height:.95;color:#fff;text-shadow:0 0 24px rgba(0,212,255,.35)}
+.nc-speedo-u{font-size:12px;color:rgba(255,255,255,.45);font-family:var(--mono);letter-spacing:3px;margin-top:-2px}
+.nc-speedo-lim{font-size:10px;color:rgba(255,255,255,.35);font-family:var(--mono);letter-spacing:1.5px;margin-top:8px}
+.nc-speedo-lim b{color:#fbbf24;font-weight:700}
+
+.nc-compass{position:absolute;right:26px;top:26px;width:74px;height:74px;border-radius:50%;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);pointer-events:auto}
+.nc-compass-ring{position:absolute;inset:6px;border-radius:50%;border:1px solid rgba(0,212,255,.18);transition:transform .8s var(--ease)}
+.nc-compass-n{position:absolute;top:4px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:700;color:#00d4ff;font-family:var(--mono)}
+.nc-compass-needle{position:absolute;left:50%;top:50%;width:2px;height:26px;background:linear-gradient(180deg,#00d4ff,transparent);transform-origin:1px 0;margin-left:-1px;margin-top:0;filter:drop-shadow(0 0 4px #00d4ff);transition:transform .6s var(--ease)}
+.nc-compass-hdg{position:absolute;bottom:9px;font-size:10px;font-family:var(--mono);font-weight:700;color:#fff}
+
+.nc-autopilot{position:absolute;left:26px;top:26px;display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:99px;background:rgba(0,0,0,.4);border:1px solid rgba(0,212,255,.25);font-size:10px;font-family:var(--mono);letter-spacing:1.2px;color:#00d4ff;font-weight:700;backdrop-filter:blur(8px);pointer-events:auto}
+.nc-autopilot .dot{width:6px;height:6px;border-radius:50%;background:#00d4ff;box-shadow:0 0 8px #00d4ff;animation:breathe 1.4s ease-in-out infinite}
+
+/* Bottom status bar on stage */
+.nc-statusbar{position:absolute;left:22px;right:22px;bottom:22px;display:flex;align-items:center;gap:12px;padding:10px 16px;background:rgba(10,12,18,.72);border:1px solid rgba(255,255,255,.06);border-radius:14px;backdrop-filter:blur(14px);pointer-events:auto}
+.nc-sb-cell{display:flex;flex-direction:column;gap:1px;min-width:0}
+.nc-sb-l{font-size:8px;font-family:var(--mono);letter-spacing:1.4px;color:rgba(255,255,255,.4);text-transform:uppercase;white-space:nowrap}
+.nc-sb-v{font-size:13px;font-weight:600;font-family:var(--mono);white-space:nowrap}
+.nc-sb-sep{width:1px;height:22px;background:rgba(255,255,255,.08)}
+
+/* Left/right metric cards */
+.nc-card{background:rgba(14,16,24,.66);border:1px solid rgba(255,255,255,.06);border-radius:18px;padding:16px;backdrop-filter:blur(12px);transition:all .3s var(--spring)}
+.nc-card:hover{border-color:rgba(0,212,255,.22);transform:translateY(-2px)}
+.nc-card-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;font-size:10px;font-family:var(--mono);letter-spacing:1.6px;color:rgba(255,255,255,.45);text-transform:uppercase}
+.nc-card-h-ic{width:18px;height:18px;color:#00d4ff}
+.nc-card-h-ic svg{width:100%;height:100%;stroke:currentColor;stroke-width:2;fill:none}
+
+/* Circular gauges */
+.nc-gauges{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.nc-gauge{position:relative;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.nc-gauge svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
+.nc-gauge-bg{stroke:rgba(255,255,255,.06);fill:none;stroke-width:6}
+.nc-gauge-fg{fill:none;stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset 1s var(--ease)}
+.nc-gauge-v{font-size:22px;font-weight:300;letter-spacing:-.03em;position:relative;z-index:1}
+.nc-gauge-u{font-size:8px;font-family:var(--mono);color:rgba(255,255,255,.45);letter-spacing:1.4px;position:relative;z-index:1}
+.nc-gauge-l{font-size:8px;font-family:var(--mono);color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1.4px;margin-top:3px;position:relative;z-index:1}
+
+/* Tire schematic */
+.nc-tires{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:6px 40px;padding:6px 6px 6px;position:relative}
+.nc-tires::before{content:'';position:absolute;left:50%;top:10%;bottom:10%;width:44px;margin-left:-22px;border-radius:10px;border:1px dashed rgba(255,255,255,.12)}
+.nc-tire{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;font-family:var(--mono)}
+.nc-tire-v{font-size:13px;font-weight:700;color:#fff}
+.nc-tire-l{font-size:7px;letter-spacing:1.2px;color:rgba(255,255,255,.35);text-transform:uppercase}
+.nc-tire.warn .nc-tire-v{color:#fbbf24}
+.nc-tire.err .nc-tire-v{color:#f87171;animation:glowPulse 1.4s ease-in-out infinite}
+
+/* Axle bars */
+.nc-axle-row{display:flex;align-items:center;gap:10px;margin-bottom:9px;font-size:11px}
+.nc-axle-row:last-child{margin-bottom:0}
+.nc-axle-l{width:54px;color:rgba(255,255,255,.55);font-family:var(--mono);letter-spacing:.5px}
+.nc-axle-bar{flex:1;height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;position:relative}
+.nc-axle-fill{height:100%;background:linear-gradient(90deg,#00d4ff,#4ade80);border-radius:3px;transition:width 1s var(--spring);position:relative}
+.nc-axle-fill.hot{background:linear-gradient(90deg,#fbbf24,#f87171)}
+.nc-axle-v{width:64px;text-align:right;font-family:var(--mono);font-weight:700;font-size:11px}
+
+/* KPI pills for bottom-left list */
+.nc-kpi{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:12px}
+.nc-kpi:last-child{border-bottom:0}
+.nc-kpi-l{display:flex;align-items:center;gap:9px;color:rgba(255,255,255,.55);font-size:11px}
+.nc-kpi-l svg{width:13px;height:13px;stroke:currentColor;stroke-width:2;fill:none;opacity:.7}
+.nc-kpi-v{font-family:var(--mono);font-weight:700;font-size:13px}
+.nc-kpi-v .delta{font-size:9px;margin-left:4px;opacity:.7}
+
+/* Nav panel — route/instructions */
+.nc-route{display:flex;flex-direction:column;gap:10px}
+.nc-route-step{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.04);font-size:12px;transition:all .25s}
+.nc-route-step.curr{background:rgba(0,212,255,.08);border-color:rgba(0,212,255,.25);animation:borderDance 2.4s ease-in-out infinite}
+.nc-route-step-ic{width:30px;height:30px;border-radius:9px;background:rgba(0,212,255,.1);color:#00d4ff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.nc-route-step-ic svg{width:15px;height:15px;stroke:currentColor;stroke-width:2.2;fill:none}
+.nc-route-step-txt{flex:1;min-width:0}
+.nc-route-step-d{font-weight:600;color:#fff}
+.nc-route-step-s{font-size:10px;color:rgba(255,255,255,.4);font-family:var(--mono);margin-top:2px}
+.nc-route-step-eta{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,.55);font-weight:600}
+
+/* Staggered entry */
+.nav-cockpit.on .nc-card{animation:slideInUp .6s var(--spring) both}
+.nav-cockpit.on .nc-col:first-child .nc-card:nth-child(1){animation-delay:.25s}
+.nav-cockpit.on .nc-col:first-child .nc-card:nth-child(2){animation-delay:.32s}
+.nav-cockpit.on .nc-col:first-child .nc-card:nth-child(3){animation-delay:.39s}
+.nav-cockpit.on .nc-col:last-child .nc-card:nth-child(1){animation-delay:.28s}
+.nav-cockpit.on .nc-col:last-child .nc-card:nth-child(2){animation-delay:.35s}
+.nav-cockpit.on .nc-col:last-child .nc-card:nth-child(3){animation-delay:.42s}
+.nav-cockpit.on .nc-speedo{animation:pop .7s var(--spring) .35s both}
+.nav-cockpit.on .nc-vehicle{animation:vehZoom .9s var(--spring) .15s both,vehicleHover 3.4s ease-in-out 1.1s infinite}
+@keyframes vehZoom{0%{opacity:0;transform:translateY(60px) scale(.3)}60%{opacity:1}100%{opacity:1;transform:none}}
+
+/* Transition flare from map to cockpit */
+.nav-flare{position:fixed;border-radius:50%;background:radial-gradient(circle,rgba(0,212,255,.9),rgba(0,212,255,.2) 40%,transparent 70%);z-index:850;pointer-events:none;mix-blend-mode:screen;transform:translate(-50%,-50%) scale(0);animation:flareExpand .9s ease-out forwards}
+@keyframes flareExpand{0%{transform:translate(-50%,-50%) scale(0);opacity:1}50%{opacity:1}100%{transform:translate(-50%,-50%) scale(140);opacity:0}}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001s!important;animation-delay:0s!important;transition-duration:.05s!important}
+}
+</style>
+</head>
+<body class="" data-cc-id="cc-1" style="cursor: crosshair; font-family: -apple-system;">
+<div id="app">
+
+  <!-- CMD BAR -->
+  <div class="cmd" data-cc-id="cc-6">
+    <div class="cmd-logo" data-cc-id="cc-34">
+      <div class="cmd-icon" data-cc-id="cc-35"><svg viewBox="0 0 24 24" data-cc-id="cc-36"><path d="M3 12h4l2-7 4 14 2-7h6"></path></svg></div>
+      <div>
+        <div style="display:flex;align-items:center;gap:6px" data-cc-id="cc-20">
+          <span class="cmd-name" data-cc-id="cc-22">Drivehub</span>
+          <span class="cmd-ver" data-cc-id="cc-21">COCKPIT · v3.1</span>
+        </div>
+        <div style="font-size:9px;color:var(--muted);font-family:var(--mono);letter-spacing:.5px" data-cc-id="cc-19" id="ctxLine">drivehub.work · RSP OPS · T11 NORTHEAST</div>
+      </div>
+    </div>
+    <div class="vsep"></div>
+    <div class="cmd-rail" id="cmdRail" data-cc-id="cc-8"><div class="ck cyan"><div class="ck-l">Active</div><div class="ck-v">28/28</div></div><div class="ck ok"><div class="ck-l">OTIF</div><div class="ck-v">93.9%</div></div><div class="ck cyan"><div class="ck-l">Stops</div><div class="ck-v">1018</div></div><div class="ck money"><div class="ck-l">CPS</div><div class="ck-v">$5.37</div></div><div class="ck err"><div class="ck-l">Err Cost</div><div class="ck-v">$268.95</div></div><div class="ck err"><div class="ck-l">SQEP</div><div class="ck-v">2 breach</div></div><div class="ck pur"><div class="ck-l">Discount</div><div class="ck-v">42%</div></div><div class="ck ok"><div class="ck-l">Margin</div><div class="ck-v">33.0%</div></div></div>
+    <div class="vsep"></div>
+    <div class="cmd-acts">
+      <div class="persona-switch" id="personaSwitch"></div>
+      <button class="role-pill" id="rolePill" data-cc-id="cc-79"><span class="role-dot"></span><span id="roleLbl">GM · K. Okafor</span></button>
+      <button class="btn btn-o btn-sm" onclick="toast('Export scheduled','ok')">Export</button>
+    </div>
+  </div>
+
+  <!-- MARGIN RIBBON -->
+  <div class="ribbon" id="marginRibbon">
+    <div class="rb-cell">
+      <div class="rb-icon" style="background:var(--money)22;color:var(--money)">📈</div>
+      <div class="rb-content">
+        <div class="rb-label">Margin · Today</div>
+        <div style="display:flex;align-items:baseline;gap:6px">
+          <div class="rb-value" style="color:var(--money)">33.0%</div>
+          <div class="rb-sub">Target 31.0%</div>
+        </div>
+      </div>
+    </div>
+    <div class="rb-cell">
+      <div class="rb-icon" style="background:var(--primary)22;color:var(--primary)">🔗</div>
+      <div class="rb-content">
+        <div class="rb-label">OnTrac Discount</div>
+        <div style="display:flex;align-items:baseline;gap:6px">
+          <div class="rb-value" style="color:var(--primary)">42%</div>
+          <div class="rb-sub">Locked · FY26 contract</div>
+        </div>
+      </div>
+    </div>
+    <div class="rb-cell">
+      <div class="rb-icon" style="background:var(--money)22;color:var(--money)">⬇</div>
+      <div class="rb-content">
+        <div class="rb-label">Cost / Stop</div>
+        <div style="display:flex;align-items:baseline;gap:6px">
+          <div class="rb-value" style="color:var(--money)">$5.37</div>
+          <div class="rb-sub">Suburban lane · blended</div>
+        </div>
+      </div>
+    </div>
+    <div class="rb-cell">
+      <div class="rb-icon" style="background:var(--err-t)22;color:var(--err-t)">⚠</div>
+      <div class="rb-content">
+        <div class="rb-label">Error Cost · Today</div>
+        <div style="display:flex;align-items:baseline;gap:6px">
+          <div class="rb-value" style="color:var(--err-t)">$268.95</div>
+          <div class="rb-sub">15 errors · $17.93 ea</div>
+        </div>
+      </div>
+    </div>
+    <div class="rb-cell">
+      <div class="rb-icon" style="background:var(--err-t)22;color:var(--err-t)">🛡</div>
+      <div class="rb-content">
+        <div class="rb-label">Fine Risk · SQEP</div>
+        <div style="display:flex;align-items:baseline;gap:6px">
+          <div class="rb-value" style="color:var(--err-t)">$3.3K</div>
+          <div class="rb-sub">2 ASN breaches · $1,663.00 ea</div>
+        </div>
+      </div>
+    </div>
+    <div class="rb-cell">
+      <div class="rb-icon" style="background:var(--primary)22;color:var(--primary)">$</div>
+      <div class="rb-content">
+        <div class="rb-label">Rev · Today</div>
+        <div style="display:flex;align-items:baseline;gap:6px">
+          <div class="rb-value" style="color:var(--primary)">$9.4K</div>
+          <div class="rb-sub">1018 stops delivered</div>
+        </div>
+      </div>
+    </div></div>
+
+  <!-- LOC BAR -->
+  <div class="loc-bar" id="locBar" data-cc-id="cc-26">
+    
+    <div class="loc-tab " onclick="switchLoc('ALL')" data-cc-id="cc-27">
+      <span class="loc-dot"></span><span data-cc-id="cc-37">All Territories</span><span class="loc-count">28</span>
+    </div>
+  
+    <div class="loc-sep"></div>
+    <div class="loc-tab " onclick="switchLoc('T11')" data-cc-id="cc-28">
+      <span class="loc-dot"></span><span data-cc-id="cc-31">T11 Youngstown</span><span class="loc-count">9</span>
+    </div>
+  
+    
+    <div class="loc-tab " onclick="switchLoc('T12')">
+      <span class="loc-dot"></span><span>T12 Cleveland</span><span class="loc-count">6</span>
+    </div>
+  
+    
+    <div class="loc-tab " onclick="switchLoc('T13')">
+      <span class="loc-dot"></span><span>T13 Akron</span><span class="loc-count">5</span>
+    </div>
+  
+    
+    <div class="loc-tab " onclick="switchLoc('T14')">
+      <span class="loc-dot"></span><span>T14 Canton</span><span class="loc-count">4</span>
+    </div>
+  
+    
+    <div class="loc-tab act" onclick="switchLoc('T18')" data-cc-id="cc-64">
+      <span class="loc-dot"></span><span data-cc-id="cc-63">T18 Boardman</span><span class="loc-count">4</span>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <!-- LEFT PANEL -->
+    <aside class="lp">
+      <div class="lp-tabs">
+        <div class="ltab act" data-tab="fleet" onclick="switchTab('fleet')">
+          <span>Fleet</span><span class="ltab-count" id="cntFleet">28</span>
+        </div>
+        <div class="ltab warn" data-tab="sqep" onclick="switchTab('sqep')" data-cc-id="cc-29">
+          <span>SQEP</span><span class="ltab-count" id="cntSqep">7</span>
+        </div>
+        <div class="ltab" data-tab="cost" onclick="switchTab('cost')" data-cc-id="cc-30">
+          <span>Cost</span>
+        </div>
+      </div>
+      <div class="lp-body" id="lpBody" data-cc-id="cc-48">
+    <div class="sec-head" data-cc-id="cc-38">Active · Presence ≥ 90%<span class="sec-head-count">4</span></div>
+    
+    <div class="drv-card " onclick="selectDriver('D100')" ondblclick="magicZoom('D100')">
+      <div class="drv-av st-en" style="background:#4ade8022;color:#4ade80">MM</div>
+      <div class="drv-info">
+        <div class="drv-name" data-cc-id="cc-39">Maria Mendez</div>
+        <div class="drv-meta">
+          <span class="grade g3">G3</span>
+          <span class="drv-mini">CV-1100</span>
+          <span class="drv-mini">·</span>
+          <span class="drv-mini">27/40</span>
+          
+        </div>
+        <div class="oee-mini-track"><div class="oee-mini-fill" style="width:67.5%"></div></div>
+      </div>
+      <div class="drv-right">
+        <div class="drv-cost">$6.76</div>
+        <div class="drv-mini">92%</div>
+      </div>
+    </div>
+    <div class="drv-card " onclick="selectDriver('D101')" ondblclick="magicZoom('D101')" data-cc-id="cc-40">
+      <div class="drv-av st-stop" style="background:#2dd4bf22;color:#2dd4bf">CS</div>
+      <div class="drv-info">
+        <div class="drv-name">Carlos Santos</div>
+        <div class="drv-meta">
+          <span class="grade g4">G4</span>
+          <span class="drv-mini" data-cc-id="cc-41">CV-1104</span>
+          <span class="drv-mini">·</span>
+          <span class="drv-mini">26/38</span>
+          
+        </div>
+        <div class="oee-mini-track"><div class="oee-mini-fill" style="width:68.42105263157895%"></div></div>
+      </div>
+      <div class="drv-right">
+        <div class="drv-cost">$5.02</div>
+        <div class="drv-mini">95%</div>
+      </div>
+    </div>
+    <div class="drv-card " onclick="selectDriver('D102')" ondblclick="magicZoom('D102')" data-cc-id="cc-42">
+      <div class="drv-av st-en" style="background:#fbbf2422;color:#fbbf24">JW</div>
+      <div class="drv-info">
+        <div class="drv-name" data-cc-id="cc-43">Jennifer Wilson</div>
+        <div class="drv-meta">
+          <span class="grade g4">G4</span>
+          <span class="drv-mini">CV-1108</span>
+          <span class="drv-mini">·</span>
+          <span class="drv-mini" data-cc-id="cc-44">44/54</span>
+          
+        </div>
+        <div class="oee-mini-track"><div class="oee-mini-fill" style="width:81.48148148148148%"></div></div>
+      </div>
+      <div class="drv-right">
+        <div class="drv-cost">$5.19</div>
+        <div class="drv-mini">91%</div>
+      </div>
+    </div>
+    <div class="drv-card " onclick="selectDriver('D103')" ondblclick="magicZoom('D103')" data-cc-id="cc-47">
+      <div class="drv-av st-en" style="background:#4ade8022;color:#4ade80">RP</div>
+      <div class="drv-info">
+        <div class="drv-name" data-cc-id="cc-45">Robert Patel</div>
+        <div class="drv-meta" data-cc-id="cc-46">
+          <span class="grade g2">G2</span>
+          <span class="drv-mini">CV-1112</span>
+          <span class="drv-mini">·</span>
+          <span class="drv-mini">42/53</span>
+          
+        </div>
+        <div class="oee-mini-track"><div class="oee-mini-fill" style="width:79.24528301886792%"></div></div>
+      </div>
+      <div class="drv-right">
+        <div class="drv-cost">$7.19</div>
+        <div class="drv-mini">96%</div>
+      </div>
+    </div>
+  </div>
+    </aside>
+
+    <!-- MAP -->
+    <div class="map-wrap">
+      <div id="lmap" class="leaflet-container leaflet-touch leaflet-retina leaflet-fade-anim leaflet-grab leaflet-touch-drag leaflet-touch-zoom" tabindex="0" style="position: relative;" data-cc-id="cc-49"><div class="leaflet-pane leaflet-map-pane" style="transform: translate3d(-455.248px, -180.065px, 0px);"><div class="leaflet-pane leaflet-tile-pane"><div class="leaflet-layer " style="z-index: 1; opacity: 1;"><div class="leaflet-tile-container leaflet-zoom-animated" style="z-index: 18; transform: translate3d(-900px, -522px, 0px) scale(2);"></div><div class="leaflet-tile-container leaflet-zoom-animated" style="z-index: 19; transform: translate3d(-900px, -522px, 0px) scale(1);"><img alt="" src="https://b.basemaps.cartocdn.com/dark_all/7/36/46@2x.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1464px, 906px, 0px); opacity: 1;"><img alt="" src="https://c.basemaps.cartocdn.com/dark_all/7/37/46@2x.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1720px, 906px, 0px); opacity: 1;"><img alt="" src="https://c.basemaps.cartocdn.com/dark_all/7/36/47@2x.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1464px, 1162px, 0px); opacity: 1;"><img alt="" src="https://a.basemaps.cartocdn.com/dark_all/7/37/47@2x.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1720px, 1162px, 0px); opacity: 1;"><img alt="" src="https://a.basemaps.cartocdn.com/dark_all/7/36/45@2x.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1464px, 650px, 0px); opacity: 1;"><img alt="" src="https://b.basemaps.cartocdn.com/dark_all/7/37/45@2x.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1720px, 650px, 0px); opacity: 1;"><img alt="" src="https://a.basemaps.cartocdn.com/dark_all/7/35/46@2x.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1208px, 906px, 0px); opacity: 1;"><img alt="" src="https://a.basemaps.cartocdn.com/dark_all/7/38/46@2x.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1976px, 906px, 0px); opacity: 1;"><img alt="" src="https://b.basemaps.cartocdn.com/dark_all/7/35/47@2x.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1208px, 1162px, 0px); opacity: 1;"><img alt="" src="https://b.basemaps.cartocdn.com/dark_all/7/38/47@2x.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1976px, 1162px, 0px); opacity: 1;"><img alt="" src="https://a.basemaps.cartocdn.com/dark_all/7/36/48@2x.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1464px, 1418px, 0px); opacity: 1;"><img alt="" src="https://b.basemaps.cartocdn.com/dark_all/7/37/48@2x.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1720px, 1418px, 0px); opacity: 1;"><img alt="" src="https://c.basemaps.cartocdn.com/dark_all/7/35/45@2x.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1208px, 650px, 0px); opacity: 1;"><img alt="" src="https://c.basemaps.cartocdn.com/dark_all/7/38/45@2x.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1976px, 650px, 0px); opacity: 1;"><img alt="" src="https://c.basemaps.cartocdn.com/dark_all/7/35/48@2x.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1208px, 1418px, 0px); opacity: 1;"><img alt="" src="https://c.basemaps.cartocdn.com/dark_all/7/38/48@2x.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1976px, 1418px, 0px); opacity: 1;"></div></div></div><div class="leaflet-pane leaflet-overlay-pane"></div><div class="leaflet-pane leaflet-shadow-pane"></div><div class="leaflet-pane leaflet-marker-pane"><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -17px; margin-top: -17px; width: 34px; height: 34px; transform: translate3d(389px, 883px, 0px); z-index: 883;"><div class="lf-depot"><svg viewBox="0 0 24 24"><path d="M3 21V9l9-7 9 7v12h-6v-7h-6v7z"></path></svg></div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -16px; margin-top: -16px; width: 32px; height: 32px; transform: translate3d(405px, 878px, 0px); z-index: 878;"><div class="lf-drv  " style="background:#4ade8018;color:#4ade80;border-color:#4ade8066">MM</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -16px; margin-top: -16px; width: 32px; height: 32px; transform: translate3d(374px, 871px, 0px); z-index: 871;"><div class="lf-drv  " style="background:#2dd4bf18;color:#2dd4bf;border-color:#2dd4bf66">CS</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -16px; margin-top: -16px; width: 32px; height: 32px; transform: translate3d(402px, 878px, 0px); z-index: 878;"><div class="lf-drv  " style="background:#fbbf2418;color:#fbbf24;border-color:#fbbf2466">JW</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -16px; margin-top: -16px; width: 32px; height: 32px; transform: translate3d(386px, 868px, 0px); z-index: 868;"><div class="lf-drv  " style="background:#4ade8018;color:#4ade80;border-color:#4ade8066">RP</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -16px; margin-top: -16px; width: 32px; height: 32px; transform: translate3d(388px, 865px, 0px); z-index: 865;"><div class="lf-drv  " style="background:#fbbf2418;color:#fbbf24;border-color:#fbbf2466">DF</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -16px; margin-top: -16px; width: 32px; height: 32px; transform: translate3d(397px, 885px, 0px); z-index: 885;"><div class="lf-drv  " style="background:#60a5fa18;color:#60a5fa;border-color:#60a5fa66">AH</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -16px; margin-top: -16px; width: 32px; height: 32px; transform: translate3d(383px, 887px, 0px); z-index: 887;"><div class="lf-drv  " style="background:#00d4ff18;color:#00d4ff;border-color:#00d4ff66">TN</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -16px; margin-top: -16px; width: 32px; height: 32px; transform: translate3d(400px, 880px, 0px); z-index: 880;"><div class="lf-drv  " style="background:#2dd4bf18;color:#2dd4bf;border-color:#2dd4bf66">SO</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -16px; margin-top: -16px; width: 32px; height: 32px; transform: translate3d(378px, 882px, 0px); z-index: 882;"><div class="lf-drv  " style="background:#60a5fa18;color:#60a5fa;border-color:#60a5fa66">MV</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -16px; margin-top: -16px; width: 32px; height: 32px; transform: translate3d(397px, 896px, 0px); z-index: 896;"><div class="lf-drv  " style="background:#2dd4bf18;color:#2dd4bf;border-color:#2dd4bf66">PM</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -16px; margin-top: -16px; width: 32px; height: 32px; transform: translate3d(398px, 864px, 0px); z-index: 864;"><div class="lf-drv  " style="background:#60a5fa18;color:#60a5fa;border-color:#60a5fa66">JK</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -16px; margin-top: -16px; width: 32px; height: 32px; transform: translate3d(382px, 894px, 0px); z-index: 894;"><div class="lf-drv  " style="background:#fbbf2418;color:#fbbf24;border-color:#fbbf2466">HJ</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -16px; margin-top: -16px; width: 32px; height: 32px; transform: translate3d(396px, 884px, 0px); z-index: 884;"><div class="lf-drv  " style="background:#fbbf2418;color:#fbbf24;border-color:#fbbf2466">BB</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -16px; margin-top: -16px; width: 32px; height: 32px; transform: translate3d(395px, 866px, 0px); z-index: 866;"><div class="lf-drv  " style="background:#fbbf2418;color:#fbbf24;border-color:#fbbf2466">AM</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -16px; margin-top: -16px; width: 32px; height: 32px; transform: translate3d(399px, 877px, 0px); z-index: 877;"><div class="lf-drv  " style="background:#00d4ff18;color:#00d4ff;border-color:#00d4ff66">VB</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -16px; margin-top: -16px; width: 32px; height: 32px; transform: translate3d(391px, 884px, 0px); z-index: 884;"><div class="lf-drv  " style="background:#00d4ff18;color:#00d4ff;border-color:#00d4ff66">OT</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -16px; margin-top: -16px; width: 32px; height: 32px; transform: translate3d(390px, 871px, 0px); z-index: 871;"><div class="lf-drv  sel" style="background:#00d4ff18;color:#00d4ff;border-color:#00d4ff66">LP</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -16px; margin-top: -16px; width: 32px; height: 32px; transform: translate3d(383px, 866px, 0px); z-index: 866;"><div class="lf-drv  " style="background:#00d4ff18;color:#00d4ff;border-color:#00d4ff66">KR</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -16px; margin-top: -16px; width: 32px; height: 32px; transform: translate3d(381px, 898px, 0px); z-index: 898;"><div class="lf-drv  " style="background:#00d4ff18;color:#00d4ff;border-color:#00d4ff66">JI</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -16px; margin-top: -16px; width: 32px; height: 32px; transform: translate3d(383px, 881px, 0px); z-index: 881;"><div class="lf-drv  " style="background:#2dd4bf18;color:#2dd4bf;border-color:#2dd4bf66">EP</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -16px; margin-top: -16px; width: 32px; height: 32px; transform: translate3d(372px, 875px, 0px); z-index: 875;"><div class="lf-drv  " style="background:#2dd4bf18;color:#2dd4bf;border-color:#2dd4bf66">NL</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -16px; margin-top: -16px; width: 32px; height: 32px; transform: translate3d(399px, 880px, 0px); z-index: 880;"><div class="lf-drv  " style="background:#c084fc18;color:#c084fc;border-color:#c084fc66">LW</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -16px; margin-top: -16px; width: 32px; height: 32px; transform: translate3d(397px, 882px, 0px); z-index: 882;"><div class="lf-drv  " style="background:#4ade8018;color:#4ade80;border-color:#4ade8066">RR</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -16px; margin-top: -16px; width: 32px; height: 32px; transform: translate3d(408px, 875px, 0px); z-index: 875;" data-cc-id="cc-53"><div class="lf-drv  " style="background:#fbbf2418;color:#fbbf24;border-color:#fbbf2466">SC</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -16px; margin-top: -16px; width: 32px; height: 32px; transform: translate3d(371px, 871px, 0px); z-index: 871;"><div class="lf-drv  " style="background:#c084fc18;color:#c084fc;border-color:#c084fc66">DG</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -16px; margin-top: -16px; width: 32px; height: 32px; transform: translate3d(393px, 882px, 0px); z-index: 882;"><div class="lf-drv  " style="background:#4ade8018;color:#4ade80;border-color:#4ade8066">YW</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -16px; margin-top: -16px; width: 32px; height: 32px; transform: translate3d(402px, 897px, 0px); z-index: 897;"><div class="lf-drv  " style="background:#c084fc18;color:#c084fc;border-color:#c084fc66">CC</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -16px; margin-top: -16px; width: 32px; height: 32px; transform: translate3d(393px, 871px, 0px); z-index: 871;"><div class="lf-drv  " style="background:#60a5fa18;color:#60a5fa;border-color:#60a5fa66">KT</div></div></div><div class="leaflet-pane leaflet-tooltip-pane"></div><div class="leaflet-pane leaflet-popup-pane"></div><div class="leaflet-proxy leaflet-zoom-animated" style="transform: translate3d(9480.25px, 12029.6px, 0px) scale(64);"></div></div><div class="leaflet-control-container"><div class="leaflet-top leaflet-left"><div class="leaflet-control-zoom leaflet-bar leaflet-control"><a class="leaflet-control-zoom-in" href="#" title="Zoom in" role="button" aria-label="Zoom in" aria-disabled="false"><span aria-hidden="true">+</span></a><a class="leaflet-control-zoom-out" href="#" title="Zoom out" role="button" aria-label="Zoom out" aria-disabled="false"><span aria-hidden="true">−</span></a></div></div><div class="leaflet-top leaflet-right"></div><div class="leaflet-bottom leaflet-left"></div><div class="leaflet-bottom leaflet-right"><div class="leaflet-control-attribution leaflet-control"><a href="https://leafletjs.com" title="A JavaScript library for interactive maps"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="12" height="8" viewBox="0 0 12 8" class="leaflet-attribution-flag"><path fill="#4C7BE1" d="M0 0h12v4H0z"></path><path fill="#FFD500" d="M0 4h12v3H0z"></path><path fill="#E0BC00" d="M0 7h12v1H0z"></path></svg> Leaflet</a> <span aria-hidden="true">|</span> © OpenStreetMap · CartoDB</div></div></div></div>
+      <div class="map-top">
+        <div class="map-chip" style="justify-content: flex-start">
+          <span class="map-chip-dot"></span>
+          <span id="mapStatus">LIVE · 28 agents · Presence 95%</span>
+        </div>
+        <div class="map-ctrl-group" data-cc-id="cc-54">
+          <div class="mlayer-panel">
+            <div class="mlp-sec">
+              <div class="mlp-sec-h">BASEMAP</div>
+              <div class="mlp-sec-body">
+                <button class="mctrl mctrl-sm act" id="baseStreets" onclick="setBasemap('streets')">
+                  <svg viewBox="0 0 24 24"><path d="M4 20l4-16M10 20l-2-16M16 20l2-16M4 10h16M4 14h16"/></svg>
+                  Streets
+                </button>
+                <button class="mctrl mctrl-sm" id="baseSat" onclick="setBasemap('sat')">
+                  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12c4-3 14-3 18 0M3 12c4 3 14 3 18 0M12 3c-3 4-3 14 0 18M12 3c3 4 3 14 0 18"/></svg>
+                  Satellite
+                </button>
+                <button class="mctrl mctrl-sm" id="base3D" onclick="setBasemap('3d')">
+                  <svg viewBox="0 0 24 24"><path d="M12 2l9 5-9 5-9-5 9-5zM3 12l9 5 9-5M3 17l9 5 9-5"/></svg>
+                  3D Mode
+                </button>
+                <button class="mctrl mctrl-sm" id="baseNav" onclick="toggleNavigator()">
+                  <svg viewBox="0 0 24 24"><path d="M3 11l18-8-8 18-2-8-8-2z"/></svg>
+                  Navigator
+                  <span class="mctrl-live" style="background:rgba(74,222,128,.18);color:#4ade80;border-color:rgba(74,222,128,.35)">TURN-BY-TURN</span>
+                </button>
+              </div>
+            </div>
+            <div class="mlp-sec">
+              <div class="mlp-sec-h">OVERLAYS</div>
+              <div class="mlp-sec-body">
+                <button class="mctrl mctrl-sm act" id="layerPresence" onclick="toggleLayer('presence')">
+                  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2"/></svg>
+                  Presence
+                </button>
+                <button class="mctrl mctrl-sm" id="layerCost" onclick="toggleLayer('cost')">
+                  <svg viewBox="0 0 24 24"><path d="M12 2v20M6 8h9a3 3 0 010 6H8a3 3 0 000 6h10"/></svg>
+                  Cost
+                </button>
+                <button class="mctrl mctrl-sm" id="layerSqep" onclick="toggleLayer('sqep')">
+                  <svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4M20 12a8 8 0 11-16 0 8 8 0 0116 0z"/></svg>
+                  ASN/SQEP
+                </button>
+                <button class="mctrl mctrl-sm" id="layerTraffic" onclick="toggleLayer('traffic')">
+                  <svg viewBox="0 0 24 24"><path d="M6 3v18M18 3v18M10 7h4M10 12h4M10 17h4"/></svg>
+                  Traffic · Live
+                  <span class="mctrl-live">LIVE</span>
+                </button>
+                <button class="mctrl mctrl-sm" id="layerPredict" onclick="toggleLayer('predict')">
+                  <svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>
+                  Traffic · Predicted
+                  <span class="mctrl-fwd">+45m</span>
+                </button>
+                <button class="mctrl mctrl-sm" id="layerCongest" onclick="toggleLayer('congest')">
+                  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><circle cx="12" cy="12" r="6" opacity=".6"/><circle cx="12" cy="12" r="10" opacity=".3"/></svg>
+                  Congestion · Infra
+                </button>
+              </div>
+            </div>
+          </div>
+          <button class="mctrl" onclick="fitMap()" style="align-self:flex-end">
+            <svg viewBox="0 0 24 24"><path d="M4 8V4h4M16 4h4v4M20 16v4h-4M8 20H4v-4"></path></svg>
+            Fit
+          </button>
+        </div>
+      </div>
+      <div class="map-legend" data-cc-id="cc-50">
+        <div class="ml-title">Fleet Status <span style="color:var(--primary);font-weight:700;font-size:9px">LIVE</span></div>
+        <div class="ml-row"><span class="ml-d" style="background:#4ade80;color:#4ade80"></span>En Route<span class="ml-row-v" id="lgEn">19</span></div>
+        <div class="ml-row" data-cc-id="cc-52"><span class="ml-d" style="background:#fbbf24;color:#fbbf24"></span>Loading<span class="ml-row-v" id="lgLd">6</span></div>
+        <div class="ml-row"><span class="ml-d" style="background:#00d4ff;color:#00d4ff"></span>At Stop<span class="ml-row-v" id="lgSt">3</span></div>
+        <div class="ml-row" data-cc-id="cc-51"><span class="ml-d" style="background:#f87171;color:#f87171"></span>Late / Exception<span class="ml-row-v" id="lgLt">0</span></div>
+      </div>
+      <div class="hint-chip">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><path d="M12 7v5l3 3"></path></svg>
+        <span>Magic Zoom</span><span class="hint-kbd">Double-Click</span><span>any agent</span>
+      </div>
+
+      <!-- NAVIGATOR MODE OVERLAY -->
+      <div class="nav-overlay" id="navOverlay">
+        <!-- Top instruction banner -->
+        <div class="nav-top">
+          <div class="nav-maneuver" id="navManeuver">
+            <svg viewBox="0 0 48 48" id="navManeuverIcon">
+              <path d="M24 40V14M24 14l-8 8M24 14l8 8" stroke="#4ade80" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="nav-instr">
+            <div class="nav-dist" id="navDist">0.4 mi</div>
+            <div class="nav-step" id="navStep">Continue on Market St</div>
+            <div class="nav-sub" id="navSub">then turn right onto Boardman-Canfield Rd</div>
+          </div>
+          <button class="nav-close" onclick="exitNavigator()" title="Exit Navigator">✕</button>
+        </div>
+
+        <!-- Lane guidance -->
+        <div class="nav-lanes" id="navLanes">
+          <div class="nav-lane"><svg viewBox="0 0 24 24"><path d="M12 4v16M12 4l-4 4M12 4l4 4" stroke-width="2.2" fill="none" stroke="currentColor" stroke-linecap="round"/></svg></div>
+          <div class="nav-lane act"><svg viewBox="0 0 24 24"><path d="M12 20V8l6 6M12 8l-4 4" stroke-width="2.4" fill="none" stroke="currentColor" stroke-linecap="round"/></svg></div>
+          <div class="nav-lane"><svg viewBox="0 0 24 24"><path d="M12 4v16M12 4l-4 4M12 4l4 4" stroke-width="2.2" fill="none" stroke="currentColor" stroke-linecap="round"/></svg></div>
+        </div>
+
+        <!-- Bottom status bar -->
+        <div class="nav-bottom">
+          <div class="nav-hud">
+            <div class="nav-speedo">
+              <svg viewBox="0 0 100 100" class="nav-speed-ring">
+                <circle cx="50" cy="50" r="44" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="5"/>
+                <circle cx="50" cy="50" r="44" fill="none" stroke="#4ade80" stroke-width="5" stroke-linecap="round" stroke-dasharray="276.46" stroke-dashoffset="138" id="navSpeedArc" transform="rotate(-90 50 50)"/>
+              </svg>
+              <div class="nav-speed-val">
+                <div class="nav-speed-n" id="navSpeed">38</div>
+                <div class="nav-speed-u">MPH</div>
+              </div>
+              <div class="nav-limit" id="navLimit">
+                <div class="nav-limit-n">45</div>
+                <div class="nav-limit-u">LIMIT</div>
+              </div>
+            </div>
+            <div class="nav-metrics">
+              <div class="nav-m">
+                <div class="nav-m-l">ETA</div>
+                <div class="nav-m-v" id="navEta">2:47 PM</div>
+                <div class="nav-m-s" id="navEtaSub">in 14 min</div>
+              </div>
+              <div class="nav-m">
+                <div class="nav-m-l">Distance</div>
+                <div class="nav-m-v" id="navRem">4.8 mi</div>
+                <div class="nav-m-s">to next stop</div>
+              </div>
+              <div class="nav-m">
+                <div class="nav-m-l">Stop</div>
+                <div class="nav-m-v" id="navStopN">23/42</div>
+                <div class="nav-m-s" id="navStopAddr">415 Elm St · Boardman</div>
+              </div>
+              <div class="nav-m">
+                <div class="nav-m-l">Traffic</div>
+                <div class="nav-m-v" style="color:var(--warn-t)" id="navTraffic">+4 min</div>
+                <div class="nav-m-s">I-680 slowdown</div>
+              </div>
+            </div>
+            <div class="nav-actions">
+              <button class="nav-act" onclick="navAction('voice')" title="Voice guidance">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/></svg>
+              </button>
+              <button class="nav-act" onclick="navAction('reroute')" title="Re-route">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 11-3-6.7M21 4v5h-5"/></svg>
+              </button>
+              <button class="nav-act danger" onclick="navAction('sos')" title="SOS / Radio">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+              </button>
+            </div>
+          </div>
+          <!-- progress rail -->
+          <div class="nav-rail">
+            <div class="nav-rail-fill" id="navRailFill" style="width:54%"></div>
+            <div class="nav-rail-dot" style="left:18%"></div>
+            <div class="nav-rail-dot" style="left:36%"></div>
+            <div class="nav-rail-dot act" style="left:54%"></div>
+            <div class="nav-rail-dot" style="left:72%"></div>
+            <div class="nav-rail-dot" style="left:90%"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="focus-card vis" id="focusCard">
+    <div class="fc-hdr">
+      <div class="fc-av" style="background:#00d4ff22;color:#00d4ff">LP</div>
+      <div class="fc-info">
+        <div class="fc-name">Laura Petrova</div>
+        <div class="fc-sub">CV-1124-17 · G4 · Zone Z4</div>
+      </div>
+      <button class="fc-close" onclick="hideFocusCard()">✕</button>
+    </div>
+    <div class="fc-tele">
+      <div class="fc-tele-row"><div class="fc-tele-label">Speed</div><div class="fc-tele-val">11 mph</div></div>
+      <div class="fc-tele-row"><div class="fc-tele-label">Heading</div><div class="fc-tele-val">224°</div></div>
+      <div class="fc-tele-row"><div class="fc-tele-label">Stops</div><div class="fc-tele-val">32/42</div></div>
+      <div class="fc-tele-row"><div class="fc-tele-label">Presence</div><div class="fc-tele-val">98%</div></div>
+      <div class="fc-tele-row"><div class="fc-tele-label">CPS</div><div class="fc-tele-val" style="color:var(--money)">$6.81</div></div>
+      <div class="fc-tele-row"><div class="fc-tele-label">OTIF</div><div class="fc-tele-val" style="color:var(--ok-t)">88.5%</div></div>
+    </div>
+    <div style="padding:10px 13px;display:flex;gap:6px">
+      <button class="btn btn-o btn-sm" style="flex:1" onclick="openCts(DRIVERS.find(x=&gt;x.id==='D116'))">Cost Panel</button>
+      <button class="btn btn-p btn-sm" style="flex:1" onclick="toast('Radio opened','ok')">Radio</button>
+    </div>
+  </div>
+    </div>
+  </div>
+
+  <!-- COST-TO-SERVE PANEL -->
+  <aside class="cts-panel" id="ctsPanel">
+    <div class="cts-hdr">
+      <div class="cts-hdr-l">
+        <div class="cts-hdr-icon"><svg viewBox="0 0 24 24"><path d="M12 2v20M6 8h9a3 3 0 010 6H8a3 3 0 000 6h10"></path></svg></div>
+        <div>
+          <div class="cts-title" id="ctsTitle">Cost-to-Serve Breakdown</div>
+          <div class="cts-sub" id="ctsSub">Select an agent to inspect</div>
+        </div>
+      </div>
+      <button class="cts-close" onclick="closeCts()">✕</button>
+    </div>
+    <div class="cts-body" id="ctsBody"></div>
+    <div class="cts-footer">
+      <button class="btn btn-o" onclick="toast('Linked to ledger','ok')">View Ledger</button>
+      <button class="btn btn-p" onclick="toast('Re-optimization queued','ok')">Re-optimize Route</button>
+    </div>
+  </aside>
+
+  <!-- TOAST -->
+  <div id="toast" class="ok">Export scheduled</div>
+
+  <!-- TESLA-STYLE DRIVER COCKPIT -->
+  <div class="nav-scrim" id="navScrim" onclick="closeNavCockpit()"></div>
+  <div class="nav-cockpit" id="navCockpit"></div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════
+   DATA MODEL
+   ═══════════════════════════════════════════════════════ */
+const DEPOT = { lat:41.0852, lng:-80.6715, name:'T11 Boardman Distribution Hub' };
+
+/* Drivehub Inc. · Chicago, IL — drivehub.work serves 4 persona types */
+const PERSONAS = [
+  {id:'rsp',  label:'RSP Op',     sub:'Fleet 50–300',             color:'#00d4ff', who:'Midwest Last-Mile LLC', you:'GM · K. Okafor',        ctx:'drivehub.work · RSP OPS · T11 NORTHEAST',          lens:'fleet economics'},
+  {id:'mm',   label:'Mkt Maker',  sub:'OnTrac · contract owner',  color:'#c084fc', who:'OnTrac · Regional',     you:'OpsDir · M. Liang',     ctx:'drivehub.work · NETWORK · OnTrac Midwest',         lens:'contract spend'},
+  {id:'ship', label:'Shipper',    sub:'Walmart / Target / Nike',  color:'#4ade80', who:'Walmart DC-4412',       you:'Logistics · P. Gupta',  ctx:'drivehub.work · SHIPPER VIEW · Walmart DC-4412',    lens:'service level'},
+  {id:'eco',  label:'Partner',    sub:'Marsh Affinity · Insurance',color:'#fbbf24', who:'Marsh Affinity',        you:'Underwriter · E. Haines', ctx:'drivehub.work · RISK & ESG · Marsh Affinity',      lens:'risk & ESG'}
+];
+let activePersona = 'rsp';
+
+/* seeded pseudo-random so layout is stable between reloads */
+let _s=1;
+function sr(){_s=(_s*9301+49297)%233280;return _s/233280}
+function rseed(n){_s=n}
+
+/* Economics — illustrative */
+const ECON = {
+  retailRate: 9.26,       // per stop retail rate
+  ontracDiscountPct: 0.42,// 42% discount
+  costSuburban: 5.37,     // $/stop suburban
+  costUrban: 6.92,
+  costRural: 7.84,
+  errorCost: 17.93,       // per-error cost
+  asnFine: 1663,          // per-violation fine
+  marginTarget: 0.31,     // 31% margin expansion target
+  marginCurrent: 0.22
+};
+
+/* Build 28 drivers clustered around Youngstown / Boardman */
+rseed(11);
+const FIRSTN = ['Maria','Carlos','Jennifer','Robert','David','Aisha','Tom','Sandra','Marcus','Priya','Jake','Hannah','Brian','Amanda','Victor','Omar','Laura','Kevin','Jessica','Ethan','Nina','Luis','Raj','Sofia','Dmitri','Yuki','Chioma','Kofi'];
+const LASTN  = ['Mendez','Park','Kim','Santos','Lee','Johnson','Wilson','White','Brown','Patel','Rivera','Moore','Foster','Cruz','Bell','Hassan','Gomez','Tran','Nguyen','Walsh','Petrova','Okafor','Chen','Rossi','Volkov','Tanaka','Ibe','Mensah'];
+const GRADES = ['g5','g5','g5','g4','g4','g4','g4','g3','g3','g2'];
+const VEHICLES = ['CV-1100','CV-1104','CV-1108','CV-1112','CV-1117','CV-1120','CV-1124','CV-1128','CV-1132','CV-1136'];
+
+function statusMix(){
+  const r=sr();
+  if(r<.62) return 'en';
+  if(r<.78) return 'load';
+  if(r<.90) return 'stop';
+  if(r<.96) return 'late';
+  return 'off';
+}
+function costFor(status, isUrban){
+  const base = isUrban ? ECON.costUrban : ECON.costSuburban;
+  return +(base + (sr()-0.5)*0.8).toFixed(2);
+}
+
+const DRIVERS = [];
+for(let i=0;i<28;i++){
+  const latJ=(sr()-.5)*.32, lngJ=(sr()-.5)*.42;
+  const st=statusMix();
+  const total=38+Math.floor(sr()*22);
+  const done=Math.min(total, Math.floor(total*(st==='off'?0:st==='late'?.35:.62+sr()*.25)));
+  const grade=GRADES[Math.floor(sr()*GRADES.length)];
+  const isUrban=sr()<.35;
+  const presence=st==='off'?0:Math.round(88+sr()*11);
+  const asnFlag = sr()<.12;
+  const c22Flag = !asnFlag && sr()<.14;
+  const otifFlag= !asnFlag && !c22Flag && sr()<.10;
+  DRIVERS.push({
+    id:'D'+(100+i),
+    name: FIRSTN[i%FIRSTN.length]+' '+LASTN[(i*3)%LASTN.length],
+    initials: FIRSTN[i%FIRSTN.length][0]+LASTN[(i*3)%LASTN.length][0],
+    lat: DEPOT.lat+latJ, lng: DEPOT.lng+lngJ,
+    status: st,
+    stops: total,
+    done, remaining: total-done,
+    grade,
+    otp: +(88+sr()*11).toFixed(1),
+    vehicle: VEHICLES[i%VEHICLES.length]+'-'+(i+1),
+    heading: Math.floor(sr()*360),
+    speed: st==='en'?Math.round(22+sr()*26):st==='stop'?0:Math.round(sr()*12),
+    isUrban,
+    cpsActual: costFor(st, isUrban),
+    presence,
+    flag: asnFlag?'asn':c22Flag?'c22':otifFlag?'otif':null,
+    errorsToday: sr()<.22? (sr()<.5?1:2) : 0,
+    miles: Math.round(done*1.8+sr()*12),
+    zone: ['Z1','Z2','Z3','Z4','Z5'][Math.floor(sr()*5)],
+    color: ['#00d4ff','#4ade80','#c084fc','#fbbf24','#2dd4bf','#60a5fa'][Math.floor(sr()*6)]
+  });
+}
+
+/* 12 ASN / SQEP records — 2 err (would trigger fines), 3 warn, rest ok */
+const ASN = [
+  {id:'ASN-8821-04',carrier:'OnTrac',depot:'T11',pallets:34,status:'err',reason:'ETA variance 247 min',fine:ECON.asnFine,lane:'PIT→YNG'},
+  {id:'ASN-8822-04',carrier:'OnTrac',depot:'T11',pallets:28,status:'ok',reason:'Validated',fine:0,lane:'YNG→CLE'},
+  {id:'ASN-8823-04',carrier:'OnTrac',depot:'T12',pallets:42,status:'warn',reason:'Weight variance 6.1%',fine:0,lane:'CLE→AKR'},
+  {id:'ASN-8824-04',carrier:'XPO',   depot:'T11',pallets:19,status:'ok',reason:'Validated',fine:0,lane:'BOS→PIT'},
+  {id:'ASN-8825-04',carrier:'OnTrac',depot:'T14',pallets:51,status:'err',reason:'SSCC label mismatch',fine:ECON.asnFine,lane:'PIT→CAN'},
+  {id:'ASN-8826-04',carrier:'OnTrac',depot:'T11',pallets:22,status:'warn',reason:'Dock door unassigned',fine:0,lane:'YNG→BRD'},
+  {id:'ASN-8827-04',carrier:'Saia',  depot:'T13',pallets:16,status:'ok',reason:'Validated',fine:0,lane:'AKR→CAN'},
+  {id:'ASN-8828-04',carrier:'OnTrac',depot:'T11',pallets:37,status:'warn',reason:'Seal inspection pending',fine:0,lane:'PIT→YNG'},
+  {id:'ASN-8829-04',carrier:'OnTrac',depot:'T15',pallets:24,status:'ok',reason:'Validated',fine:0,lane:'YNG→WRN'},
+  {id:'ASN-8830-04',carrier:'ODFL',  depot:'T11',pallets:29,status:'ok',reason:'Validated',fine:0,lane:'CLE→YNG'},
+  {id:'ASN-8831-04',carrier:'OnTrac',depot:'T17',pallets:18,status:'ok',reason:'Validated',fine:0,lane:'YNG→AUS'},
+  {id:'ASN-8832-04',carrier:'OnTrac',depot:'T18',pallets:44,status:'warn',reason:'Chilled-chain gap 4m',fine:0,lane:'YNG→BRD'}
+];
+
+/* Locations (tabs) */
+const LOCS = [
+  {id:'ALL',name:'All Territories',drivers:DRIVERS.length},
+  {id:'T11',name:'T11 Youngstown',drivers:9},
+  {id:'T12',name:'T12 Cleveland',drivers:6},
+  {id:'T13',name:'T13 Akron',drivers:5},
+  {id:'T14',name:'T14 Canton',drivers:4},
+  {id:'T18',name:'T18 Boardman',drivers:4}
+];
+
+/* ═══════════════════════════════════════════════════════
+   STATE
+   ═══════════════════════════════════════════════════════ */
+const S = {
+  tab:'fleet',
+  loc:'ALL',
+  selectedId:null,
+  layers:{presence:true,cost:false,sqep:false},
+  costZoomed:false
+};
+
+/* ═══════════════════════════════════════════════════════
+   RENDERERS
+   ═══════════════════════════════════════════════════════ */
+function fmtMoney(v){return '$'+Number(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function fmtMoneyK(v){const n=Number(v);if(n>=1e6)return '$'+(n/1e6).toFixed(2)+'M';if(n>=1e3)return '$'+(n/1e3).toFixed(1)+'K';return '$'+n.toFixed(0)}
+function fmtPct(v){return (v*100).toFixed(1)+'%'}
+
+/* Ribbon (margin + key $ signals) — persona-aware lens */
+function renderRibbon(){
+  const activeDrivers = DRIVERS.filter(d=>d.status!=='off').length;
+  const totalStops = DRIVERS.reduce((a,d)=>a+d.done,0);
+  const totalRevenue = totalStops * ECON.retailRate;
+  const totalCost = DRIVERS.reduce((a,d)=>a+d.cpsActual*d.done,0);
+  const totalErrors = DRIVERS.reduce((a,d)=>a+d.errorsToday,0);
+  const errorCostToday = totalErrors * ECON.errorCost;
+  const fineRisk = ASN.filter(a=>a.status==='err').length * ECON.asnFine;
+  const margin = (totalRevenue - totalCost - errorCostToday) / totalRevenue;
+  const safetyScore = 94.2, esgScore = 81, claimsRate = 0.0023;
+  let cells;
+  if(activePersona==='rsp'){
+    cells=[
+      {label:'Margin · Today',val:fmtPct(margin),sub:'Target 31.0%',color:margin>=.28?'var(--money)':'var(--warn-t)',icon:'📈'},
+      {label:'OnTrac Discount',val:'42%',sub:'Locked · FY26',color:'var(--primary)',icon:'🔗'},
+      {label:'Cost / Stop',val:fmtMoney(ECON.costSuburban),sub:'Suburban blended',color:'var(--money)',icon:'⬇'},
+      {label:'Error Cost',val:fmtMoney(errorCostToday),sub:totalErrors+' · $17.93 ea',color:'var(--err-t)',icon:'⚠'},
+      {label:'Fine Risk · SQEP',val:fmtMoneyK(fineRisk),sub:ASN.filter(a=>a.status==='err').length+' breach',color:'var(--err-t)',icon:'🛡'},
+      {label:'Rev · Today',val:fmtMoneyK(totalRevenue),sub:totalStops+' stops',color:'var(--primary)',icon:'$'}
+    ];
+  } else if(activePersona==='mm'){
+    cells=[
+      {label:'Network OTIF',val:'96.2%',sub:'SLA 95.0%',color:'var(--money)',icon:'📊'},
+      {label:'Contract Spend',val:'$1.84M',sub:'MTD · 42 DSPs',color:'var(--primary)',icon:'💼'},
+      {label:'Rate / Stop',val:'$5.37',sub:'42% vs retail',color:'var(--pur-t)',icon:'🔗'},
+      {label:'DSP Compliance',val:'89%',sub:'3 at risk',color:'var(--warn-t)',icon:'⚡'},
+      {label:'Fine Exposure',val:fmtMoneyK(fineRisk),sub:'chargebacks',color:'var(--err-t)',icon:'🛡'},
+      {label:'Stops Inbound',val:(totalStops*4.1).toFixed(0),sub:'network today',color:'var(--primary)',icon:'📦'}
+    ];
+  } else if(activePersona==='ship'){
+    cells=[
+      {label:'Order OTIF',val:'97.8%',sub:'SLA 95.0%',color:'var(--money)',icon:'✅'},
+      {label:'Cost / Parcel',val:'$5.37',sub:'vs $9.26 list',color:'var(--ok-t)',icon:'💰'},
+      {label:'Lead Time',val:'18.4 hr',sub:'from DC-4412',color:'var(--primary)',icon:'⏱'},
+      {label:'Exceptions',val:totalErrors,sub:'today · auto-resolved',color:totalErrors>10?'var(--warn-t)':'var(--ok-t)',icon:'⚠'},
+      {label:'Recipient NPS',val:'72',sub:'rolling 30d',color:'var(--pur-t)',icon:'⭐'},
+      {label:'Parcels Today',val:totalStops.toLocaleString(),sub:'delivered',color:'var(--primary)',icon:'📦'}
+    ];
+  } else {
+    cells=[
+      {label:'Safety Score',val:'94.2',sub:'FMCSA CSA',color:'var(--money)',icon:'🛡'},
+      {label:'Claims / 1K',val:'2.3',sub:'below book 4.1',color:'var(--ok-t)',icon:'📋'},
+      {label:'ESG Index',val:'81',sub:'EV fleet 34%',color:'var(--money)',icon:'🌱'},
+      {label:'Risk Events',val:'7',sub:'24h · 1 critical',color:'var(--warn-t)',icon:'⚠'},
+      {label:'Premium Save',val:'$48K',sub:'MTD · via Drivehub',color:'var(--primary)',icon:'💰'},
+      {label:'Coverage · Fleet',val:'28/28',sub:'all bound',color:'var(--primary)',icon:'✅'}
+    ];
+  }
+  document.getElementById('marginRibbon').innerHTML = cells.map(c=>`
+    <div class="rb-cell">
+      <div class="rb-icon" style="background:${c.color}22;color:${c.color}">${c.icon}</div>
+      <div class="rb-content">
+        <div class="rb-label">${c.label}</div>
+        <div style="display:flex;align-items:baseline;gap:6px">
+          <div class="rb-value" style="color:${c.color}">${c.val}</div>
+          <div class="rb-sub">${c.sub}</div>
+        </div>
+      </div>
+    </div>`).join('');
+
+  const rail = (activePersona==='mm') ? [
+    {k:'Network',v:'42 DSPs',cls:'pur'},{k:'OTIF',v:'96.2%',cls:'ok'},
+    {k:'Spend MTD',v:'$1.84M',cls:'cyan'},{k:'Rate',v:'$5.37',cls:'money'},
+    {k:'Compl.',v:'89%',cls:'warn'},{k:'Fines',v:fmtMoneyK(fineRisk),cls:'err'},
+    {k:'Discount',v:'42%',cls:'pur'},{k:'DSP@Risk',v:'3',cls:'warn'}
+  ] : (activePersona==='ship') ? [
+    {k:'OTIF',v:'97.8%',cls:'ok'},{k:'Parcels',v:totalStops.toLocaleString(),cls:'cyan'},
+    {k:'$/Parcel',v:'$5.37',cls:'money'},{k:'Lead',v:'18.4h',cls:'cyan'},
+    {k:'Except.',v:totalErrors,cls:totalErrors>10?'err':'ok'},{k:'NPS',v:'72',cls:'pur'},
+    {k:'Save vs list',v:'42%',cls:'money'},{k:'Carrier',v:'OnTrac',cls:'cyan'}
+  ] : (activePersona==='eco') ? [
+    {k:'Safety',v:'94.2',cls:'ok'},{k:'Claims/1K',v:'2.3',cls:'ok'},
+    {k:'ESG',v:'81',cls:'ok'},{k:'Events',v:'7',cls:'warn'},
+    {k:'Critical',v:'1',cls:'err'},{k:'EV %',v:'34%',cls:'money'},
+    {k:'Prem Save',v:'$48K',cls:'money'},{k:'Bound',v:'28/28',cls:'cyan'}
+  ] : [
+    {k:'Active',v:activeDrivers+'/'+DRIVERS.length,cls:'cyan'},
+    {k:'OTIF',v:(DRIVERS.reduce((a,d)=>a+d.otp,0)/DRIVERS.length).toFixed(1)+'%',cls:'ok'},
+    {k:'Stops',v:totalStops,cls:'cyan'},{k:'CPS',v:fmtMoney(ECON.costSuburban),cls:'money'},
+    {k:'Err Cost',v:fmtMoney(errorCostToday),cls:totalErrors>10?'err':'warn'},
+    {k:'SQEP',v:ASN.filter(a=>a.status==='err').length+' breach',cls:ASN.filter(a=>a.status==='err').length?'err':'ok'},
+    {k:'Discount',v:'42%',cls:'pur'},{k:'Margin',v:fmtPct(margin),cls:margin>=.28?'ok':'warn'}
+  ];
+  document.getElementById('cmdRail').innerHTML=rail.map(r=>`<div class="ck ${r.cls}"><div class="ck-l">${r.k}</div><div class="ck-v">${r.v}</div></div>`).join('');
+}
+
+function renderPersonaSwitch(){
+  const el = document.getElementById('personaSwitch');
+  if(!el) return;
+  el.innerHTML = PERSONAS.map(p=>`
+    <button class="ps-btn ${activePersona===p.id?'act':''}" onclick="switchPersona('${p.id}')" title="${p.sub}">
+      <span class="ps-dot" style="background:${p.color};box-shadow:0 0 6px ${p.color}"></span>${p.label}
+    </button>`).join('');
+  const p = PERSONAS.find(x=>x.id===activePersona);
+  if(p){
+    const roleLbl = document.getElementById('roleLbl');
+    const roleDot = document.querySelector('#rolePill .role-dot');
+    const ctx     = document.getElementById('ctxLine');
+    if(roleLbl) roleLbl.textContent = p.you+' · '+p.who;
+    if(roleDot){roleDot.style.background = p.color; roleDot.style.boxShadow = '0 0 6px '+p.color;}
+    if(ctx) ctx.textContent = p.ctx;
+  }
+}
+function switchPersona(id){
+  activePersona = id;
+  /* flash ripple across cockpit chrome to sell the lens swap */
+  const app = document.getElementById('app');
+  app.classList.remove('persona-flash');
+  void app.offsetWidth;
+  app.classList.add('persona-flash');
+  /* fade ribbon + rail in crossfade */
+  const rib = document.getElementById('marginRibbon');
+  const rail = document.getElementById('cmdRail');
+  [rib,rail].forEach(el=>{ if(!el) return; el.style.opacity='.15'; el.style.transform='translateY(-4px)'; el.style.transition='opacity .22s ease,transform .3s var(--spring)'; });
+  const lp = document.getElementById('lpBody');
+  if(lp){ lp.classList.add('swapping'); }
+  setTimeout(()=>{
+    renderPersonaSwitch();
+    renderRibbon();
+    renderLP();
+    setTimeout(()=>{
+      [rib,rail].forEach(el=>{ if(!el) return; el.style.opacity=''; el.style.transform=''; });
+      if(lp) lp.classList.remove('swapping');
+    },40);
+  },180);
+  const p = PERSONAS.find(x=>x.id===id);
+  toast('Lens: '+p.label+' · '+p.lens,'ok');
+}
+
+function renderLocBar(){
+  document.getElementById('locBar').innerHTML = LOCS.map((l,i)=>`
+    ${i===1?'<div class="loc-sep"></div>':''}
+    <div class="loc-tab ${S.loc===l.id?'act':''}" onclick="switchLoc('${l.id}')">
+      <span class="loc-dot"></span><span>${l.name}</span><span class="loc-count">${l.drivers}</span>
+    </div>
+  `).join('');
+}
+
+function renderFleetList(){
+  const filtered = S.loc==='ALL' ? DRIVERS : DRIVERS.slice(0, LOCS.find(l=>l.id===S.loc)?.drivers||DRIVERS.length);
+  const enRoute = filtered.filter(d=>d.status!=='off');
+  const html = `
+    <div class="sec-head">Active · Presence ≥ 90%<span class="sec-head-count">${enRoute.length}</span></div>
+    ${enRoute.map(d=>drvCardHtml(d)).join('')}
+  `;
+  document.getElementById('lpBody').innerHTML=html;
+  document.getElementById('cntFleet').textContent=DRIVERS.length;
+}
+
+function drvCardHtml(d){
+  const donePct = d.stops? (d.done/d.stops*100):0;
+  const flagHtml = d.flag==='asn'?'<span class="exc-flag f-asn">ASN</span>':
+                   d.flag==='c22'?'<span class="exc-flag f-c22">C22</span>':
+                   d.flag==='otif'?'<span class="exc-flag f-otif">OTIF</span>':'';
+  return `
+    <div class="drv-card ${S.selectedId===d.id?'sel':''}" onclick="selectDriver('${d.id}')" ondblclick="magicZoom('${d.id}')">
+      <div class="drv-av st-${d.status}" style="background:${d.color}22;color:${d.color}">${d.initials}</div>
+      <div class="drv-info">
+        <div class="drv-name">${d.name}</div>
+        <div class="drv-meta">
+          <span class="grade ${d.grade}">${d.grade.toUpperCase()}</span>
+          <span class="drv-mini">${d.vehicle.split('-').slice(0,2).join('-')}</span>
+          <span class="drv-mini">·</span>
+          <span class="drv-mini">${d.done}/${d.stops}</span>
+          ${flagHtml}
+        </div>
+        <div class="oee-mini-track"><div class="oee-mini-fill" style="width:${donePct}%"></div></div>
+      </div>
+      <div class="drv-right">
+        <div class="drv-cost">${fmtMoney(d.cpsActual)}</div>
+        <div class="drv-mini">${d.presence}%</div>
+      </div>
+    </div>`;
+}
+
+function renderSqepList(){
+  const sorted=[...ASN].sort((a,b)=>{
+    const o={err:0,warn:1,ok:2};
+    return o[a.status]-o[b.status];
+  });
+  const errs=ASN.filter(a=>a.status==='err').length;
+  const warns=ASN.filter(a=>a.status==='warn').length;
+  const html = `
+    <div class="sec-head">ASN Validation · 24h<span class="sec-head-count" style="color:var(--err-t)">${errs} breach · ${warns} warn</span></div>
+    ${sorted.map(a=>`
+      <div class="asn-card ${a.status}">
+        <div class="asn-hdr">
+          <div>
+            <div class="asn-id">${a.id}</div>
+            <div class="asn-carrier">${a.carrier} · ${a.lane}</div>
+          </div>
+          <span class="asn-status-tag s-${a.status}">${a.status==='err'?'BREACH':a.status==='warn'?'WARNING':'OK'}</span>
+        </div>
+        <div class="asn-row"><span class="asn-row-lbl">Pallets</span><span class="asn-row-val">${a.pallets}</span></div>
+        <div class="asn-row"><span class="asn-row-lbl">Depot</span><span class="asn-row-val">${a.depot}</span></div>
+        <div class="asn-row"><span class="asn-row-lbl">Reason</span><span class="asn-row-val" style="color:${a.status==='err'?'var(--err-t)':a.status==='warn'?'var(--warn-t)':'var(--money)'}">${a.reason}</span></div>
+        ${a.fine?`
+          <div class="asn-fine">
+            <div class="asn-fine-lbl">⚠ FINE EXPOSURE</div>
+            <div class="asn-fine-val">${fmtMoney(a.fine)}</div>
+          </div>
+          <div class="asn-actions">
+            <button class="asn-btn" onclick="toast('Auto-remediation drafted','ok')">Auto-Fix</button>
+            <button class="asn-btn primary" onclick="toast('Escalated to carrier ops','ok')">Escalate</button>
+          </div>
+        `:a.status==='warn'?`
+          <div class="asn-actions">
+            <button class="asn-btn" onclick="toast('Pre-validated','ok')">Pre-validate</button>
+            <button class="asn-btn" onclick="toast('Notified dock ops','ok')">Notify Dock</button>
+          </div>
+        `:''}
+      </div>
+    `).join('')}
+  `;
+  document.getElementById('lpBody').innerHTML=html;
+  document.getElementById('cntSqep').textContent=errs+warns;
+}
+
+function renderCostList(){
+  /* Zone cost-to-serve roll-up */
+  const zones = [
+    {name:'Urban Core · Downtown',cps:6.92,stops:312,drivers:7,trend:-0.4,color:'#fbbf24'},
+    {name:'Suburban · Boardman',cps:5.37,stops:847,drivers:11,trend:-0.8,color:'#4ade80'},
+    {name:'Mixed · Canfield',cps:5.84,stops:418,drivers:5,trend:-0.3,color:'#00d4ff'},
+    {name:'Rural · Mahoning Ring',cps:7.84,stops:186,drivers:3,trend:0.2,color:'#c084fc'},
+    {name:'Industrial · Niles/Warren',cps:6.12,stops:274,drivers:4,trend:-0.5,color:'#2dd4bf'}
+  ];
+  const total=zones.reduce((a,z)=>a+z.stops*z.cps,0);
+  const blended=total/zones.reduce((a,z)=>a+z.stops,0);
+  document.getElementById('lpBody').innerHTML = `
+    <div class="sec-head">Zone Cost-to-Serve<span class="sec-head-count">Blended ${fmtMoney(blended)}</span></div>
+    <div style="padding:12px 14px">
+      ${zones.map(z=>`
+        <div class="zcost-row" style="padding:10px;border-radius:9px;border:1px solid var(--border);background:rgba(255,255,255,.025);margin-bottom:8px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+            <div style="font-size:12px;font-weight:600">${z.name}</div>
+            <div style="font-family:var(--mono);font-weight:700;font-size:13px;color:${z.color}">${fmtMoney(z.cps)}</div>
+          </div>
+          <div style="height:4px;border-radius:2px;background:rgba(255,255,255,.06);overflow:hidden">
+            <div class="zcost-bar-fill" style="height:100%;width:${(z.cps/9)*100}%;background:${z.color};border-radius:2px;transition:width 1.2s var(--ease)"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:10px;font-family:var(--mono);color:var(--muted)">
+            <span>${z.stops} stops · ${z.drivers} agents</span>
+            <span style="color:${z.trend<0?'var(--money)':'var(--err-t)'}">${z.trend<0?'▼':'▲'} ${Math.abs(z.trend).toFixed(1)}%</span>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+    <div style="padding:0 14px 14px">
+      <div class="savings-hero" style="padding:12px;border-radius:10px;background:linear-gradient(135deg,rgba(0,212,255,.06),rgba(52,211,153,.06));border:1px solid rgba(0,212,255,.2)">
+        <div style="font-size:9px;color:var(--muted);font-family:var(--mono);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px">Savings vs retail rate</div>
+        <div style="font-family:var(--mono);font-weight:800;font-size:22px;color:var(--money)">${fmtMoneyK((ECON.retailRate-blended)*zones.reduce((a,z)=>a+z.stops,0))}</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:3px">Today · via 42% OnTrac contract</div>
+      </div>
+    </div>
+  `;
+}
+
+function renderLP(){
+  if(S.tab==='fleet') renderFleetList();
+  else if(S.tab==='sqep') renderSqepList();
+  else if(S.tab==='cost') renderCostList();
+  document.querySelectorAll('.ltab').forEach(t=>t.classList.toggle('act', t.dataset.tab===S.tab));
+}
+
+function switchTab(t){
+  const lp = document.getElementById('lpBody');
+  if(lp){
+    lp.classList.add('swapping');
+    S.tab=t;
+    setTimeout(()=>{ renderLP(); requestAnimationFrame(()=>lp.classList.remove('swapping')); }, 160);
+  } else { S.tab=t; renderLP(); }
+}
+function switchLoc(l){
+  S.loc=l;
+  renderLocBar();
+  const lp = document.getElementById('lpBody');
+  if(lp){
+    lp.classList.add('swapping');
+    setTimeout(()=>{ renderLP(); requestAnimationFrame(()=>lp.classList.remove('swapping')); }, 140);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   MAP
+   ═══════════════════════════════════════════════════════ */
+let map, drvMarkers={}, depotMarker, costCircles=[], asnPulseMarkers=[], trafficLines=[], predictLines=[], congestCircles=[], baseTile=null, currentBase='streets';
+
+const BASEMAPS = {
+  streets: {url:'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', attribution:'© OpenStreetMap · CartoDB', dark:true},
+  sat:     {url:'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', attribution:'© Esri · World Imagery', dark:false},
+  '3d':    {url:'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', attribution:'© OpenStreetMap · CartoDB · 3D tilt view', dark:true}
+};
+
+function setBasemap(kind){
+  if(!map) return;
+  currentBase = kind;
+  if(baseTile) map.removeLayer(baseTile);
+  const cfg = BASEMAPS[kind] || BASEMAPS.streets;
+  baseTile = L.tileLayer(cfg.url,{maxZoom:19, attribution:cfg.attribution}).addTo(map);
+  const lmap = document.getElementById('lmap');
+  lmap.classList.toggle('tilt-3d', kind==='3d');
+  lmap.classList.toggle('sat', kind==='sat');
+  ['baseStreets','baseSat','base3D'].forEach(id=>document.getElementById(id)?.classList.remove('act'));
+  document.getElementById(kind==='streets'?'baseStreets':kind==='sat'?'baseSat':'base3D')?.classList.add('act');
+  toast('Basemap · '+(kind==='streets'?'Streets':kind==='sat'?'Satellite':'3D Mode'),'ok');
+}
+
+/* ═══════════════════════════════════════════════════════
+   NAVIGATOR MODE — turn-by-turn simulated driver view
+   ═══════════════════════════════════════════════════════ */
+const NAV = {
+  on:false, tickTimer:null, stepTimer:null, progress:54, speed:38, eta:14,
+  routeLine:null, doneLine:null, carMarker:null,
+  maneuvers:[
+    {dist:'0.4 mi',step:'Continue on Market St',sub:'then turn right onto Boardman-Canfield Rd',icon:'straight',limit:45,traffic:'+4 min · I-680 slowdown',trafficColor:'var(--warn-t)',stop:'23/42',addr:'415 Elm St · Boardman'},
+    {dist:'0.2 mi',step:'Turn right onto Boardman-Canfield Rd',sub:'then continue for 1.2 mi',icon:'right',limit:35,traffic:'Clear',trafficColor:'var(--ok-t)',stop:'23/42',addr:'415 Elm St · Boardman'},
+    {dist:'1.2 mi',step:'Continue straight',sub:'through 3 signals',icon:'straight',limit:35,traffic:'+2 min',trafficColor:'var(--warn-t)',stop:'23/42',addr:'415 Elm St · Boardman'},
+    {dist:'0.1 mi',step:'Arrive at destination',sub:'415 Elm St on the right',icon:'arrive',limit:25,traffic:'Clear',trafficColor:'var(--ok-t)',stop:'23/42',addr:'415 Elm St · Boardman'},
+    {dist:'0.6 mi',step:'Turn left onto Southern Blvd',sub:'next stop · 822 Midland Ave',icon:'left',limit:35,traffic:'Clear',trafficColor:'var(--ok-t)',stop:'24/42',addr:'822 Midland Ave · Boardman'}
+  ],
+  stepIdx:0
+};
+const NAV_ICONS = {
+  straight:'<path d="M24 40V10M24 10l-8 8M24 10l8 8" stroke="#4ade80" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+  right:   '<path d="M10 36V20a6 6 0 016-6h20M36 14l-8-8M36 14l-8 8" stroke="#4ade80" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+  left:    '<path d="M38 36V20a6 6 0 00-6-6H12M12 14l8-8M12 14l8 8" stroke="#4ade80" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+  arrive:  '<circle cx="24" cy="20" r="7" stroke="#4ade80" stroke-width="4" fill="none"/><path d="M24 27v13M18 40h12" stroke="#4ade80" stroke-width="4" stroke-linecap="round"/>'
+};
+
+function toggleNavigator(){
+  if(NAV.on) exitNavigator(); else enterNavigator();
+}
+
+function enterNavigator(){
+  if(!map) return;
+  NAV.on = true;
+  const ov = document.getElementById('navOverlay');
+  if(ov) ov.classList.add('on');
+  document.getElementById('lmap').classList.add('nav-active');
+  document.getElementById('baseNav')?.classList.add('act');
+
+  /* Build a fake route around the depot */
+  const lat=DEPOT.lat, lng=DEPOT.lng;
+  const pts = [
+    [lat-0.008, lng-0.012],[lat-0.004, lng-0.009],[lat-0.001, lng-0.003],
+    [lat+0.002, lng+0.004],[lat+0.005, lng+0.011],[lat+0.008, lng+0.018],
+    [lat+0.010, lng+0.025],[lat+0.012, lng+0.033]
+  ];
+  const doneIdx = Math.floor(pts.length * 0.54);
+  const donePts = pts.slice(0, doneIdx+1);
+  const remPts = pts.slice(doneIdx);
+
+  if(NAV.routeLine) map.removeLayer(NAV.routeLine);
+  if(NAV.doneLine) map.removeLayer(NAV.doneLine);
+  if(NAV.carMarker) map.removeLayer(NAV.carMarker);
+
+  NAV.doneLine = L.polyline(donePts,{className:'nav-route-done',interactive:false}).addTo(map);
+  NAV.routeLine = L.polyline(remPts,{className:'nav-route',interactive:false}).addTo(map);
+
+  /* Car marker at current position */
+  const carPos = pts[doneIdx];
+  NAV.carMarker = L.marker(carPos,{
+    icon: L.divIcon({
+      html:'<div class="nav-car-icon"><svg viewBox="0 0 24 24"><path d="M3 11l18-8-8 18-2-8-8-2z"/></svg></div>',
+      className:'', iconSize:[36,36], iconAnchor:[18,18]
+    }),
+    zIndexOffset: 2000,
+    interactive:false
+  }).addTo(map);
+
+  /* Fly in and follow */
+  map.flyTo(carPos, 14, {duration:1.2, easeLinearity:.3});
+
+  NAV.stepIdx = 0;
+  applyManeuver(0);
+
+  /* Live tick — pulse speed, shrink distance, step through maneuvers */
+  NAV.tickTimer = setInterval(()=>{
+    /* Wobble the speed */
+    NAV.speed = Math.max(12, Math.min(58, NAV.speed + (Math.random()-.5)*4));
+    updateSpeedo();
+  }, 700);
+
+  NAV.stepTimer = setInterval(()=>{
+    NAV.stepIdx = (NAV.stepIdx+1) % NAV.maneuvers.length;
+    applyManeuver(NAV.stepIdx);
+    /* advance rail progress */
+    NAV.progress = Math.min(98, NAV.progress + 9 + Math.random()*4);
+    const rf = document.getElementById('navRailFill');
+    if(rf) rf.style.width = NAV.progress+'%';
+    document.querySelectorAll('.nav-rail-dot').forEach((d,i)=>{
+      const left = parseFloat(d.style.left);
+      d.classList.toggle('act', Math.abs(left - NAV.progress) < 9);
+    });
+    /* eta decrement */
+    NAV.eta = Math.max(1, NAV.eta-2);
+    updateEta();
+  }, 4200);
+
+  toast('Navigator engaged · turn-by-turn ON','ok');
+}
+
+function exitNavigator(){
+  NAV.on = false;
+  clearInterval(NAV.tickTimer); clearInterval(NAV.stepTimer);
+  document.getElementById('navOverlay')?.classList.remove('on');
+  document.getElementById('lmap').classList.remove('nav-active');
+  document.getElementById('baseNav')?.classList.remove('act');
+  if(NAV.routeLine) {map.removeLayer(NAV.routeLine); NAV.routeLine=null;}
+  if(NAV.doneLine)  {map.removeLayer(NAV.doneLine);  NAV.doneLine=null;}
+  if(NAV.carMarker) {map.removeLayer(NAV.carMarker); NAV.carMarker=null;}
+  toast('Navigator closed','ok');
+}
+
+function applyManeuver(i){
+  const m = NAV.maneuvers[i];
+  if(!m) return;
+  document.getElementById('navDist').textContent = m.dist;
+  document.getElementById('navStep').textContent = m.step;
+  document.getElementById('navSub').textContent = m.sub;
+  document.getElementById('navLimit').querySelector('.nav-limit-n').textContent = m.limit;
+  document.getElementById('navTraffic').textContent = m.traffic;
+  document.getElementById('navTraffic').style.color = m.trafficColor;
+  document.getElementById('navStopN').textContent = m.stop;
+  document.getElementById('navStopAddr').textContent = m.addr;
+  const icon = document.getElementById('navManeuverIcon');
+  if(icon) icon.innerHTML = NAV_ICONS[m.icon] || NAV_ICONS.straight;
+  /* re-trigger bob animation */
+  icon.style.animation='none';void icon.offsetWidth;icon.style.animation='';
+  /* nudge lane highlight */
+  const lanes = document.querySelectorAll('.nav-lane');
+  lanes.forEach((l,ix)=>l.classList.toggle('act', ix===(m.icon==='left'?0:m.icon==='right'?2:1)));
+}
+
+function updateSpeedo(){
+  const el = document.getElementById('navSpeed');
+  const arc = document.getElementById('navSpeedArc');
+  if(!el||!arc) return;
+  el.textContent = Math.round(NAV.speed);
+  /* 276.46 circumference; fill proportional to speed/70 */
+  const pct = Math.min(1, NAV.speed/70);
+  arc.setAttribute('stroke-dashoffset', (276.46*(1-pct)).toFixed(1));
+  const limit = parseInt(document.querySelector('.nav-limit-n').textContent)||45;
+  const over = NAV.speed > limit + 3;
+  arc.setAttribute('stroke', over?'#f87171':'#4ade80');
+  el.style.color = over?'#f87171':'#fff';
+}
+
+function updateEta(){
+  const now = new Date(Date.now()+NAV.eta*60000);
+  const h = now.getHours(); const m = now.getMinutes();
+  const hh = ((h+11)%12+1); const mm = m<10?'0'+m:m; const ap = h>=12?'PM':'AM';
+  const eta = document.getElementById('navEta'); if(eta) eta.textContent = `${hh}:${mm} ${ap}`;
+  const etaSub = document.getElementById('navEtaSub'); if(etaSub) etaSub.textContent = `in ${NAV.eta} min`;
+  const rem = document.getElementById('navRem'); if(rem) rem.textContent = (NAV.eta*0.35).toFixed(1)+' mi';
+}
+
+function navAction(kind){
+  if(kind==='voice') toast('Voice guidance toggled','ok');
+  else if(kind==='reroute') {
+    toast('Re-routing · avoiding I-680 slowdown','ok');
+    NAV.progress = Math.max(10, NAV.progress-8);
+    const rf = document.getElementById('navRailFill'); if(rf) rf.style.width = NAV.progress+'%';
+  } else if(kind==='sos') toast('Radio opened · Dispatch on line','err');
+}
+
+function initMap(){
+  map = L.map('lmap',{zoomControl:false,attributionControl:true,preferCanvas:true})
+         .setView([DEPOT.lat, DEPOT.lng], 10);
+  L.control.zoom({position:'bottomright'}).addTo(map);
+  setBasemap('streets');
+
+  /* Depot */
+  depotMarker = L.marker([DEPOT.lat, DEPOT.lng], {
+    icon: L.divIcon({
+      html:'<div class="lf-depot"><svg viewBox="0 0 24 24"><path d="M3 21V9l9-7 9 7v12h-6v-7h-6v7z"/></svg></div>',
+      className:'', iconSize:[34,34], iconAnchor:[17,17]
+    })
+  }).addTo(map)
+    .bindPopup(`<div class="popup-title">${DEPOT.name}</div>
+      <div class="popup-row"><span class="popup-label">Inbound ASNs</span><span class="popup-val">${ASN.length}</span></div>
+      <div class="popup-row"><span class="popup-label">Fine Exposure</span><span class="popup-val" style="color:var(--err-t)">${fmtMoney(ASN.filter(a=>a.status==='err').length*ECON.asnFine)}</span></div>`);
+
+  /* State expansion for new overlays */
+  S.layers.traffic = false; S.layers.predict = false; S.layers.congest = false;
+  renderSwarm();
+  renderLayers();
+}
+
+function renderSwarm(){
+  Object.values(drvMarkers).forEach(m=>map.removeLayer(m));
+  drvMarkers={};
+  DRIVERS.forEach(d=>{
+    if(d.status==='off') return;
+    const isLate = d.status==='late';
+    const html = `<div class="lf-drv ${isLate?'late':''} ${S.selectedId===d.id?'sel':''}" style="background:${d.color}18;color:${d.color};border-color:${d.color}66">${d.initials}</div>`;
+    const m = L.marker([d.lat,d.lng],{
+      icon: L.divIcon({html, className:'', iconSize:[32,32], iconAnchor:[16,16]})
+    }).addTo(map)
+      .bindPopup(popupHtml(d));
+    m.on('click', ()=>{ selectDriver(d.id); });
+    m.on('dblclick', (e)=>{ L.DomEvent.stopPropagation(e); magicZoom(d.id); });
+    drvMarkers[d.id]=m;
+  });
+  updateLegend();
+}
+
+function popupHtml(d){
+  return `<div class="popup-title">${d.name} · ${d.grade.toUpperCase()}</div>
+    <div class="popup-row"><span class="popup-label">Status</span><span class="popup-val" style="color:${d.color}">${d.status.toUpperCase()}</span></div>
+    <div class="popup-row"><span class="popup-label">Stops</span><span class="popup-val">${d.done}/${d.stops}</span></div>
+    <div class="popup-row"><span class="popup-label">Cost / stop</span><span class="popup-val" style="color:var(--money)">${fmtMoney(d.cpsActual)}</span></div>
+    <div class="popup-row"><span class="popup-label">Presence</span><span class="popup-val" style="color:var(--primary)">${d.presence}%</span></div>
+    ${d.errorsToday?`<div class="popup-row"><span class="popup-label">Errors</span><span class="popup-val" style="color:var(--err-t)">${d.errorsToday} · ${fmtMoney(d.errorsToday*ECON.errorCost)}</span></div>`:''}
+    <div class="popup-dblhint">✨ Double-click to magic-zoom</div>`;
+}
+
+function updateLegend(){
+  const cnt={en:0,load:0,stop:0,late:0};
+  DRIVERS.forEach(d=>{if(cnt[d.status]!==undefined)cnt[d.status]++});
+  document.getElementById('lgEn').textContent=cnt.en;
+  document.getElementById('lgLd').textContent=cnt.load;
+  document.getElementById('lgSt').textContent=cnt.stop;
+  document.getElementById('lgLt').textContent=cnt.late;
+  document.getElementById('mapStatus').textContent=`LIVE · ${DRIVERS.filter(d=>d.status!=='off').length} agents · Presence 95%`;
+}
+
+function renderLayers(){
+  /* Cost-to-serve heat circles */
+  costCircles.forEach(c=>map.removeLayer(c));
+  costCircles=[];
+  if(S.layers.cost){
+    DRIVERS.filter(d=>d.status!=='off').forEach(d=>{
+      const cost=d.cpsActual;
+      const color = cost>7 ? '#f87171' : cost>6 ? '#fbbf24' : cost>5.5 ? '#00d4ff' : '#4ade80';
+      const c=L.circle([d.lat,d.lng],{radius:1800,color,fillColor:color,fillOpacity:.12,weight:1.2,opacity:.5}).addTo(map);
+      costCircles.push(c);
+    });
+  }
+  /* ASN/SQEP breach pulse markers at depot */
+  asnPulseMarkers.forEach(m=>map.removeLayer(m));
+  asnPulseMarkers=[];
+  if(S.layers.sqep){
+    ASN.filter(a=>a.status!=='ok').forEach((a,i)=>{
+      const color = a.status==='err'?'#f87171':'#fbbf24';
+      const radius = a.status==='err'?5000:2400;
+      const c=L.circle([DEPOT.lat+(i*0.003-0.01),DEPOT.lng+(i*0.004-0.015)],{
+        radius,color,fillColor:color,fillOpacity:.08,weight:1.5,opacity:.6,dashArray:'4 4'
+      }).addTo(map);
+      asnPulseMarkers.push(c);
+    });
+  }
+  /* Traffic — live */
+  trafficLines.forEach(l=>map.removeLayer(l));
+  trafficLines=[];
+  if(S.layers.traffic){
+    const corridors = buildCorridors();
+    corridors.forEach(seg=>{
+      const color = seg.sev>.7?'#f87171':seg.sev>.4?'#fbbf24':'#4ade80';
+      const line=L.polyline(seg.coords,{color,weight:5,opacity:.85,dashArray:'10 8',className:'traf-live'}).addTo(map);
+      trafficLines.push(line);
+    });
+  }
+  /* Traffic — predicted +45m */
+  predictLines.forEach(l=>map.removeLayer(l));
+  predictLines=[];
+  if(S.layers.predict){
+    const corridors = buildCorridors(true);
+    corridors.forEach(seg=>{
+      const color = seg.sevP>.7?'#c084fc':seg.sevP>.4?'#a78bfa':'#818cf8';
+      const line=L.polyline(seg.coords,{color,weight:4,opacity:.65,dashArray:'3 10',className:'traf-pred'}).addTo(map);
+      predictLines.push(line);
+    });
+  }
+  /* Congestion — infrastructure hotspots */
+  congestCircles.forEach(c=>map.removeLayer(c));
+  congestCircles=[];
+  if(S.layers.congest){
+    const hubs = [
+      {lat:DEPOT.lat+.04, lng:DEPOT.lng-.02, r:2200, lvl:.85, name:'I-680 / SR-224 Merge'},
+      {lat:DEPOT.lat-.03, lng:DEPOT.lng+.05, r:1800, lvl:.7,  name:'Market St Bridge'},
+      {lat:DEPOT.lat+.08, lng:DEPOT.lng+.07, r:2600, lvl:.55, name:'Downtown Loop'},
+      {lat:DEPOT.lat-.06, lng:DEPOT.lng-.08, r:1500, lvl:.4,  name:'Canfield Fairgrounds'},
+      {lat:DEPOT.lat+.11, lng:DEPOT.lng-.05, r:3100, lvl:.92, name:'Turnpike On-Ramp'}
+    ];
+    hubs.forEach(h=>{
+      const color = h.lvl>.8?'#f87171':h.lvl>.55?'#fbbf24':'#4ade80';
+      /* 3 nested rings create heat feel */
+      [1.4,1,.65].forEach((sc,i)=>{
+        const c=L.circle([h.lat,h.lng],{radius:h.r*sc,color,fillColor:color,fillOpacity:.08+i*.04,weight:0,opacity:0}).addTo(map);
+        congestCircles.push(c);
+      });
+      const m=L.circle([h.lat,h.lng],{radius:h.r*.55,color,fillColor:color,fillOpacity:.3,weight:1.5,opacity:.9}).addTo(map)
+        .bindPopup(`<div class="popup-title">${h.name}</div><div class="popup-row"><span class="popup-label">Congestion</span><span class="popup-val" style="color:${color}">${Math.round(h.lvl*100)}%</span></div>`);
+      congestCircles.push(m);
+    });
+  }
+}
+
+/* Build pseudo-corridor polylines radiating from depot through driver clusters */
+function buildCorridors(predicted){
+  const out=[];
+  const anchors=[
+    [DEPOT.lat+.14, DEPOT.lng-.08],
+    [DEPOT.lat+.06, DEPOT.lng+.12],
+    [DEPOT.lat-.10, DEPOT.lng+.05],
+    [DEPOT.lat-.07, DEPOT.lng-.14],
+    [DEPOT.lat+.02, DEPOT.lng-.16],
+    [DEPOT.lat+.16, DEPOT.lng+.03],
+    [DEPOT.lat-.13, DEPOT.lng-.02],
+    [DEPOT.lat+.09, DEPOT.lng+.17]
+  ];
+  anchors.forEach((a,i)=>{
+    const mid=[(DEPOT.lat+a[0])/2+(((i*13)%10)-5)*.008, (DEPOT.lng+a[1])/2+(((i*7)%10)-5)*.008];
+    const sev = ((Math.sin(i*1.3+Date.now()/30000)+1)/2) * .9 + .05;
+    const sevP = ((Math.sin(i*1.7+Date.now()/30000+1.8)+1)/2) * .9 + .05;
+    out.push({coords:[[DEPOT.lat,DEPOT.lng], mid, a], sev, sevP});
+  });
+  return out;
+}
+
+function toggleLayer(l){
+  S.layers[l]=!S.layers[l];
+  const idMap={presence:'layerPresence',cost:'layerCost',sqep:'layerSqep',traffic:'layerTraffic',predict:'layerPredict',congest:'layerCongest'};
+  const btn=document.getElementById(idMap[l]);
+  if(btn) btn.classList.toggle('act', S.layers[l]);
+  renderLayers();
+  toast(l.toUpperCase()+' · '+(S.layers[l]?'on':'off'),'ok');
+}
+
+function fitMap(){
+  const pts=DRIVERS.filter(d=>d.status!=='off').map(d=>[d.lat,d.lng]);
+  pts.push([DEPOT.lat,DEPOT.lng]);
+  map.flyToBounds(L.latLngBounds(pts), {padding:[60,60], duration:.9});
+  closeCts();
+}
+
+/* ═══════════════════════════════════════════════════════
+   TESLA-STYLE DRIVER COCKPIT
+   ═══════════════════════════════════════════════════════ */
+const VEHICLE_MODELS = [
+  {id:'sprinter', name:'MB Sprinter 2500', sub:'Diesel · 188hp · 3.0L V6', color:'#e8ecf1', range:'312 mi', fuel:true},
+  {id:'transit',  name:'Ford Transit 350', sub:'EcoBoost · 310hp · 3.5L V6', color:'#1e40af', range:'286 mi', fuel:true},
+  {id:'promaster',name:'RAM ProMaster 2500',sub:'Pentastar · 276hp · 3.6L', color:'#d97706', range:'298 mi', fuel:true},
+  {id:'etransit', name:'Ford E-Transit',   sub:'EV · 266hp · 68kWh', color:'#00d4ff', range:'126 mi', fuel:false},
+  {id:'cyberfleet',name:'CyberFleet RT-1', sub:'EV · 520hp · 122kWh', color:'#8892a6', range:'318 mi', fuel:false}
+];
+let currentModel = 'sprinter';
+let _navSimTimer = null;
+let _navDriver = null;
+let _navEtaEnd = 0;
+
+/* SVG rear-view renderers per model */
+function vehicleSVG(modelId, bodyColor){
+  const m = VEHICLE_MODELS.find(x=>x.id===modelId) || VEHICLE_MODELS[0];
+  const c = bodyColor || m.color;
+  /* Rear 3/4 perspective of a cargo van, built with layered SVG */
+  if(modelId==='cyberfleet'){
+    return `<svg width="360" height="220" viewBox="0 0 360 220" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="body1" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="${c}" stop-opacity=".95"/>
+          <stop offset="1" stop-color="${c}" stop-opacity=".55"/>
+        </linearGradient>
+        <linearGradient id="glass1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0a1520"/><stop offset="1" stop-color="#132030"/></linearGradient>
+      </defs>
+      <!-- shadow -->
+      <ellipse cx="180" cy="205" rx="140" ry="8" fill="rgba(0,0,0,.55)" filter="blur(4px)"/>
+      <!-- angular body -->
+      <polygon points="40,180 60,100 300,100 320,180" fill="url(#body1)" stroke="${c}" stroke-width="1" stroke-opacity=".8"/>
+      <polygon points="60,100 120,70 240,70 300,100" fill="url(#body1)" stroke="${c}" stroke-width="1" stroke-opacity=".8"/>
+      <!-- rear glass -->
+      <polygon points="120,75 240,75 285,100 75,100" fill="url(#glass1)" stroke="#00d4ff" stroke-width="1" stroke-opacity=".4"/>
+      <!-- light bar -->
+      <rect x="68" y="120" width="224" height="6" rx="3" fill="#f87171" opacity=".9"/>
+      <rect x="68" y="120" width="224" height="2" rx="1" fill="#fff" opacity=".4"/>
+      <!-- door split -->
+      <line x1="180" y1="100" x2="180" y2="180" stroke="#000" stroke-opacity=".35" stroke-width="1.5"/>
+      <!-- wheels -->
+      <ellipse cx="85" cy="190" rx="22" ry="10" fill="#0a0a0f"/>
+      <ellipse cx="275" cy="190" rx="22" ry="10" fill="#0a0a0f"/>
+      <ellipse cx="85" cy="188" rx="14" ry="6" fill="#1a1a24"/>
+      <ellipse cx="275" cy="188" rx="14" ry="6" fill="#1a1a24"/>
+      <!-- plate -->
+      <rect x="160" y="155" width="40" height="12" rx="2" fill="#fff"/>
+      <text x="180" y="164" font-size="9" text-anchor="middle" font-family="monospace" font-weight="700" fill="#0a0a0f">CF-RT1</text>
+      <!-- underglow -->
+      <ellipse cx="180" cy="190" rx="140" ry="3" fill="#00d4ff" opacity=".3"/>
+    </svg>`;
+  }
+  /* generic cargo van rear-view */
+  return `<svg width="360" height="220" viewBox="0 0 360 220" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="bdy" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="${c}" stop-opacity=".98"/>
+        <stop offset=".55" stop-color="${c}" stop-opacity=".75"/>
+        <stop offset="1" stop-color="${c}" stop-opacity=".45"/>
+      </linearGradient>
+      <linearGradient id="gls" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0a1018"/><stop offset="1" stop-color="#1a2230"/></linearGradient>
+      <radialGradient id="hilite" cx=".3" cy=".1"><stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+    </defs>
+    <!-- shadow -->
+    <ellipse cx="180" cy="205" rx="140" ry="8" fill="rgba(0,0,0,.55)" filter="blur(4px)"/>
+    <!-- van body rounded -->
+    <path d="M52 180 Q48 100 70 80 Q100 64 180 62 Q260 64 290 80 Q312 100 308 180 Z" fill="url(#bdy)" stroke="rgba(0,0,0,.35)" stroke-width="1"/>
+    <!-- highlight -->
+    <path d="M52 180 Q48 100 70 80 Q100 64 180 62 Q260 64 290 80 Q312 100 308 180 Z" fill="url(#hilite)"/>
+    <!-- rear windows -->
+    <path d="M92 88 Q100 76 180 74 Q260 76 268 88 L268 118 L92 118 Z" fill="url(#gls)" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+    <line x1="180" y1="74" x2="180" y2="118" stroke="rgba(0,0,0,.4)" stroke-width="1.5"/>
+    <!-- rear doors -->
+    <line x1="180" y1="118" x2="180" y2="180" stroke="rgba(0,0,0,.4)" stroke-width="2"/>
+    <!-- handles -->
+    <rect x="168" y="148" width="8" height="3" rx="1" fill="rgba(0,0,0,.5)"/>
+    <rect x="184" y="148" width="8" height="3" rx="1" fill="rgba(0,0,0,.5)"/>
+    <!-- brake lights -->
+    <rect x="72" y="128" width="18" height="26" rx="3" fill="#f87171" opacity=".88"/>
+    <rect x="270" y="128" width="18" height="26" rx="3" fill="#f87171" opacity=".88"/>
+    <rect x="72" y="128" width="18" height="6" rx="3" fill="#fef3c7" opacity=".7"/>
+    <rect x="270" y="128" width="18" height="6" rx="3" fill="#fef3c7" opacity=".7"/>
+    <!-- plate -->
+    <rect x="156" y="160" width="48" height="14" rx="2" fill="#fff"/>
+    <text x="180" y="170" font-size="9" text-anchor="middle" font-family="monospace" font-weight="700" fill="#0a0a0f">DH-${Math.floor(1000+Math.random()*9000)}</text>
+    <!-- wheels -->
+    <ellipse cx="88" cy="188" rx="24" ry="11" fill="#0a0a0f"/>
+    <ellipse cx="272" cy="188" rx="24" ry="11" fill="#0a0a0f"/>
+    <ellipse cx="88" cy="186" rx="15" ry="6.5" fill="#1a1a24"/>
+    <ellipse cx="272" cy="186" rx="15" ry="6.5" fill="#1a1a24"/>
+    <circle cx="88" cy="186" r="4" fill="#2a2a35"/>
+    <circle cx="272" cy="186" r="4" fill="#2a2a35"/>
+    <!-- brand stripe -->
+    <rect x="56" y="172" width="248" height="3" fill="#00d4ff" opacity=".5"/>
+    <!-- drivehub emblem -->
+    <text x="180" y="100" font-size="10" text-anchor="middle" font-family="'Outfit',sans-serif" font-weight="700" fill="#fff" opacity=".55" letter-spacing="2">DRIVEHUB</text>
+  </svg>`;
+}
+function modelIconSVG(modelId){
+  const m = VEHICLE_MODELS.find(x=>x.id===modelId) || VEHICLE_MODELS[0];
+  return `<svg width="28" height="20" viewBox="0 0 28 20" fill="none"><path d="M3 15h22M5 15V9 l3-5h12l3 5v6" stroke="${m.color}" stroke-width="1.5" stroke-linejoin="round"/><circle cx="8" cy="16" r="2" fill="${m.color}"/><circle cx="20" cy="16" r="2" fill="${m.color}"/><rect x="10" y="6" width="8" height="4" rx="1" fill="${m.color}" opacity=".3"/></svg>`;
+}
+
+/* Open Tesla-style navigator cockpit */
+function openNavCockpit(driverId, fromPoint){
+  const d = DRIVERS.find(x=>x.id===driverId);
+  if(!d) return;
+  _navDriver = d;
+  /* set ETA end-time for FSD countdown (≈3 min per remaining stop + 8 min base) */
+  _navEtaEnd = Date.now() + Math.max(300, (d.stops - d.done) * 185 + 480) * 1000;
+  /* flare from marker position */
+  if(fromPoint){
+    const flare = document.createElement('div');
+    flare.className = 'nav-flare';
+    flare.style.left = fromPoint.x+'px';
+    flare.style.top = fromPoint.y+'px';
+    flare.style.width = flare.style.height = '28px';
+    document.body.appendChild(flare);
+    setTimeout(()=>flare.remove(), 950);
+  }
+  renderNavCockpit(d);
+  document.getElementById('navScrim').classList.add('on');
+  document.getElementById('navCockpit').classList.add('on');
+  /* start live sim */
+  if(_navSimTimer) clearInterval(_navSimTimer);
+  _navSimTimer = setInterval(()=>tickNavCockpit(), 1000);
+}
+function closeNavCockpit(){
+  document.getElementById('navScrim').classList.remove('on');
+  document.getElementById('navCockpit').classList.remove('on');
+  if(_navSimTimer){ clearInterval(_navSimTimer); _navSimTimer=null; }
+  const menu = document.getElementById('ncModelMenu');
+  if(menu) menu.classList.remove('open');
+}
+function setNavModel(mid){
+  currentModel = mid;
+  document.getElementById('ncModelMenu')?.classList.remove('open');
+  if(_navDriver) renderNavCockpit(_navDriver);
+  toast('Vehicle model · '+VEHICLE_MODELS.find(m=>m.id===mid).name, 'ok');
+}
+function toggleModelMenu(e){
+  e?.stopPropagation();
+  document.getElementById('ncModelMenu')?.classList.toggle('open');
+}
+document.addEventListener('click',(e)=>{
+  if(!e.target.closest('.nc-model-select')) document.getElementById('ncModelMenu')?.classList.remove('open');
+});
+
+function renderNavCockpit(d){
+  const m = VEHICLE_MODELS.find(x=>x.id===currentModel) || VEHICLE_MODELS[0];
+  const speedLimit = 45;
+  const speed = d.speed;
+  const rangeMi = m.fuel ? 186 + Math.floor(Math.random()*60) : 94 + Math.floor(Math.random()*40);
+  const fuelPct = m.fuel ? 62 : 71;
+  const battPct = 78;
+  const wearIdx = 34;       // 0-100 (lower=better)
+  const odo = 84127;
+  const tripMi = d.miles;
+  const idleMin = 42;
+  const engHrs = 6.7;
+  const hvac = 68;
+  const current = m.fuel? 0 : 42;  // kW draw if EV
+  const regen = m.fuel? 0 : 18;
+  const axleFront = 62;     // % of rated
+  const axleRear  = 78;
+  const load = 71;
+  const tires = {fl:38.2, fr:38.0, rl:36.4, rr:35.1};
+  const gForce = 0.14;
+
+  /* ── FSD window precomputed values ── */
+  const earnedPer = 9.26 * 0.58;
+  const totalEarned = earnedPer * d.done;
+  const totalLeft   = earnedPer * Math.max(0, d.stops - d.done);
+  const parcelPct   = d.stops ? Math.round(d.done / d.stops * 100) : 0;
+  /* Mini route map — 7 fixed waypoints mapped to d.done progress */
+  const _mpts = [{x:80,y:182},{x:54,y:158},{x:28,y:138},{x:28,y:106},{x:55,y:82},{x:86,y:56},{x:124,y:34}];
+  const _nmp  = _mpts.length;
+  const _dIdx = Math.min(Math.round(d.done / Math.max(d.stops, 1) * (_nmp - 1)), _nmp - 1);
+  const _mapFull = _mpts.map((p,i) => (i ? 'L' : 'M') + p.x + ',' + p.y).join(' ');
+  const _mapDone = _mpts.slice(0, _dIdx + 1).map((p,i) => (i ? 'L' : 'M') + p.x + ',' + p.y).join(' ');
+  const _mapDoneHtml = _dIdx > 0 ?
+    '<path fill="none" stroke="#00d4ff" stroke-width="2.5" stroke-linecap="round" opacity=".9" d="' + _mapDone + '"/>' : '';
+  const _mapDots = _mpts.map((p, i) => {
+    const done = i < _dIdx, curr = i === _dIdx;
+    const r    = curr ? 5 : 3.5;
+    const fill = done ? '#4ade80' : curr ? '#00d4ff' : 'rgba(255,255,255,.18)';
+    const ring = curr ? '<circle cx="' + p.x + '" cy="' + p.y + '" r="9" fill="none" stroke="rgba(0,212,255,.28)" stroke-width="1.5"/>' : '';
+    return ring + '<circle cx="' + p.x + '" cy="' + p.y + '" r="' + r + '" fill="' + fill + '"/>';
+  }).join('');
+
+  document.getElementById('navCockpit').innerHTML = `
+    <div class="nc-top">
+      <div class="nc-top-l">
+        <button class="nc-back" onclick="closeNavCockpit()"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+        <div class="nc-driver">
+          <div class="nc-driver-nm">${d.name}</div>
+          <div class="nc-driver-sub">${d.vehicle} · ${d.grade.toUpperCase()} · Zone ${d.zone}</div>
+        </div>
+        <div class="nc-badge"><span class="dot"></span>${d.status==='en'?'EN ROUTE':d.status==='stop'?'AT STOP':d.status==='load'?'LOADING':'ACTIVE'}</div>
+      </div>
+      <div class="nc-top-r">
+        <div class="nc-model-select">
+          <button class="nc-model-btn" onclick="toggleModelMenu(event)">
+            ${modelIconSVG(currentModel)}
+            <span>${m.name}</span>
+            <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div class="nc-model-menu" id="ncModelMenu">
+            ${VEHICLE_MODELS.map(v=>`
+              <div class="nc-model-opt ${v.id===currentModel?'sel':''}" onclick="setNavModel('${v.id}')">
+                <div class="nc-model-opt-ic">${modelIconSVG(v.id)}</div>
+                <div style="flex:1">
+                  <div class="nc-model-opt-nm">${v.name}</div>
+                  <div class="nc-model-opt-sub">${v.sub}</div>
+                </div>
+                ${v.id===currentModel?'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg>':''}
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nc-body">
+      <!-- LEFT COL -->
+      <div class="nc-col">
+        <div class="nc-card">
+          <div class="nc-card-h"><span>PROPULSION</span><span class="nc-card-h-ic"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></span></div>
+          <div class="nc-gauges">
+            ${gaugeSVG(m.fuel?fuelPct:battPct, m.fuel?'#4ade80':'#00d4ff', m.fuel?'FUEL':'BATTERY','%')}
+            ${gaugeSVG(Math.min(100,(rangeMi/320)*100),'#c084fc','RANGE',rangeMi+' mi', true)}
+            ${gaugeSVG(100-wearIdx,'#fbbf24','HEALTH','%')}
+            ${gaugeSVG(Math.min(100,load),'#2dd4bf','PAYLOAD','%')}
+          </div>
+        </div>
+
+        <div class="nc-card">
+          <div class="nc-card-h"><span>AXLE LOAD</span><span class="nc-card-h-ic"><svg viewBox="0 0 24 24"><path d="M4 12h16M6 8h12M6 16h12"/></svg></span></div>
+          <div class="nc-axle-row">
+            <span class="nc-axle-l">FRONT</span>
+            <div class="nc-axle-bar"><div class="nc-axle-fill ${axleFront>85?'hot':''}" style="width:${axleFront}%"></div></div>
+            <span class="nc-axle-v">${(axleFront*34).toFixed(0)} kg</span>
+          </div>
+          <div class="nc-axle-row">
+            <span class="nc-axle-l">REAR</span>
+            <div class="nc-axle-bar"><div class="nc-axle-fill ${axleRear>85?'hot':''}" style="width:${axleRear}%"></div></div>
+            <span class="nc-axle-v">${(axleRear*48).toFixed(0)} kg</span>
+          </div>
+          <div class="nc-axle-row">
+            <span class="nc-axle-l">G-FORCE</span>
+            <div class="nc-axle-bar"><div class="nc-axle-fill" style="width:${Math.min(100,gForce*200)}%"></div></div>
+            <span class="nc-axle-v">${gForce.toFixed(2)}g</span>
+          </div>
+        </div>
+
+        <div class="nc-card">
+          <div class="nc-card-h"><span>TIRE PRESSURE</span><span class="nc-card-h-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg></span></div>
+          <div class="nc-tires">
+            <div class="nc-tire"><div class="nc-tire-v">${tires.fl.toFixed(1)}</div><div class="nc-tire-l">FL · psi</div></div>
+            <div class="nc-tire"><div class="nc-tire-v">${tires.fr.toFixed(1)}</div><div class="nc-tire-l">FR · psi</div></div>
+            <div class="nc-tire ${tires.rl<37?'warn':''}"><div class="nc-tire-v">${tires.rl.toFixed(1)}</div><div class="nc-tire-l">RL · psi</div></div>
+            <div class="nc-tire ${tires.rr<36?'err':''}"><div class="nc-tire-v">${tires.rr.toFixed(1)}</div><div class="nc-tire-l">RR · psi</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CENTER STAGE -->
+      <div class="nc-stage">
+        <div class="nc-road"></div>
+        <div class="nc-road-lines"></div>
+
+        <div class="nc-hud">
+          <div class="nc-autopilot"><span class="dot"></span>ASSIST ACTIVE</div>
+          <div class="nc-speedo">
+            <div class="nc-speedo-v" id="ncSpeed">${speed}</div>
+            <div class="nc-speedo-u">MPH</div>
+            <div class="nc-speedo-lim">LIMIT <b>${speedLimit}</b></div>
+          </div>
+          <div class="nc-compass">
+            <div class="nc-compass-ring"></div>
+            <div class="nc-compass-n">N</div>
+            <div class="nc-compass-needle" id="ncNeedle" style="transform:rotate(${d.heading}deg)"></div>
+            <div class="nc-compass-hdg" id="ncHdg">${d.heading}°</div>
+          </div>
+        </div>
+
+        <!-- ── Tesla FSD-style window ── -->
+        <div class="nc-fsd-win" id="ncFsdWin">
+
+          <!-- LEFT: Mini route map -->
+          <div class="nc-fsd-map">
+            <div class="nc-fsd-map-hd">Route · Progress</div>
+            <svg class="nc-fsd-map-svg" viewBox="0 0 160 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+              <!-- street grid -->
+              <line x1="0" y1="50"  x2="160" y2="50"  stroke="rgba(255,255,255,.045)" stroke-width="1"/>
+              <line x1="0" y1="100" x2="160" y2="100" stroke="rgba(255,255,255,.045)" stroke-width="1"/>
+              <line x1="0" y1="150" x2="160" y2="150" stroke="rgba(255,255,255,.045)" stroke-width="1"/>
+              <line x1="40"  y1="0" x2="40"  y2="200" stroke="rgba(255,255,255,.045)" stroke-width="1"/>
+              <line x1="90"  y1="0" x2="90"  y2="200" stroke="rgba(255,255,255,.045)" stroke-width="1"/>
+              <line x1="135" y1="0" x2="135" y2="200" stroke="rgba(255,255,255,.045)" stroke-width="1"/>
+              <!-- full route (dim dashed) -->
+              <path fill="none" stroke="rgba(255,255,255,.14)" stroke-width="1.5" stroke-dasharray="5 4" d="${_mapFull}"/>
+              <!-- completed portion (solid cyan) -->
+              ${_mapDoneHtml}
+              <!-- stop dots + current ring -->
+              ${_mapDots}
+              <!-- depot start (green square) -->
+              <rect x="${_mpts[0].x-5}" y="${_mpts[0].y-5}" width="10" height="10" rx="2" fill="rgba(74,222,128,.45)" stroke="#4ade80" stroke-width="1.2"/>
+              <!-- destination (amber triangle) -->
+              <path d="M${_mpts[_nmp-1].x},${_mpts[_nmp-1].y-8} L${_mpts[_nmp-1].x+5},${_mpts[_nmp-1].y+3} L${_mpts[_nmp-1].x-5},${_mpts[_nmp-1].y+3}Z" fill="rgba(251,191,36,.6)" stroke="#fbbf24" stroke-width="1.2"/>
+            </svg>
+            <div class="nc-fsd-map-ft">${d.done} of ${d.stops} delivered</div>
+          </div>
+
+          <!-- CENTER: Road view (transparent — stage road bg visible) -->
+          <div class="nc-fsd-road">
+            <!-- speed limit sign -->
+            <div class="nc-fsd-spd-sign">
+              <div class="nc-fsd-spd-sign-circle">${speedLimit}</div>
+              <div class="nc-fsd-spd-sign-post"></div>
+            </div>
+            <!-- delivery van silhouette — top-down -->
+            <svg class="nc-fsd-veh-sil" width="84" height="58" viewBox="0 0 84 58">
+              <rect x="10" y="6" width="64" height="46" rx="9" fill="rgba(0,212,255,.12)" stroke="rgba(0,212,255,.62)" stroke-width="1.5"/>
+              <rect x="19" y="12" width="46" height="15" rx="3.5" fill="rgba(0,212,255,.17)" stroke="rgba(0,212,255,.32)" stroke-width="1"/>
+              <rect x="23" y="32" width="38" height="14" rx="3" fill="rgba(0,212,255,.07)" stroke="rgba(0,212,255,.15)" stroke-width=".8"/>
+              <circle cx="16" cy="7"  r="5.5" fill="rgba(14,22,40,.85)" stroke="rgba(0,212,255,.48)" stroke-width="1.5"/>
+              <circle cx="68" cy="7"  r="5.5" fill="rgba(14,22,40,.85)" stroke="rgba(0,212,255,.48)" stroke-width="1.5"/>
+              <circle cx="16" cy="51" r="5.5" fill="rgba(14,22,40,.85)" stroke="rgba(0,212,255,.48)" stroke-width="1.5"/>
+              <circle cx="68" cy="51" r="5.5" fill="rgba(14,22,40,.85)" stroke="rgba(0,212,255,.48)" stroke-width="1.5"/>
+              <circle cx="42" cy="29" r="3.5" fill="rgba(0,212,255,.55)"/>
+            </svg>
+            <!-- lane detect lines -->
+            <div class="nc-fsd-lane nc-fsd-lane-l"></div>
+            <div class="nc-fsd-lane nc-fsd-lane-r"></div>
+          </div>
+
+          <!-- RIGHT: Driver operations info -->
+          <div class="nc-fsd-info">
+            <div class="nc-fsd-stat">
+              <div class="nc-fsd-stat-l">Time to Arrival</div>
+              <div class="nc-fsd-stat-v cyan big" id="ncFsdEta">--:--</div>
+            </div>
+            <div class="nc-fsd-stat">
+              <div class="nc-fsd-stat-l">Parcels Today</div>
+              <div class="nc-fsd-stat-v">${d.done}<span style="color:rgba(255,255,255,.3);font-size:12px;font-weight:400"> / ${d.stops}</span></div>
+              <div class="nc-fsd-parcel-wrap">
+                <div class="nc-fsd-parcel-bar"><div class="nc-fsd-parcel-fill" style="width:${parcelPct}%"></div></div>
+                <span class="nc-fsd-parcel-pct">${parcelPct}%</span>
+              </div>
+            </div>
+            <div class="nc-fsd-stat">
+              <div class="nc-fsd-stat-l">Earned · Today</div>
+              <div class="nc-fsd-stat-v green">${fmtMoney(totalEarned)}</div>
+            </div>
+            <div class="nc-fsd-stat">
+              <div class="nc-fsd-stat-l">Left to Earn</div>
+              <div class="nc-fsd-stat-v amber">${fmtMoney(totalLeft)}</div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="nc-statusbar">
+          <div class="nc-sb-cell"><div class="nc-sb-l">Next Stop</div><div class="nc-sb-v">0.8 mi</div></div>
+          <div class="nc-sb-sep"></div>
+          <div class="nc-sb-cell"><div class="nc-sb-l">ETA</div><div class="nc-sb-v" style="color:#4ade80">4:12 PM</div></div>
+          <div class="nc-sb-sep"></div>
+          <div class="nc-sb-cell"><div class="nc-sb-l">Trip</div><div class="nc-sb-v">${tripMi} mi</div></div>
+          <div class="nc-sb-sep"></div>
+          <div class="nc-sb-cell"><div class="nc-sb-l">Stops</div><div class="nc-sb-v">${d.done}/${d.stops}</div></div>
+          <div class="nc-sb-sep"></div>
+          <div class="nc-sb-cell"><div class="nc-sb-l">Odometer</div><div class="nc-sb-v">${odo.toLocaleString()}</div></div>
+          <div class="nc-sb-sep"></div>
+          <div class="nc-sb-cell"><div class="nc-sb-l">HVAC</div><div class="nc-sb-v">${hvac}°F</div></div>
+          <div style="flex:1"></div>
+          <div class="nc-sb-cell" style="text-align:right"><div class="nc-sb-l">Range</div><div class="nc-sb-v" style="color:#00d4ff">${rangeMi} mi</div></div>
+        </div>
+      </div>
+
+      <!-- RIGHT COL -->
+      <div class="nc-col">
+        <div class="nc-card">
+          <div class="nc-card-h"><span>OPERATIONS</span><span class="nc-card-h-ic"><svg viewBox="0 0 24 24"><path d="M12 8v4l3 2M20 12a8 8 0 11-16 0 8 8 0 0116 0z"/></svg></span></div>
+          <div class="nc-kpi"><div class="nc-kpi-l"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>Avg Speed</div><div class="nc-kpi-v">${Math.round(speed*.82)} mph</div></div>
+          <div class="nc-kpi"><div class="nc-kpi-l"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Idle Time</div><div class="nc-kpi-v" style="color:#fbbf24">${idleMin} min</div></div>
+          <div class="nc-kpi"><div class="nc-kpi-l"><svg viewBox="0 0 24 24"><path d="M3 3h18v18H3z"/><path d="M9 9h6v6H9z"/></svg>Engine Hrs</div><div class="nc-kpi-v">${engHrs} h</div></div>
+          <div class="nc-kpi"><div class="nc-kpi-l"><svg viewBox="0 0 24 24"><path d="M12 2l4 8 8 1-6 6 2 9-8-5-8 5 2-9-6-6 8-1z"/></svg>Driver Score</div><div class="nc-kpi-v" style="color:#4ade80">${d.otp}</div></div>
+          <div class="nc-kpi"><div class="nc-kpi-l"><svg viewBox="0 0 24 24"><path d="M1 12h22M12 1v22"/></svg>${m.fuel?'Fuel Econ':'kWh/100mi'}</div><div class="nc-kpi-v">${m.fuel?(8.2+Math.random()*.6).toFixed(1)+' mpg':(42+Math.random()*4).toFixed(1)}</div></div>
+          ${!m.fuel?`<div class="nc-kpi"><div class="nc-kpi-l"><svg viewBox="0 0 24 24"><path d="M5 3l14 9-14 9V3z"/></svg>Draw · Regen</div><div class="nc-kpi-v"><span style="color:#00d4ff">${current} kW</span> <span style="color:#4ade80">+${regen}</span></div></div>`:''}
+        </div>
+
+        <div class="nc-card">
+          <div class="nc-card-h"><span>ROUTE · UPCOMING</span><span class="nc-card-h-ic"><svg viewBox="0 0 24 24"><path d="M9 20l-5-5 5-5M4 15h12a4 4 0 004-4V4"/></svg></span></div>
+          <div class="nc-route">
+            <div class="nc-route-step curr">
+              <div class="nc-route-step-ic"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div>
+              <div class="nc-route-step-txt">
+                <div class="nc-route-step-d">Turn right · Market St</div>
+                <div class="nc-route-step-s">0.3 mi · residential</div>
+              </div>
+              <div class="nc-route-step-eta">2m</div>
+            </div>
+            <div class="nc-route-step">
+              <div class="nc-route-step-ic"><svg viewBox="0 0 24 24"><path d="M12 3v18"/></svg></div>
+              <div class="nc-route-step-txt">
+                <div class="nc-route-step-d">Stop · 2114 Shields Rd</div>
+                <div class="nc-route-step-s">residential · signature req</div>
+              </div>
+              <div class="nc-route-step-eta">4m</div>
+            </div>
+            <div class="nc-route-step">
+              <div class="nc-route-step-ic"><svg viewBox="0 0 24 24"><path d="M4 12h16M14 6l6 6-6 6"/></svg></div>
+              <div class="nc-route-step-txt">
+                <div class="nc-route-step-d">Continue · Boardman-Canfield</div>
+                <div class="nc-route-step-s">1.4 mi · corridor</div>
+              </div>
+              <div class="nc-route-step-eta">6m</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="nc-card">
+          <div class="nc-card-h"><span>ECONOMICS</span><span class="nc-card-h-ic"><svg viewBox="0 0 24 24"><path d="M12 2v20M6 8h9a3 3 0 010 6H8a3 3 0 000 6h10"/></svg></span></div>
+          <div class="nc-kpi"><div class="nc-kpi-l">Cost / Stop</div><div class="nc-kpi-v" style="color:#34d399">${fmtMoney(d.cpsActual)}</div></div>
+          <div class="nc-kpi"><div class="nc-kpi-l">Margin / Stop</div><div class="nc-kpi-v" style="color:#4ade80">${fmtMoney((9.26*.58)-d.cpsActual)}</div></div>
+          <div class="nc-kpi"><div class="nc-kpi-l">P&L Today</div><div class="nc-kpi-v" style="color:#4ade80">${fmtMoney(((9.26*.58)-d.cpsActual)*d.done)}</div></div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function gaugeSVG(pct, color, label, unit, unitAsText){
+  const r = 38, circ = 2*Math.PI*r, off = circ - (pct/100)*circ;
+  return `<div class="nc-gauge">
+    <svg viewBox="0 0 100 100">
+      <circle class="nc-gauge-bg" cx="50" cy="50" r="${r}"/>
+      <circle class="nc-gauge-fg" cx="50" cy="50" r="${r}" stroke="${color}" stroke-dasharray="${circ}" stroke-dashoffset="${off}" style="filter:drop-shadow(0 0 6px ${color})"/>
+    </svg>
+    <div class="nc-gauge-v" style="color:${color}">${unitAsText?unit.split(' ')[0]:Math.round(pct)}</div>
+    <div class="nc-gauge-u">${unitAsText?unit.split(' ')[1]||'':unit}</div>
+    <div class="nc-gauge-l">${label}</div>
+  </div>`;
+}
+
+function tickNavCockpit(){
+  if(!_navDriver) return;
+  const d = _navDriver;
+  /* light jitter on speed + heading */
+  d.speed = Math.max(0, Math.min(55, d.speed + Math.round((Math.random()-.5)*4)));
+  d.heading = (d.heading + Math.round((Math.random()-.5)*8) + 360)%360;
+  const sp = document.getElementById('ncSpeed');
+  const nd = document.getElementById('ncNeedle');
+  const hd = document.getElementById('ncHdg');
+  if(sp) sp.textContent = d.speed;
+  if(nd) nd.style.transform = 'rotate('+d.heading+'deg)';
+  if(hd) hd.textContent = d.heading+'°';
+  /* FSD ETA countdown */
+  const etaEl = document.getElementById('ncFsdEta');
+  if(etaEl && _navEtaEnd > 0){
+    const rem = Math.max(0, _navEtaEnd - Date.now());
+    const hh  = Math.floor(rem / 3600000);
+    const mm  = Math.floor((rem % 3600000) / 60000);
+    const ss  = Math.floor((rem % 60000) / 1000);
+    etaEl.textContent = hh > 0
+      ? hh + ':' + String(mm).padStart(2,'0') + ':' + String(ss).padStart(2,'0')
+      : String(mm).padStart(2,'0') + ':' + String(ss).padStart(2,'0');
+  }
+}
+
+/* Hook magicZoom → navigator instead of plain fly-to */
+function magicZoom(id){
+  const d=DRIVERS.find(x=>x.id===id);
+  if(!d) return;
+  selectDriver(id);
+  let pt = null;
+  try{
+    const mk = drvMarkers[id];
+    if(mk){ const px = map.latLngToContainerPoint(mk.getLatLng()); const mb = document.getElementById('lmap').getBoundingClientRect(); pt = {x: mb.left+px.x, y: mb.top+px.y}; }
+  }catch(e){}
+  map.flyTo([d.lat,d.lng], 16, {animate:true, duration:.7});
+  setTimeout(()=>openNavCockpit(id, pt), 420);
+}
+
+function selectDriver(id){
+  S.selectedId=id;
+  renderFleetList();
+  renderSwarm();
+  const d=DRIVERS.find(x=>x.id===id);
+  if(d) showFocusCard(d);
+}
+
+function showFocusCard(d){
+  const fc=document.getElementById('focusCard');
+  fc.innerHTML = `
+    <div class="fc-hdr">
+      <div class="fc-av" style="background:${d.color}22;color:${d.color}">${d.initials}</div>
+      <div class="fc-info">
+        <div class="fc-name">${d.name}</div>
+        <div class="fc-sub">${d.vehicle} · ${d.grade.toUpperCase()} · Zone ${d.zone}</div>
+      </div>
+      <button class="fc-close" onclick="hideFocusCard()">✕</button>
+    </div>
+    <div class="fc-tele">
+      <div class="fc-tele-row"><div class="fc-tele-label">Speed</div><div class="fc-tele-val">${d.speed} mph</div></div>
+      <div class="fc-tele-row"><div class="fc-tele-label">Heading</div><div class="fc-tele-val">${d.heading}°</div></div>
+      <div class="fc-tele-row"><div class="fc-tele-label">Stops</div><div class="fc-tele-val">${d.done}/${d.stops}</div></div>
+      <div class="fc-tele-row"><div class="fc-tele-label">Presence</div><div class="fc-tele-val">${d.presence}%</div></div>
+      <div class="fc-tele-row"><div class="fc-tele-label">CPS</div><div class="fc-tele-val" style="color:var(--money)">${fmtMoney(d.cpsActual)}</div></div>
+      <div class="fc-tele-row"><div class="fc-tele-label">OTIF</div><div class="fc-tele-val" style="color:var(--ok-t)">${d.otp}%</div></div>
+    </div>
+    <div style="padding:10px 13px;display:flex;gap:6px">
+      <button class="btn btn-o btn-sm" style="flex:1" onclick="openCts(DRIVERS.find(x=>x.id==='${d.id}'))">Cost Panel</button>
+      <button class="btn btn-p btn-sm" style="flex:1" onclick="toast('Radio opened','ok')">Radio</button>
+    </div>
+  `;
+  fc.classList.add('vis');
+}
+function hideFocusCard(){document.getElementById('focusCard').classList.remove('vis')}
+
+/* ═══════════════════════════════════════════════════════
+   COST-TO-SERVE PANEL
+   ═══════════════════════════════════════════════════════ */
+function openCts(d){
+  const retail = ECON.retailRate;
+  const discount = retail * ECON.ontracDiscountPct;
+  const effective = retail - discount;
+  const errorCost = d.errorsToday * ECON.errorCost;
+  const grossMargin = (effective - d.cpsActual - errorCost/Math.max(d.done,1)) / effective;
+
+  const breakdown = [
+    {lbl:'Labor',    v:d.cpsActual*0.42, neg:true},
+    {lbl:'Fuel',     v:d.cpsActual*0.18, neg:true},
+    {lbl:'Vehicle',  v:d.cpsActual*0.12, neg:true},
+    {lbl:'Platform', v:d.cpsActual*0.16, neg:true},
+    {lbl:'Insurance',v:d.cpsActual*0.08, neg:true},
+    {lbl:'Other',    v:d.cpsActual*0.04, neg:true}
+  ];
+  const maxBar = d.cpsActual;
+
+  document.getElementById('ctsTitle').textContent = d.name+' · Cost-to-Serve';
+  document.getElementById('ctsSub').textContent   = d.vehicle+' · '+d.done+'/'+d.stops+' stops · Zone '+d.zone;
+
+  document.getElementById('ctsBody').innerHTML = `
+    <!-- HERO -->
+    <div class="cts-hero">
+      <div class="cts-hero-l">Effective cost per stop</div>
+      <div class="cts-hero-v">${fmtMoney(d.cpsActual)}</div>
+      <div class="cts-hero-sub">vs blended target ${fmtMoney(ECON.costSuburban)}</div>
+      <div class="cts-hero-delta">
+        ${d.cpsActual<=ECON.costSuburban?'▼':'▲'} ${fmtMoney(Math.abs(d.cpsActual-ECON.costSuburban))} vs target
+      </div>
+    </div>
+
+    <!-- GRID KPIs -->
+    <div class="cts-grid">
+      <div class="cts-cell cy">
+        <div class="cts-cell-l">Revenue / Stop</div>
+        <div class="cts-cell-v">${fmtMoney(effective)}</div>
+        <div class="cts-cell-s">post 42% discount</div>
+      </div>
+      <div class="cts-cell ok">
+        <div class="cts-cell-l">Margin / Stop</div>
+        <div class="cts-cell-v">${fmtMoney(effective-d.cpsActual)}</div>
+        <div class="cts-cell-s">${(grossMargin*100).toFixed(1)}% gross</div>
+      </div>
+      <div class="cts-cell ${d.errorsToday?'err':'ok'}">
+        <div class="cts-cell-l">Error Cost</div>
+        <div class="cts-cell-v">${fmtMoney(errorCost)}</div>
+        <div class="cts-cell-s">${d.errorsToday} today · ${fmtMoney(ECON.errorCost)} ea</div>
+      </div>
+      <div class="cts-cell">
+        <div class="cts-cell-l">P&L Today</div>
+        <div class="cts-cell-v" style="color:${((effective*d.done)-(d.cpsActual*d.done)-errorCost)>0?'var(--money)':'var(--err-t)'}">${fmtMoney((effective*d.done)-(d.cpsActual*d.done)-errorCost)}</div>
+        <div class="cts-cell-s">${d.done} stops · net</div>
+      </div>
+    </div>
+
+    <!-- DISCOUNT MATH -->
+    <div class="cts-discount">
+      <div class="cts-section-lbl" style="margin-bottom:10px">Contract economics</div>
+      <div class="cd-row"><span class="cd-lbl">Retail rate</span><span class="cd-v strike">${fmtMoney(retail)}</span></div>
+      <div class="cd-row"><span class="cd-lbl">OnTrac discount <span class="cd-pct">42%</span></span><span class="cd-v" style="color:var(--money)">− ${fmtMoney(discount)}</span></div>
+      <div class="cd-row big"><span class="cd-lbl">Effective rate</span><span class="cd-v hero">${fmtMoney(effective)}</span></div>
+    </div>
+
+    <!-- WATERFALL -->
+    <div>
+      <div class="cts-section-lbl">Cost waterfall</div>
+      <div class="cts-waterfall">
+        <div class="wf-row">
+          <span class="wf-label" style="font-weight:600">Rev / stop</span>
+          <div class="wf-bar-wrap"><div class="wf-bar hero" style="width:${(effective/retail)*100}%"></div></div>
+          <span class="wf-val hero">+${fmtMoney(effective)}</span>
+        </div>
+        ${breakdown.map(b=>`
+          <div class="wf-row">
+            <span class="wf-label">${b.lbl}</span>
+            <div class="wf-bar-wrap"><div class="wf-bar neg" style="width:${(b.v/maxBar)*100*(effective/retail)}%"></div></div>
+            <span class="wf-val neg">− ${fmtMoney(b.v)}</span>
+          </div>
+        `).join('')}
+        <div style="height:1px;background:var(--border);margin:4px 0"></div>
+        <div class="wf-row">
+          <span class="wf-label" style="font-weight:700">Margin</span>
+          <div class="wf-bar-wrap"><div class="wf-bar pos" style="width:${((effective-d.cpsActual)/retail)*100}%"></div></div>
+          <span class="wf-val pos">${fmtMoney(effective-d.cpsActual)}</span>
+        </div>
+      </div>
+    </div>
+  `;
+  document.getElementById('ctsPanel').classList.add('open');
+}
+function closeCts(){document.getElementById('ctsPanel').classList.remove('open')}
+
+/* ═══════════════════════════════════════════════════════
+   TOAST
+   ═══════════════════════════════════════════════════════ */
+let _tt;
+function toast(msg,kind){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='';t.classList.add('show');
+  if(kind)t.classList.add(kind);
+  clearTimeout(_tt);
+  _tt=setTimeout(()=>t.classList.remove('show'),1800);
+}
+
+/* ═══════════════════════════════════════════════════════
+   SIMULATION — light drift every 2.5s for presence feel
+   ═══════════════════════════════════════════════════════ */
+function simTick(){
+  DRIVERS.forEach(d=>{
+    if(d.status==='en' || d.status==='stop'){
+      d.lat += (Math.random()-.5)*.0014;
+      d.lng += (Math.random()-.5)*.0018;
+      d.heading = (d.heading + Math.round((Math.random()-.5)*30)+360)%360;
+      if(d.status==='en') d.speed = Math.max(12, Math.min(54, d.speed + Math.round((Math.random()-.5)*6)));
+    }
+  });
+  Object.entries(drvMarkers).forEach(([id,m])=>{
+    const d=DRIVERS.find(x=>x.id===id);
+    if(d && m) m.setLatLng([d.lat,d.lng]);
+  });
+}
+/* refresh traffic corridors every few seconds so they feel live */
+setInterval(()=>{ if(S.layers.traffic || S.layers.predict) renderLayers(); }, 8000);
+setInterval(simTick, 2500);
+
+/* ═══════════════════════════════════════════════════════
+   ANIM — radial mouse tracking for map controls
+   ═══════════════════════════════════════════════════════ */
+document.addEventListener('mousemove', (e)=>{
+  const t=e.target.closest('.mctrl,.ck,.rb-cell,.cts-cell');
+  if(!t) return;
+  const r=t.getBoundingClientRect();
+  t.style.setProperty('--mx', ((e.clientX-r.left)/r.width*100)+'%');
+  t.style.setProperty('--my', ((e.clientY-r.top)/r.height*100)+'%');
+},{passive:true});
+
+/* Ribbon value tick animation: briefly pop values every refresh */
+function pulseRibbonValues(){
+  document.querySelectorAll('.rb-value, .ck-v').forEach(el=>{
+    el.style.transition='transform .4s cubic-bezier(.34,1.56,.64,1),color .3s';
+    el.style.transform='scale(1.08)';
+    setTimeout(()=>{ el.style.transform=''; },260);
+  });
+}
+
+/* ═══════════════════════════════════════════════════════
+   INIT
+   ═══════════════════════════════════════════════════════ */
+renderRibbon();
+renderLocBar();
+renderPersonaSwitch();
+renderLP();
+initMap();
+setTimeout(()=>{fitMap();},300);
+setInterval(()=>{ renderRibbon(); requestAnimationFrame(pulseRibbonValues); }, 15000);
+/* Sporadic "breathing" pulse on command rail — feels alive */
+setInterval(()=>{
+  const cks=document.querySelectorAll('.ck');
+  if(!cks.length) return;
+  const c=cks[Math.floor(Math.random()*cks.length)];
+  c.style.transition='transform .35s cubic-bezier(.34,1.56,.64,1), box-shadow .35s';
+  c.style.transform='translateY(-2px) scale(1.03)';
+  c.style.boxShadow='0 6px 18px rgba(0,212,255,.18)';
+  setTimeout(()=>{ c.style.transform=''; c.style.boxShadow=''; }, 520);
+}, 3200);
+</script>
+
+
+</body></html>
