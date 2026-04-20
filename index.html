@@ -751,7 +751,7 @@ body.dh-ann-mode #page-content{cursor:crosshair!important}
   border-bottom:none;
 }
 /* accent line top — color by type */
-.mcd-driver .mcd-card{border-top:2px solid #f97316;}
+.mcd-driver .mcd-card{border-top:2px solid #00d4ff;}
 .mcd-stop .mcd-card{border-top:2px solid #00d4ff;}
 .mcd-warehouse .mcd-card{border-top:2px solid #a78bfa;}
 .mcd-hd{display:flex;align-items:center;gap:8px;margin-bottom:8px;padding-bottom:6px;
@@ -1126,6 +1126,20 @@ a,button,select,.nav-item,.tab-item,.demo-btn,.demo-dropdown summary,.btn,.notif
 .re-rdr-body th{background:rgba(249,115,22,.08);padding:5px 7px;text-align:left;color:#e2e8f0;border:1px solid rgba(249,115,22,.1)}
 .re-rdr-body td{padding:4px 7px;border:1px solid rgba(255,255,255,.04);color:#94a3b8}
 .re-sim-bar{height:26px;display:flex;align-items:center;gap:10px;padding:0 18px;background:rgba(0,0,0,.35);border-top:1px solid rgba(249,115,22,.06);flex-shrink:0;font-size:9px;color:#475569;font-family:var(--mono)}
+
+/* ── Login Hero ── */
+.login-hero{text-align:center;padding:28px 24px 20px;background:linear-gradient(160deg,rgba(0,212,255,.07) 0%,rgba(0,153,204,.05) 50%,rgba(167,139,250,.06) 100%);border-bottom:1px solid var(--border);border-radius:20px 20px 0 0;position:relative;overflow:hidden}
+.login-hero::before{content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(0,212,255,.1) 0%,transparent 70%);pointer-events:none;animation:heroGlow 4s ease-in-out infinite}
+@keyframes heroGlow{0%,100%{opacity:.7;transform:translateX(-50%) scale(1)}50%{opacity:1;transform:translateX(-50%) scale(1.1)}}
+.login-hero .login-logo-row{justify-content:center;margin-bottom:10px}
+.login-hero .login-logo-icon{width:52px;height:52px;border-radius:14px;box-shadow:0 4px 28px rgba(0,212,255,.4);animation:heroPulse 3s ease-in-out infinite}
+.login-hero .login-logo-icon span{font-size:18px!important}
+@keyframes heroPulse{0%,100%{box-shadow:0 4px 28px rgba(0,212,255,.4)}50%{box-shadow:0 4px 44px rgba(0,212,255,.65),0 0 60px rgba(0,212,255,.15)}}
+.login-hero .login-logo-title{font-size:26px}
+.login-hero .login-logo-sub{font-size:10px;letter-spacing:3.5px;margin-top:6px}
+.login-slogan{font-size:13px;color:var(--primary);margin-top:10px;font-style:italic;letter-spacing:.5px;opacity:.75;animation:sloganFloat 5s ease-in-out infinite}
+@keyframes sloganFloat{0%,100%{opacity:.75;transform:translateY(0)}50%{opacity:1;transform:translateY(-2px)}}
+body.light-theme .login-hero{background:linear-gradient(160deg,rgba(0,180,220,.06) 0%,rgba(0,153,204,.04) 50%,rgba(140,120,220,.05) 100%)}
 </style>
 </head>
 <body>
@@ -1143,6 +1157,12 @@ const USERS=[
   {id:6,name:"James Williams",email:"driver@firstchoice.com",pw:"drv123",role:"driver",co:1,phone:"+1 (555) 500-0001",active:true},
   {id:7,name:"Miguel Hernandez",email:"driver2@ontrac-la.com",pw:"drv456",role:"driver",co:4,phone:"+1 (323) 500-0007",active:true},
   {id:8,name:"Keisha Brown",email:"driver3@swiftdel.com",pw:"drv789",role:"driver",co:3,phone:"+1 (602) 500-0008",active:true},
+  {id:9,name:"Victor Petrov",email:"vp@ontrac-la.com",pw:"vp123",role:"ontrac_manager",co:null,phone:"+1 (415) 555-0901",active:true},
+  {id:10,name:"Rachel Green",email:"regional@pacrim.com",pw:"reg123",role:"manager",co:2,phone:"+1 (415) 555-1001",active:true},
+  {id:11,name:"Tom Bradley",email:"b2b@industry-partners.com",pw:"b2b123",role:"manager",co:null,phone:"+1 (310) 555-1101",active:true},
+  {id:12,name:"Lisa Park",email:"b2c@industry-partners.com",pw:"b2c123",role:"manager",co:null,phone:"+1 (310) 555-1201",active:true},
+  {id:13,name:"Ryan Okafor",email:"dhmanager@drivehub.io",pw:"dhm123",role:"admin",co:null,phone:"+1 (415) 555-1301",active:true},
+  {id:14,name:"Diana Ross",email:"owner@drivehub.io",pw:"dho123",role:"admin",co:null,phone:"+1 (415) 555-1401",active:true},
 ];
 
 let companies=[
@@ -2657,7 +2677,7 @@ function renderTracking(){
 function initTrackingMap(){
   const mapEl=document.getElementById('tracking-map');if(!mapEl||mapEl._leaflet_id)return;
   const map=L.map(mapEl,{scrollWheelZoom:true,zoomControl:true}).setView([34.0,-118.2],10);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OSM',maxZoom:18}).addTo(map);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'©CARTO',subdomains:'abcd',maxZoom:19}).addTo(map);
   const bounds=[];
   USERS.filter(u=>u.role==='driver'&&u.active).forEach(u=>{
     const gps=DRIVER_GPS[u.id];const dd=DRIVER_DATA[u.id];if(!gps||!dd)return;
@@ -2697,7 +2717,7 @@ function initDriverRouteMap(){
   const stops=dd.currentRoute.stops.filter(s=>s.lat&&s.lng);if(stops.length===0)return;
   const cLat=stops.reduce((a,s)=>a+s.lat,0)/stops.length;const cLng=stops.reduce((a,s)=>a+s.lng,0)/stops.length;
   const map=L.map(mapEl,{scrollWheelZoom:true,zoomControl:true}).setView([cLat,cLng],13);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OSM',maxZoom:18}).addTo(map);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'©CARTO',subdomains:'abcd',maxZoom:19}).addTo(map);
   const bounds=[];const routeCoords=stops.map(s=>[s.lat,s.lng]);
   L.polyline(routeCoords,{color:'#00d4ff',weight:3,opacity:0.6,dashArray:'8 6'}).addTo(map);
   stops.forEach(s=>{
@@ -3596,9 +3616,9 @@ var FEATURES={
 // 7 ADVANCED FEATURE MODULE RENDERERS  (delta-edit — additions only)
 // ══════════════════════════════════════════════════════════
 
-// ── AI Route Optimization: FlowSkip v2 Embedded ──────────
+// ── AI Route Optimization: DriveHub Cockpit v2 Animated (iframe embed) ──────
 function renderFeature_ai_route_opt(){
-  return renderFlowSkipPage();
+  return '<div style="position:absolute;inset:0;z-index:2;overflow:hidden"><iframe src="cockpit-v2.html" style="width:100%;height:100%;border:none;display:block" allow="fullscreen" title="DriveHub Cockpit v2 \u2014 AI Route Optimization"></iframe></div>';
 }
 
 // ── MODULE 1: Predictive Analytics Engine ─────────────────
@@ -4377,34 +4397,50 @@ function conReplacePagePins(){var pg=conCurrentPage();CON.annotations.forEach(fu
 // LOGIN
 // ══════════════════════════════════════════════════════════
 const DEMO=[
-  {email:"admin@rspplatform.com",pw:"admin123",role:"Platform Admin",color:"#00d4ff"},
-  {email:"owner@firstchoice.com",pw:"owner123",role:"Company Owner",color:"#4ade80"},
-  {email:"gm@ontrac-la.com",pw:"gm123",role:"OnTrac Manager",color:"#3b82f6"},
-  {email:"accountant@swiftdel.com",pw:"acc123",role:"Accountant",color:"#2dd4bf"},
+  {email:"owner@firstchoice.com",pw:"owner123",role:"Business Owner",color:"#4ade80"},
   {email:"manager@pacrim.com",pw:"mgr123",role:"Manager",color:"#fbbf24"},
-  {email:"driver@firstchoice.com",pw:"drv123",role:"Driver — James",color:"#f97316"},
-  {email:"driver2@ontrac-la.com",pw:"drv456",role:"Driver — Miguel",color:"#ea580c"},
-  {email:"driver3@swiftdel.com",pw:"drv789",role:"Driver — Keisha",color:"#c2410c"},
+  {email:"accountant@swiftdel.com",pw:"acc123",role:"Accountant",color:"#2dd4bf"},
+  {email:"driver3@swiftdel.com",pw:"drv789",role:"RSP Driver",color:"#34d399"},
+  {email:"driver@firstchoice.com",pw:"drv123",role:"Driver SP",color:"#f97316"},
+  {email:"driver2@ontrac-la.com",pw:"drv456",role:"Driver EP",color:"#ea580c"},
+  {email:"vp@ontrac-la.com",pw:"vp123",role:"VP Manager",color:"#3b82f6"},
+  {email:"gm@ontrac-la.com",pw:"gm123",role:"GM Manager",color:"#60a5fa"},
+  {email:"regional@pacrim.com",pw:"reg123",role:"Regional Manager",color:"#6366f1"},
+  {email:"b2b@industry-partners.com",pw:"b2b123",role:"B2B Manager",color:"#a78bfa"},
+  {email:"b2c@industry-partners.com",pw:"b2c123",role:"B2C Manager",color:"#c084fc"},
+  {email:"admin@rspplatform.com",pw:"admin123",role:"System Administrator",color:"#00d4ff"},
+  {email:"dhmanager@drivehub.io",pw:"dhm123",role:"DriveHub Manager",color:"#22d3ee"},
+  {email:"owner@drivehub.io",pw:"dho123",role:"DriveHub Owner",color:"#0ea5e9"},
 ];
 function renderLogin(){
-  var adminAccounts=DEMO.filter(function(d){return d.role.indexOf('Driver')===-1;});
-  var driverAccounts=DEMO.filter(function(d){return d.role.indexOf('Driver')!==-1;});
+  function demoGroup(emails){return DEMO.filter(function(d){return emails.indexOf(d.email)!==-1;});}
+  function renderGroup(label,color,accounts){
+    if(!accounts.length)return'';
+    return'<details class="demo-dropdown"><summary><span style="color:'+color+'">'+label+'</span></summary><div class="demo-items">'+accounts.map(function(d){return'<button class="demo-btn" data-email="'+esc(d.email)+'" data-pw="'+esc(d.pw)+'"><div class="demo-btn-role" style="color:'+d.color+'">'+esc(d.role)+'</div><div class="demo-btn-email">'+esc(d.email)+'</div></button>';}).join('')+'</div></details>';
+  }
+  var g1=demoGroup(['owner@firstchoice.com','manager@pacrim.com','accountant@swiftdel.com','driver3@swiftdel.com']);
+  var g2=demoGroup(['driver@firstchoice.com','driver2@ontrac-la.com']);
+  var g3=demoGroup(['vp@ontrac-la.com','gm@ontrac-la.com','regional@pacrim.com']);
+  var g4=demoGroup(['b2b@industry-partners.com','b2c@industry-partners.com']);
+  var g5=demoGroup(['admin@rspplatform.com','dhmanager@drivehub.io','owner@drivehub.io']);
   return`<div class="login-wrap"><div id="star-canvas"></div>
     <div class="theme-toggle" onclick="toggleTheme()" title="Toggle light / dark theme">
       <div class="theme-toggle-track"><div class="theme-toggle-thumb"><span class="theme-icon">${document.body.classList.contains('light-theme')?'☀':'🌙'}</span></div></div>
       <span class="theme-toggle-label">${document.body.classList.contains('light-theme')?'Light':'Dark'}</span>
     </div>
     <div class="login-box">
-    <div class="login-logo"><div class="login-logo-row"><div class="login-logo-icon"><span style="font-size:15px;font-weight:800;letter-spacing:-0.5px;color:#fff;line-height:1;font-family:'Outfit',sans-serif">DH</span></div><span class="login-logo-title">Drive<span>Hub</span></span></div><div class="login-logo-sub">DSP Management System</div></div>
-    <div class="card"><div class="cb"><form id="login-form" class="sy">
+    <div class="card"><div class="login-hero"><div class="login-logo-row"><div class="login-logo-icon"><span style="font-size:18px;font-weight:800;letter-spacing:-0.5px;color:#fff;line-height:1;font-family:'Outfit',sans-serif">DH</span></div><span class="login-logo-title">Drive<span>Hub</span></span></div><div class="login-logo-sub">DSP Management System</div><div class="login-slogan">Drive to our Hub...</div></div><div class="cb"><form id="login-form" class="sy">
       <div><label>Email</label><input id="login-email" class="inp" type="email" placeholder="you@company.com" required/></div>
       <div><label>Password</label><div class="inp-w"><input id="login-pass" class="inp" type="password" placeholder="••••••••" required style="padding-right:36px"/><button type="button" id="toggle-pass" class="btn-g" style="position:absolute;right:4px;top:50%;transform:translateY(-50%);border-radius:4px;padding:4px">${icon('Eye')}</button></div></div>
       <button type="submit" class="btn btn-p" style="width:100%">Sign In</button>
     </form>
     <div class="divider"></div>
     <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">${icon('Shield')}<span style="font-size:12px;color:var(--muted)">Demo accounts</span></div>
-    <details class="demo-dropdown"><summary><span style="color:var(--primary)">Administration Accounts</span></summary><div class="demo-items">${adminAccounts.map(function(d){return'<button class="demo-btn" data-email="'+esc(d.email)+'" data-pw="'+esc(d.pw)+'"><div class="demo-btn-role" style="color:'+d.color+'">'+esc(d.role)+'</div><div class="demo-btn-email">'+esc(d.email)+'</div></button>';}).join('')}</div></details>
-    <details class="demo-dropdown"><summary><span style="color:#f97316">Drivers Accounts</span></summary><div class="demo-items">${driverAccounts.map(function(d){return'<button class="demo-btn" data-email="'+esc(d.email)+'" data-pw="'+esc(d.pw)+'"><div class="demo-btn-role" style="color:'+d.color+'">'+esc(d.role)+'</div><div class="demo-btn-email">'+esc(d.email)+'</div></button>';}).join('')}</div></details>
+    ${renderGroup('1. DSP / RSP Companies','#4ade80',g1)}
+    ${renderGroup('2. Delivery Contractor','#f97316',g2)}
+    ${renderGroup('3. Logistics Operator','#3b82f6',g3)}
+    ${renderGroup('4. Industry Partners','#a78bfa',g4)}
+    ${renderGroup('5. DriveHub Team','#00d4ff',g5)}
     </div></div>
     <div class="login-footer">2026 &copy; DriveHub Inc. Made with <em class="heart">&#10084;</em> for people just like us</div>
   </div></div>`;
@@ -4821,7 +4857,7 @@ function startSimulation(){
 // ══════════════════════════════════════════════════════════
 // CONSTRUCTOR
 // ══════════════════════════════════════════════════════════
-const CON={mode:null,annotations:[],textChanges:[],activeEdit:null,nextId:1,visible:true};
+const CON={mode:null,annotations:[],textChanges:[],activeEdit:null,nextId:1,visible:false};
 
 (function injectEdits(){
   const tog=document.createElement("button");
@@ -5634,8 +5670,12 @@ function _mcdDriverHtml(u,dd,gps){
   var dirs=['N','NE','E','SE','S','SW','W','NW'];
   var dir=dirs[Math.round(gps.heading/45)%8];
   var spdClr=gps.speed<25?'#4ade80':gps.speed<45?'#fbbf24':'#f87171';
+  var _cpsActual=rt.completed>0?dd.todayPay/rt.completed:5.37;
+  var _marginPct=Math.round((5.37-_cpsActual)/5.37*100);
+  var _marginClr=_marginPct>=0?'#4ade80':'#f87171';
+  var _marginTxt=(_marginPct>=0?'+':'')+_marginPct+'% '+(_marginPct>=0?'↑':'↓');
   return '<div class="mcd-hd">'+
-    '<div class="mcd-av" style="background:rgba(249,115,22,.15);color:#f97316">'+initials(u.name)+'</div>'+
+    '<div class="mcd-av" style="background:rgba(0,212,255,.12);color:#00d4ff">'+initials(u.name)+'</div>'+
     '<div><div class="mcd-name">'+esc(u.name)+'</div>'+
     '<div class="mcd-sub">'+esc(dd.zone)+' · '+esc(dd.vehicleId||dd.vehicleType)+'</div></div>'+
   '</div>'+
@@ -5643,7 +5683,7 @@ function _mcdDriverHtml(u,dd,gps){
   '<div class="mcd-row"><span class="mcd-lbl">Heading</span><span class="mcd-val">'+Math.round(gps.heading)+'° '+dir+'</span></div>'+
   '<div class="mcd-row"><span class="mcd-lbl">Route progress</span><span class="mcd-val">'+pct+'%  ('+rt.completed+'/'+rt.totalStops+')</span></div>'+
   '<div class="mcd-divider"></div>'+
-  '<div class="mcd-row"><span class="mcd-lbl">Margin expansion</span><span class="mcd-val" style="color:#4ade80">+31% ↑</span></div>'+
+  '<div class="mcd-row"><span class="mcd-lbl">Margin expansion</span><span class="mcd-val" style="color:'+_marginClr+'">'+_marginTxt+'</span></div>'+
   '<div class="mcd-row"><span class="mcd-lbl">SQEP risk</span>'+
     '<span class="mcd-pill '+(sqepRisk==='HIGH'?'mcd-pill-err':'mcd-pill-ok')+'">'+sqepRisk+'</span></div>'+
   '<div class="mcd-row"><span class="mcd-lbl">OTP rate</span>'+
