@@ -751,7 +751,7 @@ body.dh-ann-mode #page-content{cursor:crosshair!important}
   border-bottom:none;
 }
 /* accent line top — color by type */
-.mcd-driver .mcd-card{border-top:2px solid #f97316;}
+.mcd-driver .mcd-card{border-top:2px solid #00d4ff;}
 .mcd-stop .mcd-card{border-top:2px solid #00d4ff;}
 .mcd-warehouse .mcd-card{border-top:2px solid #a78bfa;}
 .mcd-hd{display:flex;align-items:center;gap:8px;margin-bottom:8px;padding-bottom:6px;
@@ -2677,7 +2677,7 @@ function renderTracking(){
 function initTrackingMap(){
   const mapEl=document.getElementById('tracking-map');if(!mapEl||mapEl._leaflet_id)return;
   const map=L.map(mapEl,{scrollWheelZoom:true,zoomControl:true}).setView([34.0,-118.2],10);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OSM',maxZoom:18}).addTo(map);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'©CARTO',subdomains:'abcd',maxZoom:19}).addTo(map);
   const bounds=[];
   USERS.filter(u=>u.role==='driver'&&u.active).forEach(u=>{
     const gps=DRIVER_GPS[u.id];const dd=DRIVER_DATA[u.id];if(!gps||!dd)return;
@@ -2717,7 +2717,7 @@ function initDriverRouteMap(){
   const stops=dd.currentRoute.stops.filter(s=>s.lat&&s.lng);if(stops.length===0)return;
   const cLat=stops.reduce((a,s)=>a+s.lat,0)/stops.length;const cLng=stops.reduce((a,s)=>a+s.lng,0)/stops.length;
   const map=L.map(mapEl,{scrollWheelZoom:true,zoomControl:true}).setView([cLat,cLng],13);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OSM',maxZoom:18}).addTo(map);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'©CARTO',subdomains:'abcd',maxZoom:19}).addTo(map);
   const bounds=[];const routeCoords=stops.map(s=>[s.lat,s.lng]);
   L.polyline(routeCoords,{color:'#00d4ff',weight:3,opacity:0.6,dashArray:'8 6'}).addTo(map);
   stops.forEach(s=>{
@@ -5670,8 +5670,12 @@ function _mcdDriverHtml(u,dd,gps){
   var dirs=['N','NE','E','SE','S','SW','W','NW'];
   var dir=dirs[Math.round(gps.heading/45)%8];
   var spdClr=gps.speed<25?'#4ade80':gps.speed<45?'#fbbf24':'#f87171';
+  var _cpsActual=rt.completed>0?dd.todayPay/rt.completed:5.37;
+  var _marginPct=Math.round((5.37-_cpsActual)/5.37*100);
+  var _marginClr=_marginPct>=0?'#4ade80':'#f87171';
+  var _marginTxt=(_marginPct>=0?'+':'')+_marginPct+'% '+(_marginPct>=0?'↑':'↓');
   return '<div class="mcd-hd">'+
-    '<div class="mcd-av" style="background:rgba(249,115,22,.15);color:#f97316">'+initials(u.name)+'</div>'+
+    '<div class="mcd-av" style="background:rgba(0,212,255,.12);color:#00d4ff">'+initials(u.name)+'</div>'+
     '<div><div class="mcd-name">'+esc(u.name)+'</div>'+
     '<div class="mcd-sub">'+esc(dd.zone)+' · '+esc(dd.vehicleId||dd.vehicleType)+'</div></div>'+
   '</div>'+
@@ -5679,7 +5683,7 @@ function _mcdDriverHtml(u,dd,gps){
   '<div class="mcd-row"><span class="mcd-lbl">Heading</span><span class="mcd-val">'+Math.round(gps.heading)+'° '+dir+'</span></div>'+
   '<div class="mcd-row"><span class="mcd-lbl">Route progress</span><span class="mcd-val">'+pct+'%  ('+rt.completed+'/'+rt.totalStops+')</span></div>'+
   '<div class="mcd-divider"></div>'+
-  '<div class="mcd-row"><span class="mcd-lbl">Margin expansion</span><span class="mcd-val" style="color:#4ade80">+31% ↑</span></div>'+
+  '<div class="mcd-row"><span class="mcd-lbl">Margin expansion</span><span class="mcd-val" style="color:'+_marginClr+'">'+_marginTxt+'</span></div>'+
   '<div class="mcd-row"><span class="mcd-lbl">SQEP risk</span>'+
     '<span class="mcd-pill '+(sqepRisk==='HIGH'?'mcd-pill-err':'mcd-pill-ok')+'">'+sqepRisk+'</span></div>'+
   '<div class="mcd-row"><span class="mcd-lbl">OTP rate</span>'+
