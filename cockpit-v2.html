@@ -799,13 +799,19 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 /* ── Tesla FSD-style window (replaces 3D vehicle) ─────────────── */
 .nc-fsd-win{position:relative;z-index:3;width:calc(100% - 56px);margin:0 28px 8px;display:flex;border-radius:14px;overflow:hidden;border:1px solid rgba(0,212,255,.22);background:rgba(6,8,16,.78);backdrop-filter:blur(12px);box-shadow:0 0 48px rgba(0,212,255,.08),inset 0 1px 0 rgba(255,255,255,.06);flex-shrink:0;height:228px}
 /* map column */
-.nc-fsd-map{width:27%;border-right:1px solid rgba(0,212,255,.1);padding:11px 10px;display:flex;flex-direction:column;gap:5px;background:rgba(0,4,14,.5)}
-.nc-fsd-map-hd{font-size:8px;font-family:var(--mono);letter-spacing:2px;color:rgba(0,212,255,.7);text-transform:uppercase}
-.nc-fsd-map-svg{flex:1;width:100%;display:block;overflow:visible}
+.nc-fsd-map{width:27%;border-right:1px solid rgba(0,212,255,.1);padding:11px 10px;display:flex;flex-direction:column;gap:5px;background:rgba(0,4,14,.5);position:relative}
+.nc-fsd-map-hd{font-size:8px;font-family:var(--mono);letter-spacing:2px;color:rgba(0,212,255,.7);text-transform:uppercase;display:flex;justify-content:space-between;align-items:center}
+.nc-fsd-map-svg{flex:1;width:100%;display:block;overflow:visible;transition:none}
+.nc-fsd-map-zoom{display:flex;flex-direction:column;gap:2px;position:absolute;top:8px;right:8px;z-index:4}
+.nc-fsd-map-zoom button{width:22px;height:22px;border-radius:5px;border:1px solid rgba(0,212,255,.3);background:rgba(8,10,18,.9);color:var(--primary);font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);transition:background .15s ease,border-color .15s ease;padding:0;line-height:1}
+.nc-fsd-map-zoom button:hover{background:rgba(0,212,255,.16);border-color:rgba(0,212,255,.55)}
+.nc-fsd-map-zoom button:active{transform:scale(.94)}
+.nc-fsd-map-zoom button:disabled{opacity:.3;cursor:not-allowed}
+.nc-fsd-map-zlvl{font-size:7.5px;font-family:var(--mono);color:rgba(255,255,255,.42);text-align:center;letter-spacing:.5px}
 .nc-fsd-map-ft{font-size:8px;font-family:var(--mono);letter-spacing:.7px;color:rgba(255,255,255,.42)}
 /* road center column — transparent, shows the stage road bg */
-.nc-fsd-road{flex:1;position:relative;overflow:hidden;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:10px 8px}
-.nc-fsd-instr{display:flex;align-items:center;gap:12px;padding:9px 13px;background:rgba(10,12,22,.9);border:1.5px solid rgba(74,222,128,.38);border-radius:12px;width:100%;max-width:290px;animation:navInstrGlow 2.4s ease-in-out infinite}
+.nc-fsd-road{flex:1;position:relative;overflow:hidden;background:transparent;display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:14px;padding:12px 14px}
+.nc-fsd-instr{display:flex;align-items:center;gap:12px;padding:10px 14px;background:rgba(10,12,22,.9);border:1.5px solid rgba(74,222,128,.38);border-radius:12px;flex:1;min-width:0;max-width:none;animation:navInstrGlow 2.4s ease-in-out infinite}
 .nc-fsd-instr-ic{width:40px;height:40px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:rgba(74,222,128,.14);border-radius:9px}
 .nc-fsd-instr-ic svg{width:28px;height:28px;animation:navInstrBob 1.3s ease-in-out infinite}
 .nc-fsd-instr-body{flex:1;display:flex;flex-direction:column;min-width:0}
@@ -953,7 +959,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .nc-nav-laneline{animation:roadDashSlow 2.2s linear infinite}
 
 /* ── FSD center: speedometer ring ── */
-.nc-fsd-speedo-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;position:relative;overflow:hidden}
+.nc-fsd-speedo-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;width:150px;height:150px;flex-shrink:0;position:relative;overflow:hidden}
 .nc-fsd-speedo-svg{width:118px;height:118px;position:relative;z-index:2;flex-shrink:0}
 .nc-fsd-spd-val{font-size:26px;font-weight:200;letter-spacing:-.04em;color:#fff;line-height:1}
 .nc-fsd-spd-unit{font-size:9px;font-family:var(--mono);letter-spacing:2px;color:rgba(255,255,255,.4);margin-top:1px}
@@ -970,7 +976,27 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .nc-fsd-veh-dot{transition:cx .8s var(--ease),cy .8s var(--ease)}
 
 /* ── Earnings dashboard panel ── */
-.nc-earn-hd{font-size:8px;font-family:var(--mono);letter-spacing:2px;color:rgba(0,212,255,.7);text-transform:uppercase;margin-bottom:4px}
+.nc-earn-hd{font-size:8px;font-family:var(--mono);letter-spacing:2px;color:rgba(0,212,255,.7);text-transform:uppercase;margin-bottom:6px}
+/* Hero block — prominent earned-today + small ring */
+.nc-earn-hero{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
+.nc-earn-hero-main{display:flex;flex-direction:column;min-width:0}
+.nc-earn-hero-val{font-size:22px;font-weight:700;font-family:'Outfit',sans-serif;color:#fff;line-height:1;letter-spacing:-.5px}
+.nc-earn-hero-lbl{font-size:9px;font-family:var(--mono);color:rgba(255,255,255,.45);letter-spacing:.5px;margin-top:3px;text-transform:uppercase}
+/* Secondary earnings — still-to-earn with progress bar */
+.nc-earn-sub{margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,.05)}
+.nc-earn-sub-row{display:flex;align-items:baseline;gap:6px;margin-bottom:4px;flex-wrap:wrap}
+.nc-earn-left-val{font-size:13px;font-weight:600;font-family:var(--mono);color:#fbbf24;letter-spacing:-.2px}
+.nc-earn-left-lbl{font-size:9px;color:rgba(255,255,255,.55);font-family:var(--mono)}
+.nc-earn-stops-row{display:flex;justify-content:space-between;font-size:8.5px;font-family:var(--mono);color:rgba(255,255,255,.5);margin-top:4px}
+.nc-earn-stops-row b{color:rgba(255,255,255,.85);font-weight:600}
+/* Key-value blocks — grouped metrics */
+.nc-kv-block{margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,.05)}
+.nc-kv-block:first-of-type{border-top:none;padding-top:0}
+.nc-kv-block-hd{font-size:7.5px;font-family:var(--mono);letter-spacing:1.5px;color:rgba(0,212,255,.45);text-transform:uppercase;margin-bottom:4px}
+.nc-kv-row{display:flex;justify-content:space-between;align-items:baseline;font-size:9.5px;font-family:var(--mono);margin-top:3px}
+.nc-kv-row:first-child{margin-top:0}
+.nc-kv-l{color:rgba(255,255,255,.55)}
+.nc-kv-v{text-align:right;font-weight:600}
 .nc-earn-ring-wrap{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:6px}
 .nc-earn-ring-svg{width:70px;height:70px;flex-shrink:0}
 .nc-earn-ring-pct{font-size:16px;font-weight:700;font-family:var(--mono);color:#4ade80}
@@ -2511,7 +2537,11 @@ function renderNavCockpit(d){
 
       <!-- LEFT: Animated route journey tracker -->
       <div class="nc-fsd-map">
-        <div class="nc-fsd-map-hd">Route · Progress</div>
+        <div class="nc-fsd-map-hd"><span>Route · Progress</span><span class="nc-fsd-map-zlvl" id="ncMapZLvl">1.00×</span></div>
+        <div class="nc-fsd-map-zoom">
+          <button type="button" onclick="ncMapZoom(1.25)" id="ncMapZoomIn" title="Zoom in" aria-label="Zoom in">+</button>
+          <button type="button" onclick="ncMapZoom(0.8)" id="ncMapZoomOut" title="Zoom out" aria-label="Zoom out">−</button>
+        </div>
         <svg class="nc-fsd-map-svg" id="ncRouteSvg" viewBox="0 0 160 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
           <!-- subtle park block -->
           <rect x="8" y="62" width="28" height="22" rx="3" fill="rgba(74,222,128,.05)" stroke="rgba(74,222,128,.12)" stroke-width=".6"/>
@@ -2548,16 +2578,6 @@ function renderNavCockpit(d){
 
       <!-- CENTER: FSD speedometer view with real-time route info -->
       <div class="nc-fsd-road">
-        <!-- Turn instruction — large, animated, legible -->
-        <div class="nc-fsd-instr" id="ncFsdInstr">
-          <div class="nc-fsd-instr-ic" id="ncFsdInstrIc">
-            <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path d="M10 36V20a6 6 0 016-6h20M36 14l-8-8M36 14l-8 8" stroke="#4ade80" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
-          <div class="nc-fsd-instr-body">
-            <div class="nc-fsd-instr-action" id="ncFsdInstrAction">Continue on Market St</div>
-            <div class="nc-fsd-instr-km"><b id="ncFsdInstrKm">0.64</b>km to next drop-off</div>
-          </div>
-        </div>
         <div class="nc-fsd-speedo-wrap">
           <svg class="nc-fsd-speedo-svg" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
             <!-- background ring -->
@@ -2578,6 +2598,16 @@ function renderNavCockpit(d){
             <text x="60" y="80" text-anchor="middle" font-size="8" font-family="'JetBrains Mono',monospace" fill="rgba(255,255,255,.28)">LIMIT <tspan fill="#fbbf24" font-weight="700">${speedLimit}</tspan></text>
           </svg>
         </div>
+        <!-- Turn instruction — large, animated, legible (placed to the RIGHT of the speedometer) -->
+        <div class="nc-fsd-instr" id="ncFsdInstr">
+          <div class="nc-fsd-instr-ic" id="ncFsdInstrIc">
+            <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path d="M10 36V20a6 6 0 016-6h20M36 14l-8-8M36 14l-8 8" stroke="#4ade80" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="nc-fsd-instr-body">
+            <div class="nc-fsd-instr-action" id="ncFsdInstrAction">Continue on Market St</div>
+            <div class="nc-fsd-instr-km"><b id="ncFsdInstrKm">0.64</b>km to next drop-off</div>
+          </div>
+        </div>
         <!-- Rotating alert banner -->
         <div class="nc-fsd-alert ${_NAV_ALERTS[0].cls}" id="ncFsdAlert">
           <svg viewBox="0 0 24 24"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zM12 8v4M12 16h.01"/></svg>
@@ -2588,7 +2618,13 @@ function renderNavCockpit(d){
       <!-- RIGHT: Earnings dashboard -->
       <div class="nc-fsd-info" style="width:31%;padding:10px 11px">
         <div class="nc-earn-hd">Earnings · Route</div>
-        <div class="nc-earn-ring-wrap">
+
+        <!-- Hero: earned today + small progress ring -->
+        <div class="nc-earn-hero">
+          <div class="nc-earn-hero-main">
+            <div class="nc-earn-hero-val" id="ncEarnVal">${fmtMoney(totalEarned)}</div>
+            <div class="nc-earn-hero-lbl">earned today</div>
+          </div>
           <svg class="nc-earn-ring-svg" viewBox="0 0 70 70" xmlns="http://www.w3.org/2000/svg">
             <circle cx="35" cy="35" r="28" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="7"/>
             <circle cx="35" cy="35" r="28" fill="none" stroke="#4ade80" stroke-width="7"
@@ -2596,47 +2632,37 @@ function renderNavCockpit(d){
               stroke-dashoffset="${((2*Math.PI*28)*(1-parcelPct/100)).toFixed(1)}"
               transform="rotate(-90 35 35)" id="ncEarnRing"
               style="filter:drop-shadow(0 0 5px rgba(74,222,128,.4))"/>
-            <text x="35" y="32" text-anchor="middle" font-size="13" font-weight="700" font-family="'JetBrains Mono',monospace" fill="#4ade80" id="ncEarnPct">${parcelPct}</text>
-            <text x="35" y="42" text-anchor="middle" font-size="7" font-family="'JetBrains Mono',monospace" fill="rgba(255,255,255,.35)" letter-spacing="1">DONE %</text>
+            <text x="35" y="33" text-anchor="middle" font-size="15" font-weight="700" font-family="'JetBrains Mono',monospace" fill="#4ade80" id="ncEarnPct">${parcelPct}</text>
+            <text x="35" y="45" text-anchor="middle" font-size="7" font-family="'JetBrains Mono',monospace" fill="rgba(255,255,255,.4)" letter-spacing="1">DONE %</text>
           </svg>
-          <div style="display:flex;flex-direction:column;gap:3px;text-align:right;margin-left:auto;padding-right:2px">
-            <div class="nc-earn-ring-pct" id="ncEarnVal" style="text-align:right">${fmtMoney(totalEarned)}</div>
-            <div class="nc-earn-ring-lbl" style="text-align:right">earned today</div>
-            <div style="font-size:10px;font-weight:600;font-family:var(--mono);color:#fbbf24;margin-top:2px;text-align:right" id="ncEarnLeft">${fmtMoney(totalLeft)}</div>
-            <div class="nc-earn-ring-lbl" style="text-align:right">left to earn</div>
+        </div>
+
+        <!-- Secondary line: still-to-earn with progress bar -->
+        <div class="nc-earn-sub">
+          <div class="nc-earn-sub-row">
+            <span class="nc-earn-left-val" id="ncEarnLeft">+${fmtMoney(totalLeft)}</span>
+            <span class="nc-earn-left-lbl">still to earn today</span>
+          </div>
+          <div class="nc-earn-bar" title="${d.done} of ${d.stops} stops delivered"><div class="nc-earn-bar-fill" id="ncEarnBar" style="width:${parcelPct}%"></div></div>
+          <div class="nc-earn-stops-row">
+            <span><b>${d.done}</b> of <b>${d.stops}</b> stops delivered</span><span id="ncEarnStops">${d.stops - d.done} remaining</span>
           </div>
         </div>
-        <div class="nc-earn-bar-wrap">
-          <div style="display:flex;justify-content:space-between;font-size:7.5px;font-family:var(--mono);color:rgba(255,255,255,.35);margin-bottom:3px">
-            <span>${d.done} stops done</span><span id="ncEarnStops">${d.stops - d.done} left</span>
-          </div>
-          <div class="nc-earn-bar"><div class="nc-earn-bar-fill" id="ncEarnBar" style="width:${parcelPct}%"></div></div>
+
+        <!-- Monetary metrics block -->
+        <div class="nc-kv-block">
+          <div class="nc-kv-block-hd">Pay Breakdown</div>
+          <div class="nc-kv-row"><span class="nc-kv-l">Rate per stop</span><span class="nc-kv-v" style="color:#00d4ff" id="ncEarnRate">${fmtMoney(earnedPer)}</span></div>
+          <div class="nc-kv-row"><span class="nc-kv-l">On-time bonus</span><span class="nc-kv-v" style="color:#4ade80" id="ncFsdBonus">+${fmtMoney(d.done*0.42)}</span></div>
+          <div class="nc-kv-row"><span class="nc-kv-l">Tips today</span><span class="nc-kv-v" style="color:#4ade80" id="ncFsdTips">+${fmtMoney(d.done*0.28)}</span></div>
         </div>
-        <div style="margin-top:5px;padding-top:5px;border-top:1px solid rgba(255,255,255,.05)">
-          <div style="display:flex;justify-content:space-between;font-size:8px;font-family:var(--mono)">
-            <span style="color:rgba(255,255,255,.38)">Rate/stop</span>
-            <span style="color:#00d4ff;text-align:right" id="ncEarnRate">${fmtMoney(earnedPer)}</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;font-size:8px;font-family:var(--mono);margin-top:3px">
-            <span style="color:rgba(255,255,255,.38)">ETA Arrival</span>
-            <span style="color:#4ade80;text-align:right" id="ncFsdEta">--:--</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;font-size:8px;font-family:var(--mono);margin-top:3px">
-            <span style="color:rgba(255,255,255,.38)">Miles today</span>
-            <span style="color:#c084fc;text-align:right" id="ncFsdMiles">${tripMi} mi</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;font-size:8px;font-family:var(--mono);margin-top:3px">
-            <span style="color:rgba(255,255,255,.38)">On-time bonus</span>
-            <span style="color:#4ade80;text-align:right" id="ncFsdBonus">${fmtMoney(d.done*0.42)}</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;font-size:8px;font-family:var(--mono);margin-top:3px">
-            <span style="color:rgba(255,255,255,.38)">Packages left</span>
-            <span style="color:#fbbf24;text-align:right" id="ncFsdPkgs">${(d.stops - d.done)*1.3|0}</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;font-size:8px;font-family:var(--mono);margin-top:3px">
-            <span style="color:rgba(255,255,255,.38)">Tips today</span>
-            <span style="color:#4ade80;text-align:right" id="ncFsdTips">${fmtMoney(d.done*0.28)}</span>
-          </div>
+
+        <!-- Operational metrics block -->
+        <div class="nc-kv-block">
+          <div class="nc-kv-block-hd">Shift Stats</div>
+          <div class="nc-kv-row"><span class="nc-kv-l">Miles today</span><span class="nc-kv-v" style="color:#c084fc" id="ncFsdMiles">${tripMi} mi</span></div>
+          <div class="nc-kv-row"><span class="nc-kv-l">Packages to deliver</span><span class="nc-kv-v" style="color:#fbbf24" id="ncFsdPkgs">${(d.stops - d.done)*1.3|0}</span></div>
+          <div class="nc-kv-row"><span class="nc-kv-l">ETA arrival</span><span class="nc-kv-v" style="color:#4ade80" id="ncFsdEta">${(()=>{const n=new Date();n.setMinutes(n.getMinutes()+Math.max(8,(d.stops-d.done)*3));return n.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true})})()}</span></div>
         </div>
       </div>
 
@@ -2965,6 +2991,35 @@ function selectDriver(id){
   renderSwarm();
   const d=DRIVERS.find(x=>x.id===id);
   if(d) showFocusCard(d);
+}
+
+/* Mini-map zoom (Route · Progress strip inside the driver cockpit).
+   factor < 1 zooms in (shrinks viewBox around the centre of the current view),
+   factor > 1 zooms out. Zoom level is clamped and the level indicator updates. */
+const _NC_MAP_BASE = {x:0, y:0, w:160, h:200};
+let _ncMapZoom = 1.0;
+function ncMapZoom(factor){
+  const svg = document.getElementById('ncRouteSvg');
+  if(!svg) return;
+  const next = Math.max(0.4, Math.min(3.0, _ncMapZoom * factor));
+  if(Math.abs(next - _ncMapZoom) < 0.01) return;  /* at clamp */
+  _ncMapZoom = next;
+  const w = _NC_MAP_BASE.w / _ncMapZoom;
+  const h = _NC_MAP_BASE.h / _ncMapZoom;
+  const x = _NC_MAP_BASE.x + (_NC_MAP_BASE.w - w) / 2;
+  const y = _NC_MAP_BASE.y + (_NC_MAP_BASE.h - h) / 2;
+  svg.setAttribute('viewBox', x.toFixed(2)+' '+y.toFixed(2)+' '+w.toFixed(2)+' '+h.toFixed(2));
+  svg.style.transition = 'none';
+  /* tween via short CSS transform for a smooth feel without thrashing SVG */
+  const lvl = document.getElementById('ncMapZLvl');
+  if(lvl) lvl.textContent = _ncMapZoom.toFixed(2)+'×';
+  const zoomIn = document.getElementById('ncMapZoomIn');
+  const zoomOut = document.getElementById('ncMapZoomOut');
+  /* with the + button scaling up (factor 1.25) and − button scaling down (factor 0.8),
+     _ncMapZoom > 1 means zoomed in (smaller viewBox = closer view),
+     _ncMapZoom < 1 means zoomed out (larger viewBox = wider area). */
+  if(zoomIn)  zoomIn.disabled  = _ncMapZoom >= 2.99;
+  if(zoomOut) zoomOut.disabled = _ncMapZoom <= 0.41;
 }
 
 /* Single-click on a driver name in the left list: select + gradually zoom the map
