@@ -290,6 +290,19 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .nav-act.danger:hover{border-color:rgba(239,68,68,.4);color:var(--err-t);background:rgba(239,68,68,.08)}
 
 /* Progress rail */
+/* Upcoming stops sequence — delivery address strip */
+.nav-seq{position:absolute;bottom:168px;left:14px;right:14px;display:flex;gap:8px;padding:8px 10px;background:rgba(8,9,20,.82);border:1px solid rgba(0,212,255,.14);border-radius:12px;backdrop-filter:blur(14px);overflow-x:auto;scrollbar-width:none;animation:navSlideUp .6s var(--spring) .15s both;pointer-events:auto;z-index:4}
+.nav-seq::-webkit-scrollbar{display:none}
+.nav-seq-hd{flex-shrink:0;display:flex;align-items:center;gap:6px;font-size:9px;font-weight:700;font-family:var(--mono);color:rgba(0,212,255,.7);letter-spacing:2px;text-transform:uppercase;padding:0 6px 0 2px;border-right:1px solid rgba(255,255,255,.06);margin-right:2px}
+.nav-seq-hd svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.2}
+.nav-seq-item{flex-shrink:0;display:flex;flex-direction:column;min-width:148px;max-width:200px;padding:6px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.06);background:rgba(10,12,18,.6);transition:all .3s var(--ease)}
+.nav-seq-item.curr{border-color:rgba(0,212,255,.45);background:rgba(0,212,255,.08);box-shadow:0 0 14px rgba(0,212,255,.18)}
+.nav-seq-item.done{opacity:.45}
+.nav-seq-item.done .nav-seq-n{color:#4ade80}
+.nav-seq-n{font-size:9px;font-weight:700;font-family:var(--mono);color:var(--muted);letter-spacing:1.5px;margin-bottom:2px;display:flex;align-items:center;gap:4px}
+.nav-seq-item.curr .nav-seq-n{color:#00d4ff}
+.nav-seq-a{font-size:11px;color:var(--text);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
 .nav-rail{height:4px;margin:10px 6px 0;background:rgba(255,255,255,.06);border-radius:2px;position:relative;overflow:visible}
 .nav-rail-fill{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,#00d4ff,#4ade80);border-radius:2px;transition:width 1s var(--ease);box-shadow:0 0 10px rgba(74,222,128,.4)}
 .nav-rail-dot{position:absolute;top:50%;transform:translate(-50%,-50%);width:10px;height:10px;border-radius:50%;background:#0a0a0f;border:2px solid rgba(255,255,255,.25)}
@@ -1291,6 +1304,9 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
           <button class="nav-close" onclick="exitNavigator()" title="Exit Navigator">✕</button>
         </div>
 
+        <!-- Delivery address sequence — upcoming stops as driver travels -->
+        <div class="nav-seq" id="navSeq"></div>
+
         <!-- Lane guidance -->
         <div class="nav-lanes" id="navLanes">
           <div class="nav-lane"><svg viewBox="0 0 24 24"><path d="M12 4v16M12 4l-4 4M12 4l4 4" stroke-width="2.2" fill="none" stroke="currentColor" stroke-linecap="round"/></svg></div>
@@ -1862,11 +1878,20 @@ const NAV = {
   on:false, tickTimer:null, stepTimer:null, progress:54, speed:38, eta:14,
   routeLine:null, doneLine:null, carMarker:null,
   maneuvers:[
-    {dist:'0.4 mi',step:'Continue on Market St',sub:'then turn right onto Boardman-Canfield Rd',icon:'straight',limit:45,traffic:'+4 min · I-680 slowdown',trafficColor:'var(--warn-t)',stop:'23/42',addr:'415 Elm St · Boardman'},
-    {dist:'0.2 mi',step:'Turn right onto Boardman-Canfield Rd',sub:'then continue for 1.2 mi',icon:'right',limit:35,traffic:'Clear',trafficColor:'var(--ok-t)',stop:'23/42',addr:'415 Elm St · Boardman'},
-    {dist:'1.2 mi',step:'Continue straight',sub:'through 3 signals',icon:'straight',limit:35,traffic:'+2 min',trafficColor:'var(--warn-t)',stop:'23/42',addr:'415 Elm St · Boardman'},
-    {dist:'0.1 mi',step:'Arrive at destination',sub:'415 Elm St on the right',icon:'arrive',limit:25,traffic:'Clear',trafficColor:'var(--ok-t)',stop:'23/42',addr:'415 Elm St · Boardman'},
-    {dist:'0.6 mi',step:'Turn left onto Southern Blvd',sub:'next stop · 822 Midland Ave',icon:'left',limit:35,traffic:'Clear',trafficColor:'var(--ok-t)',stop:'24/42',addr:'822 Midland Ave · Boardman'}
+    {dist:'0.4 mi',step:'Continue on Market St',sub:'then turn right onto Boardman-Canfield Rd',icon:'straight',limit:45,traffic:'+4 min · I-680 slowdown',trafficColor:'var(--warn-t)',stop:'23/42',addr:'415 Elm St · Boardman',seqIdx:1},
+    {dist:'0.2 mi',step:'Turn right onto Boardman-Canfield Rd',sub:'then continue for 1.2 mi',icon:'right',limit:35,traffic:'Clear',trafficColor:'var(--ok-t)',stop:'23/42',addr:'415 Elm St · Boardman',seqIdx:1},
+    {dist:'1.2 mi',step:'Continue straight',sub:'through 3 signals',icon:'straight',limit:35,traffic:'+2 min',trafficColor:'var(--warn-t)',stop:'23/42',addr:'415 Elm St · Boardman',seqIdx:1},
+    {dist:'0.1 mi',step:'Arrive at destination',sub:'415 Elm St on the right',icon:'arrive',limit:25,traffic:'Clear',trafficColor:'var(--ok-t)',stop:'23/42',addr:'415 Elm St · Boardman',seqIdx:1},
+    {dist:'0.6 mi',step:'Turn left onto Southern Blvd',sub:'next stop · 822 Midland Ave',icon:'left',limit:35,traffic:'Clear',trafficColor:'var(--ok-t)',stop:'24/42',addr:'822 Midland Ave · Boardman',seqIdx:2}
+  ],
+  /* Sequence of delivery addresses — shown as the driver travels from one geolocation to another */
+  stops:[
+    {n:'22/42',addr:'1201 Midlothian Blvd',eta:'2:14 PM'},
+    {n:'23/42',addr:'415 Elm St · Boardman',eta:'2:47 PM'},
+    {n:'24/42',addr:'822 Midland Ave · Boardman',eta:'3:05 PM'},
+    {n:'25/42',addr:'3350 Southern Blvd',eta:'3:22 PM'},
+    {n:'26/42',addr:'7018 Market St · Boardman',eta:'3:41 PM'},
+    {n:'27/42',addr:'2114 Shields Rd · Canfield',eta:'4:04 PM'}
   ],
   stepIdx:0
 };
@@ -1962,6 +1987,28 @@ function exitNavigator(){
   toast('Navigator closed','ok');
 }
 
+function renderNavSeq(){
+  const el = document.getElementById('navSeq');
+  if(!el) return;
+  const cur = (NAV.maneuvers[NAV.stepIdx]||{}).seqIdx ?? 1;
+  el.innerHTML =
+    '<div class="nav-seq-hd">'
+    + '<svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1118 0z"/><circle cx="12" cy="10" r="3"/></svg>'
+    + 'Route'
+    + '</div>'
+    + NAV.stops.map((s,i)=>{
+        const cls = i<cur?'done':i===cur?'curr':'';
+        const mark = i<cur?'✓':i===cur?'●':'○';
+        return '<div class="nav-seq-item '+cls+'">'
+          + '<div class="nav-seq-n"><span>'+mark+'</span> STOP '+s.n+' · '+s.eta+'</div>'
+          + '<div class="nav-seq-a">'+s.addr+'</div>'
+          + '</div>';
+      }).join('');
+  /* Auto-scroll to keep current stop in view */
+  const currEl = el.querySelector('.nav-seq-item.curr');
+  if(currEl) currEl.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+}
+
 function applyManeuver(i){
   const m = NAV.maneuvers[i];
   if(!m) return;
@@ -1973,6 +2020,7 @@ function applyManeuver(i){
   document.getElementById('navTraffic').style.color = m.trafficColor;
   document.getElementById('navStopN').textContent = m.stop;
   document.getElementById('navStopAddr').textContent = m.addr;
+  renderNavSeq();
   const icon = document.getElementById('navManeuverIcon');
   if(icon) icon.innerHTML = NAV_ICONS[m.icon] || NAV_ICONS.straight;
   /* re-trigger bob animation */
