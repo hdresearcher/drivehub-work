@@ -1123,7 +1123,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       <div class="lp-body" id="lpBody" data-cc-id="cc-48">
     <div class="sec-head" data-cc-id="cc-38">Active · Presence ≥ 90%<span class="sec-head-count">4</span></div>
     
-    <div class="drv-card " onclick="selectDriver('D100')" ondblclick="magicZoom('D100')">
+    <div class="drv-card " onclick="focusDriver('D100')" ondblclick="magicZoom('D100')">
       <div class="drv-av st-en" style="background:#4ade8022;color:#4ade80">MM</div>
       <div class="drv-info">
         <div class="drv-name" data-cc-id="cc-39">Maria Mendez</div>
@@ -1141,7 +1141,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
         <div class="drv-mini">92%</div>
       </div>
     </div>
-    <div class="drv-card " onclick="selectDriver('D101')" ondblclick="magicZoom('D101')" data-cc-id="cc-40">
+    <div class="drv-card " onclick="focusDriver('D101')" ondblclick="magicZoom('D101')" data-cc-id="cc-40">
       <div class="drv-av st-stop" style="background:#2dd4bf22;color:#2dd4bf">CS</div>
       <div class="drv-info">
         <div class="drv-name">Carlos Santos</div>
@@ -1159,7 +1159,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
         <div class="drv-mini">95%</div>
       </div>
     </div>
-    <div class="drv-card " onclick="selectDriver('D102')" ondblclick="magicZoom('D102')" data-cc-id="cc-42">
+    <div class="drv-card " onclick="focusDriver('D102')" ondblclick="magicZoom('D102')" data-cc-id="cc-42">
       <div class="drv-av st-en" style="background:#fbbf2422;color:#fbbf24">JW</div>
       <div class="drv-info">
         <div class="drv-name" data-cc-id="cc-43">Jennifer Wilson</div>
@@ -1177,7 +1177,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
         <div class="drv-mini">91%</div>
       </div>
     </div>
-    <div class="drv-card " onclick="selectDriver('D103')" ondblclick="magicZoom('D103')" data-cc-id="cc-47">
+    <div class="drv-card " onclick="focusDriver('D103')" ondblclick="magicZoom('D103')" data-cc-id="cc-47">
       <div class="drv-av st-en" style="background:#4ade8022;color:#4ade80">RP</div>
       <div class="drv-info">
         <div class="drv-name" data-cc-id="cc-45">Robert Patel</div>
@@ -1285,7 +1285,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       </div>
       <div class="hint-chip">
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><path d="M12 7v5l3 3"></path></svg>
-        <span>Open Trip View</span><span class="hint-kbd">Double-Click</span><span>any agent</span>
+        <span>Open Driver Cockpit</span><span class="hint-kbd">Double-Click</span><span>any agent</span>
       </div>
 
       <!-- NAVIGATOR MODE OVERLAY -->
@@ -1698,7 +1698,7 @@ function drvCardHtml(d){
                    d.flag==='c22'?'<span class="exc-flag f-c22">C22</span>':
                    d.flag==='otif'?'<span class="exc-flag f-otif">OTIF</span>':'';
   return `
-    <div class="drv-card ${S.selectedId===d.id?'sel':''}" onclick="magicZoom('${d.id}')" title="Open driver cockpit">
+    <div class="drv-card ${S.selectedId===d.id?'sel':''}" onclick="focusDriver('${d.id}')" ondblclick="magicZoom('${d.id}')" title="Click to zoom · double-click to open cockpit">
       <div class="drv-av st-${d.status}" style="background:${d.color}22;color:${d.color}">${d.initials}</div>
       <div class="drv-info">
         <div class="drv-name">${d.name}</div>
@@ -2113,7 +2113,7 @@ function renderSwarm(){
     }).addTo(map)
       .bindPopup(popupHtml(d));
     m.on('click', ()=>{ selectDriver(d.id); });
-    m.on('dblclick', (e)=>{ L.DomEvent.stopPropagation(e); window.open('index.html?view=trip&driver='+encodeURIComponent(d.id),'_blank'); });
+    m.on('dblclick', (e)=>{ L.DomEvent.stopPropagation(e); magicZoom(d.id); });
     drvMarkers[d.id]=m;
   });
   updateLegend();
@@ -2897,6 +2897,18 @@ function selectDriver(id){
   renderSwarm();
   const d=DRIVERS.find(x=>x.id===id);
   if(d) showFocusCard(d);
+}
+
+/* Single-click on a driver name in the left list: select + gradually zoom the map
+   to that driver, without opening the cockpit overlay. Matches the user interaction
+   request: list-click = show on map (gradual zoom); list-dblclick = open cockpit. */
+function focusDriver(id){
+  const d=DRIVERS.find(x=>x.id===id);
+  if(!d) return;
+  selectDriver(id);
+  if(map && typeof map.flyTo==='function'){
+    map.flyTo([d.lat,d.lng], 15, {animate:true, duration:1.4, easeLinearity:.25});
+  }
 }
 
 function showFocusCard(d){
