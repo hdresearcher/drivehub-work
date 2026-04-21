@@ -1883,7 +1883,7 @@ let notifications=[
 ];
 let notifSeq=9;
 
-const ROLE_LABELS={admin:"Platform Admin",owner:"Company Owner",general_manager:"General Manager",ontrac_manager:"OnTrac Manager",manager:"Manager",accountant:"Accountant",driver:"Driver"};
+const ROLE_LABELS={admin:"Platform Admin",owner:"Company Owner",general_manager:"General Manager",ontrac_manager:"OnTrac Manager",manager:"Manager",accountant:"Accountant",driver:"ms. Keisha brown"};
 const ROLE_PERMS={admin:["all"],owner:["companies","requests","billing","users","analytics","tracking","driver_stats","locations","reporting"],general_manager:["companies","requests","analytics","users","tracking","locations"],ontrac_manager:["all"],manager:["companies","requests","tracking"],accountant:["billing","analytics","manual_data","locations","reporting","driver_stats"],driver:["driver"]};
 const hasPerm=(role,res)=>{const p=ROLE_PERMS[role];if(!p)return false;return p.includes("all")||p.includes(res)};
 const AVATAR_COLOR={admin:"#00d4ff",owner:"#4ade80",general_manager:"#a78bfa",ontrac_manager:"#3b82f6",manager:"#fbbf24",accountant:"#2dd4bf",driver:"#f97316"};
@@ -2427,7 +2427,7 @@ function renderDriverDashboard(){
   if(!dd)return`<div class="page"><div style="text-align:center;padding:60px;color:var(--muted)">No driver data found.</div></div>`;
   const co=companies.find(c=>c.id===u.co);
   const tab=state.drvTab||'route';
-  const TABS=[{id:'route',label:'Route'},{id:'earnings',label:'Earnings'},{id:'rates',label:'Rates'},{id:'forecast',label:'Forecast'},{id:'performance',label:'Stats'},{id:'report',label:'📝 Report Data'}];
+  const TABS=[{id:'route',label:'Daily Route'},{id:'earnings',label:'My Earnings'},{id:'rates',label:'My Rates'},{id:'forecast',label:'Forecasts'},{id:'performance',label:'My Statistics'},{id:'report',label:'📝 Report Data'}];
   const rt=dd.currentRoute;
   const pct=Math.round(rt.completed/rt.totalStops*100);
 
@@ -3334,14 +3334,14 @@ function renderSidebar(){
   ];
   const DRIVER_NAV=[
     {id:'driver',label:'Dashboard',icon:'LayoutDashboard',res:'driver'},
-    {id:'driver',label:'📦 Pre-Shift Scan',icon:'Package',res:'driver',tab:'preshift'},
-    {id:'driver',label:'Route',icon:'Navigation',res:'driver',tab:'route'},
-    {id:'driver',label:'Earnings',icon:'DollarSign',res:'driver',tab:'earnings'},
-    {id:'driver',label:'Rates',icon:'Globe',res:'driver',tab:'rates'},
-    {id:'driver',label:'Forecast',icon:'TrendingUp',res:'driver',tab:'forecast'},
-    {id:'driver',label:'Stats',icon:'Award',res:'driver',tab:'performance'},
+    {id:'driver',label:'Pre-Shift Scan',icon:'Package',res:'driver',tab:'preshift'},
+    {id:'driver',label:'Daily Route',icon:'Navigation',res:'driver',tab:'route'},
+    {id:'driver',label:'My Earnings',icon:'DollarSign',res:'driver',tab:'earnings'},
+    {id:'driver',label:'My Rates',icon:'Globe',res:'driver',tab:'rates'},
+    {id:'driver',label:'Forecasts',icon:'TrendingUp',res:'driver',tab:'forecast'},
+    {id:'driver',label:'My Statistics',icon:'Award',res:'driver',tab:'performance'},
     {id:'driver',label:'Report Data',icon:'Send',res:'driver',tab:'report'},
-    {id:'onroute_rates',label:'OnRouteRates',icon:'Globe',res:'driver'},
+    {id:'onroute_rates',label:'OnRouteRates  market',icon:'Globe',res:'driver'},
   ];
   const ONTRAC_MGR_NAV=[
     {id:'ontrac_gm',label:'🌐 Network Overview',icon:'Globe',res:'analytics'},
@@ -3355,14 +3355,14 @@ function renderSidebar(){
   ];
   const NAV=isDriver?DRIVER_NAV:(u&&u.role==='owner'?OWNER_NAV:(u&&u.role==='accountant'?ACCT_NAV:(u&&u.role==='ontrac_manager'?ONTRAC_MGR_NAV:(u&&u.role==='general_manager'?GM_NAV:(u&&u.role==='manager'?MGR_NAV:ADMIN_NAV)))));
   const visible=NAV.filter(n=>n.id==='_sec'||!u||hasPerm(u.role,n.res)||n.id==='dashboard'||n.id.startsWith('owner_'));
-  return`<div class="sidebar"><div class="sb-head"><div class="sb-logo"><div class="sb-logo-icon"><span style="font-size:11px;font-weight:800;letter-spacing:-0.5px;color:#fff;line-height:1;font-family:'Outfit',sans-serif">DH</span></div><div><div class="sb-logo-name">DriveHub</div><div class="sb-logo-sub">${isDriver?'Driver Portal':u&&u.role==='owner'?'NationWide Partners':isAcc?'Finance Console':u&&u.role==='ontrac_manager'?'OnTrac Network':u&&u.role==='general_manager'?'Operations':u&&u.role==='manager'?'Manager':'Admin Console'}</div></div></div></div>
-  <div class="sb-nav"><div class="sb-section">${isDriver?'Driver':'Navigation'}</div>${visible.map((n,i)=>{
+  return`<div class="sidebar"><div class="sb-head"><div class="sb-logo"><div class="sb-logo-icon"><span style="font-size:11px;font-weight:800;letter-spacing:-0.5px;color:#fff;line-height:1;font-family:'Outfit',sans-serif">D H</span></div><div><div class="sb-logo-name">DriveHub platform</div><div class="sb-logo-sub">${isDriver?'Driver Swiftdel Inc.':u&&u.role==='owner'?'NationWide Partners':isAcc?'Finance Console':u&&u.role==='ontrac_manager'?'OnTrac Network':u&&u.role==='general_manager'?'Operations':u&&u.role==='manager'?'Manager':'Admin Console'}</div></div></div></div>
+  <div class="sb-nav"><div class="sb-section">${isDriver?'DSP-Driver Premium':'Navigation'}</div>${visible.map((n,i)=>{
     if(n.id==='_sec') return`<div class="sb-section" style="margin-top:14px">${esc(n.label)}</div>`;
     const isActive=isDriver?(n.id==='onroute_rates'?state.page==='onroute_rates':(state.page!=='onroute_rates'&&((state.drvTab||'route')===(n.tab||'route')&&i>0||(i===0&&!state.drvTab)))):state.page===n.id;
     const navClick=isDriver&&n.id==='onroute_rates'?`navigate('onroute_rates')`:isDriver&&n.tab?`setDrvTab('${n.tab}')`:`navigate('${n.id}')`;
     return`<div class="nav-item${isActive?' active':''}" onclick="${navClick}">${icon(n.icon)}<span style="flex:1">${esc(n.label)}</span>${n.badge>0?`<span class="nav-badge">${n.badge}</span>`:''}</div>`;
   }).join('')}</div>
-  <div class="sb-foot">${u?`${renderAcctDropdown(u)}<div class="sb-user" onclick="toggleAcctDropdown(event)" style="cursor:pointer"><div class="avatar acct-trigger-avatar" id="sb-avatar" style="background:${AVATAR_COLOR[u.role]+'22'};color:${AVATAR_COLOR[u.role]}">${initials(u.name)}</div><div style="flex:1;min-width:0"><div class="user-name">${esc(u.name)}</div><div class="user-role">${esc(ROLE_LABELS[u.role])}</div></div><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--muted);flex-shrink:0"><polyline points="6 9 12 15 18 9"/></svg></div>`:''}</div></div>`;
+  <div class="sb-foot">${u?`${renderAcctDropdown(u)}<div class="sb-user" onclick="toggleAcctDropdown(event)" style="cursor:pointer"><div class="avatar acct-trigger-avatar" id="sb-avatar" style="background:${AVATAR_COLOR[u.role]+'22'};color:${AVATAR_COLOR[u.role]}">${isDriver?'ID':initials(u.name)}</div><div style="flex:1;min-width:0"><div class="user-name">${esc(u.name)}</div><div class="user-role">${esc(ROLE_LABELS[u.role])}</div></div><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--muted);flex-shrink:0"><polyline points="6 9 12 15 18 9"/></svg></div>`:''}</div></div>`;
 }
 
 // ══════════════════════════════════════════════════════════
