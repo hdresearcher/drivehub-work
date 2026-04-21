@@ -428,7 +428,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 
 /* ── LEAFLET OVERRIDES ── */
 .leaflet-container{background:#0a0a0f!important}
-.leaflet-tile-pane{filter:brightness(.55) contrast(1.1) saturate(.6) hue-rotate(180deg) invert(.94)}
+.leaflet-tile-pane{filter:brightness(.78) contrast(1.18) saturate(.82)}
 .leaflet-popup-content-wrapper{background:#12131e!important;border:1px solid rgba(0,212,255,.2)!important;border-radius:10px!important;box-shadow:0 12px 36px rgba(0,0,0,.7)!important;color:var(--text)!important;font-family:'Outfit',sans-serif!important}
 .leaflet-popup-tip{background:#12131e!important;border:1px solid rgba(0,212,255,.2)!important}
 .leaflet-popup-content{margin:11px 14px!important;font-size:12px!important}
@@ -1285,7 +1285,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       </div>
       <div class="hint-chip">
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><path d="M12 7v5l3 3"></path></svg>
-        <span>Magic Zoom</span><span class="hint-kbd">Double-Click</span><span>any agent</span>
+        <span>Open Trip View</span><span class="hint-kbd">Double-Click</span><span>any agent</span>
       </div>
 
       <!-- NAVIGATOR MODE OVERLAY -->
@@ -2113,7 +2113,7 @@ function renderSwarm(){
     }).addTo(map)
       .bindPopup(popupHtml(d));
     m.on('click', ()=>{ selectDriver(d.id); });
-    m.on('dblclick', (e)=>{ L.DomEvent.stopPropagation(e); if(NAV.on){ window.open('index.html','_blank'); } else { magicZoom(d.id); } });
+    m.on('dblclick', (e)=>{ L.DomEvent.stopPropagation(e); window.open('index.html?view=trip&driver='+encodeURIComponent(d.id),'_blank'); });
     drvMarkers[d.id]=m;
   });
   updateLegend();
