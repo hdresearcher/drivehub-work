@@ -1017,6 +1017,87 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.001s!important;animation-delay:0s!important;transition-duration:.05s!important}
 }
+
+/* ── iPhone / narrow-viewport optimisation (≤480 px) ───────────────────────── */
+@media (max-width: 480px){
+  body{font-size:13px}
+  .cmd{flex-wrap:wrap;gap:6px;padding:8px 10px}
+  .cmd-logo{flex:1 1 auto;min-width:0}
+  .cmd-logo .cmd-name{font-size:14px}
+  .cmd-logo .cmd-ver{font-size:8px}
+  .vsep{display:none}
+  .cmd-rail{order:3;width:100%;gap:5px;overflow-x:auto;padding-bottom:2px}
+  .cmd-rail .ck{flex-shrink:0;min-width:72px}
+  .cmd-acts{order:4;width:100%;gap:6px;justify-content:flex-end;flex-wrap:wrap}
+  .persona-switch{flex:1;min-width:0;overflow-x:auto}
+  .role-pill{font-size:10px;padding:4px 8px}
+  /* Margin ribbon — horizontal scroll */
+  .ribbon{overflow-x:auto;flex-wrap:nowrap;gap:10px;padding:8px 10px}
+  .rb-cell{flex-shrink:0;min-width:150px}
+  .rb-value{font-size:16px}
+  /* Main area — stack vertically */
+  .main{flex-direction:column;height:auto;min-height:calc(100dvh - 48px)}
+  .lp{width:100%;min-width:0;max-width:100%;border-right:none;border-bottom:1px solid var(--border);max-height:42vh}
+  .map-wrap{width:100%;height:50vh;min-height:320px}
+  .map-legend{margin:6px}
+  /* Cost-to-serve panel becomes a bottom sheet */
+  .cts{position:fixed;inset:auto 0 0 0;width:100%;max-width:100%;max-height:80vh;border-radius:14px 14px 0 0}
+  /* Driver detail panel responsiveness */
+  .drv-card{padding:8px 10px}
+  /* NavCockpit — stack into single column */
+  .nc-top{padding:10px 12px;gap:8px;flex-wrap:wrap}
+  .nc-top-l{gap:8px;flex:1;min-width:0}
+  .nc-driver-nm{font-size:13px}
+  .nc-driver-sub{font-size:9.5px}
+  .nc-back{width:30px;height:30px}
+  .nc-badge{font-size:9px;padding:3px 6px}
+  .nc-model-btn{font-size:10px;padding:4px 8px}
+  .nc-body{grid-template-columns:1fr;gap:10px;padding:6px 12px 16px;overflow-y:auto}
+  .nc-col{gap:10px}
+  .nc-card{padding:10px}
+  .nc-card-h{font-size:10px}
+  /* FSD strip — stack vertically on mobile */
+  .nc-fsd-win{width:calc(100% - 16px);margin:0 8px 8px;height:auto;min-height:380px;flex-direction:column;border-radius:14px}
+  .nc-fsd-map{width:100%;min-height:130px;border-right:none;border-bottom:1px solid rgba(0,212,255,.1)}
+  .nc-fsd-map-zoom{top:6px;right:6px}
+  .nc-fsd-road{flex-direction:column;gap:10px;padding:12px 10px;min-height:200px}
+  .nc-fsd-speedo-wrap{width:110px;height:110px}
+  .nc-fsd-instr{width:100%;max-width:none;padding:8px 10px}
+  .nc-fsd-instr-action{font-size:12px}
+  .nc-fsd-instr-km b{font-size:16px}
+  .nc-fsd-alert{font-size:9px;padding:3px 7px}
+  .nc-fsd-info{width:100%;border-left:none;border-top:1px solid rgba(0,212,255,.1);padding:10px 12px}
+  .nc-earn-hero-val{font-size:20px}
+  /* Centre stage adapts to shorter portrait */
+  .nc-stage{min-height:240px}
+  .nc-statusbar{padding:8px 12px;flex-wrap:wrap;gap:6px}
+  .nc-sb-cell{font-size:9px}
+  /* Navigator overlay — tighter layout */
+  .nav-top{padding:10px 12px;gap:10px}
+  .nav-step{font-size:13px}
+  .nav-dist{font-size:18px}
+  .nav-lanes{gap:8px}
+  .nav-bottom{padding:0 8px 8px}
+  .nav-hud{gap:8px}
+  .nav-metrics{grid-template-columns:1fr 1fr;gap:6px}
+  .nav-m-v{font-size:12px}
+  .nav-speedo{width:72px;height:72px}
+  .nav-speed-n{font-size:20px}
+  .nav-limit{width:30px;height:30px;font-size:9px}
+  .nav-seq{bottom:140px;left:8px;right:8px;padding:6px 8px}
+  .nav-seq-item{min-width:128px}
+  /* Focus card mobile */
+  .focus-card{width:calc(100% - 24px);right:12px;left:12px;bottom:12px}
+  /* Toast smaller */
+  #toast{max-width:calc(100% - 40px);font-size:11px}
+}
+/* Very small iPhone SE — tighter again */
+@media (max-width: 380px){
+  .cmd-logo .cmd-ver{display:none}
+  .nc-fsd-speedo-wrap{width:96px;height:96px}
+  .nc-earn-hero-val{font-size:18px}
+  .nav-metrics{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body class="" data-cc-id="cc-1" style="cursor: crosshair; font-family: -apple-system;">
@@ -2486,9 +2567,22 @@ function renderNavCockpit(d){
   /* Mini route map — 7 fixed waypoints mapped to d.done progress */
   const _mpts = [{x:80,y:182},{x:54,y:158},{x:28,y:138},{x:28,y:106},{x:55,y:82},{x:86,y:56},{x:124,y:34}];
   const _nmp  = _mpts.length;
-  const _dIdx = Math.min(Math.round(d.done / Math.max(d.stops, 1) * (_nmp - 1)), _nmp - 1);
+  /* Fractional progress along the polyline so the driver marker sits ON the line
+     between geolocation points, not snapped to a waypoint. */
+  const _fProg = Math.max(0, Math.min(1, d.done / Math.max(d.stops, 1)));
+  const _segs  = _nmp - 1;
+  const _exact = _fProg * _segs;               /* e.g. 2.7 → 70% along segment 2→3 */
+  const _dIdx  = Math.min(_segs - 1, Math.floor(_exact));
+  const _segT  = _exact - _dIdx;
+  const _p0    = _mpts[_dIdx];
+  const _p1    = _mpts[Math.min(_dIdx + 1, _nmp - 1)];
+  const _drvX  = +((_p0.x + (_p1.x - _p0.x) * _segT).toFixed(2));
+  const _drvY  = +((_p0.y + (_p1.y - _p0.y) * _segT).toFixed(2));
+  /* Publish to the zoom module so it can centre the viewBox on the driver */
+  if(typeof window !== 'undefined'){ window._ncMapDriver = {x:_drvX, y:_drvY}; }
   const _mapFull = _mpts.map((p,i) => (i ? 'L' : 'M') + p.x + ',' + p.y).join(' ');
-  const _mapDone = _mpts.slice(0, _dIdx + 1).map((p,i) => (i ? 'L' : 'M') + p.x + ',' + p.y).join(' ');
+  const _mapDone = _mpts.slice(0, _dIdx + 1).map((p,i) => (i ? 'L' : 'M') + p.x + ',' + p.y).join(' ')
+                   + ' L ' + _drvX + ',' + _drvY;
   const _mapDoneHtml = _dIdx > 0 ?
     '<path fill="none" stroke="#00d4ff" stroke-width="2.5" stroke-linecap="round" opacity=".9" d="' + _mapDone + '"/>' : '';
   const _mapDots = _mpts.map((p, i) => {
@@ -2539,8 +2633,8 @@ function renderNavCockpit(d){
       <div class="nc-fsd-map">
         <div class="nc-fsd-map-hd"><span>Route · Progress</span><span class="nc-fsd-map-zlvl" id="ncMapZLvl">1.00×</span></div>
         <div class="nc-fsd-map-zoom">
-          <button type="button" onclick="ncMapZoom(1.25)" id="ncMapZoomIn" title="Zoom in" aria-label="Zoom in">+</button>
-          <button type="button" onclick="ncMapZoom(0.8)" id="ncMapZoomOut" title="Zoom out" aria-label="Zoom out">−</button>
+          <button type="button" onclick="ncMapZoom(1)" id="ncMapZoomIn" title="Zoom in (5 levels)" aria-label="Zoom in">+</button>
+          <button type="button" onclick="ncMapZoom(-1)" id="ncMapZoomOut" title="Zoom out (5 levels)" aria-label="Zoom out">−</button>
         </div>
         <svg class="nc-fsd-map-svg" id="ncRouteSvg" viewBox="0 0 160 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
           <!-- subtle park block -->
@@ -2570,8 +2664,8 @@ function renderNavCockpit(d){
           <!-- destination -->
           <path d="M${_mpts[_nmp-1].x},${_mpts[_nmp-1].y-8} L${_mpts[_nmp-1].x+5},${_mpts[_nmp-1].y+3} L${_mpts[_nmp-1].x-5},${_mpts[_nmp-1].y+3}Z" fill="rgba(251,191,36,.6)" stroke="#fbbf24" stroke-width="1.2"/>
           <!-- Animated vehicle position (will be updated by tickNavCockpit) -->
-          <circle id="ncRouteVeh" class="nc-fsd-veh-dot" cx="${_mpts[_dIdx].x}" cy="${_mpts[_dIdx].y}" r="6" fill="#00d4ff" stroke="rgba(0,212,255,.35)" stroke-width="5" opacity=".95"/>
-          <circle id="ncRouteVehGlow" cx="${_mpts[_dIdx].x}" cy="${_mpts[_dIdx].y}" r="10" fill="none" stroke="rgba(0,212,255,.2)" stroke-width="1.5"/>
+          <circle id="ncRouteVeh" class="nc-fsd-veh-dot" cx="${_drvX}" cy="${_drvY}" r="4.5" fill="#00d4ff" stroke="rgba(0,212,255,.55)" stroke-width="4" opacity=".98"/>
+          <circle id="ncRouteVehGlow" cx="${_drvX}" cy="${_drvY}" r="9" fill="none" stroke="rgba(0,212,255,.28)" stroke-width="1.5"/>
         </svg>
         <div class="nc-fsd-map-ft" id="ncMapFt">${d.done} of ${d.stops} delivered</div>
       </div>
@@ -2755,57 +2849,55 @@ function renderNavCockpit(d){
           <!-- Tesla-style autopilot lane tracking (blue, glowing, tracking the driver's lane) -->
           <line x1="253" y1="60" x2="165" y2="420" stroke="#00d4ff" stroke-width="2.6" stroke-linecap="round" opacity="0.88" filter="url(#ncBlueGlow)"/>
           <line x1="267" y1="60" x2="355" y2="420" stroke="#00d4ff" stroke-width="2.6" stroke-linecap="round" opacity="0.88" filter="url(#ncBlueGlow)"/>
-          <!-- Motorcycle (far, left-of-lane) -->
-          <g transform="translate(226 116)" opacity="0.82">
-            <rect x="-2.4" y="-5" width="4.8" height="8.4" rx="1" fill="rgba(220,220,230,0.28)" stroke="rgba(255,255,255,0.45)" stroke-width="0.4"/>
-            <rect x="-1.6" y="-4.2" width="3.2" height="3" rx="0.4" fill="rgba(18,18,24,0.85)"/>
-            <circle cx="0" cy="4.2" r="1.3" fill="rgba(55,55,70,0.8)"/>
-          </g>
-          <!-- Medium sedan (mid-right, light gray, rear view) -->
-          <g transform="translate(300 152)" opacity="0.82">
-            <rect x="-11" y="-8" width="22" height="16" rx="2.2" fill="rgba(215,215,222,0.26)" stroke="rgba(255,255,255,0.42)" stroke-width="0.7"/>
-            <rect x="-8.8" y="-5.5" width="17.6" height="6" rx="1" fill="rgba(8,10,18,0.7)"/>
-            <rect x="-10" y="6" width="3" height="1.3" fill="#ff4545"/>
-            <rect x="7" y="6" width="3" height="1.3" fill="#ff4545"/>
-          </g>
-          <!-- Mid-lane vehicle (ahead of driver, dark SUV) -->
-          <g transform="translate(260 205)" opacity="0.9">
-            <rect x="-18" y="-13" width="36" height="26" rx="3.2" fill="rgba(55,58,72,0.42)" stroke="rgba(255,255,255,0.5)" stroke-width="0.95"/>
-            <rect x="-15" y="-10" width="30" height="10" rx="1.6" fill="rgba(0,0,0,0.7)"/>
-            <rect x="-14" y="-9.5" width="28" height="2.2" rx="0.5" fill="rgba(255,255,255,0.08)"/>
-            <rect x="-17" y="9" width="5" height="2.4" rx="0.6" fill="#ff3030"/>
-            <rect x="12" y="9" width="5" height="2.4" rx="0.6" fill="#ff3030"/>
-            <ellipse cx="-14.5" cy="10" rx="6" ry="2.4" fill="rgba(255,50,50,0.3)" filter="url(#ncRedGlow)"/>
-            <ellipse cx="14.5" cy="10" rx="6" ry="2.4" fill="rgba(255,50,50,0.3)" filter="url(#ncRedGlow)"/>
-          </g>
-          <!-- SPEED LIMIT sign floating beside mid vehicle -->
-          <g transform="translate(212 178)">
-            <rect x="-11" y="-15" width="22" height="30" rx="2" fill="#f6f6f4" stroke="rgba(0,0,0,0.65)" stroke-width="0.55"/>
-            <rect x="-9.5" y="-13.5" width="19" height="27" rx="1.2" fill="none" stroke="#111" stroke-width="0.45"/>
-            <text x="0" y="-7" text-anchor="middle" font-size="4.2" font-weight="700" font-family="'Helvetica',sans-serif" fill="#111" letter-spacing="0.3">SPEED</text>
-            <text x="0" y="-2" text-anchor="middle" font-size="4.2" font-weight="700" font-family="'Helvetica',sans-serif" fill="#111" letter-spacing="0.3">LIMIT</text>
-            <text x="0" y="11" text-anchor="middle" font-size="12" font-weight="800" font-family="'Helvetica',sans-serif" fill="#111">45</text>
-          </g>
-          <!-- DRIVER'S RED CAR (foreground, centred on lane, rear 3/4 view) -->
-          <g transform="translate(260 365)">
-            <!-- tire shadow -->
-            <ellipse cx="0" cy="24" rx="56" ry="6" fill="rgba(0,0,0,0.45)"/>
-            <!-- body -->
-            <path d="M -50 18 Q -58 8 -52 -6 Q -46 -18 -34 -22 Q 0 -26 34 -22 Q 46 -18 52 -6 Q 58 8 50 18 Z" fill="#c01f1f" stroke="#6a0e0e" stroke-width="2"/>
-            <!-- body highlight band -->
-            <path d="M -46 -4 Q 0 -6 46 -4" fill="none" stroke="rgba(255,150,150,0.38)" stroke-width="1.2"/>
-            <!-- rear glass -->
-            <path d="M -34 -20 Q -22 -22 0 -22 Q 22 -22 34 -20 L 32 -7 Q 18 -9 0 -9 Q -18 -9 -32 -7 Z" fill="rgba(6,12,22,0.8)" stroke="rgba(255,255,255,0.08)" stroke-width="0.4"/>
-            <!-- roof highlight -->
-            <path d="M -32 -21 Q 0 -24 32 -21" fill="none" stroke="rgba(255,255,255,0.38)" stroke-width="1"/>
-            <!-- tail lights -->
-            <rect x="-46" y="8" width="14" height="5" rx="1.8" fill="#ff2020"/>
-            <rect x="32" y="8" width="14" height="5" rx="1.8" fill="#ff2020"/>
-            <!-- license plate -->
-            <rect x="-16" y="12" width="32" height="5" rx="0.8" fill="rgba(255,255,255,0.22)" stroke="rgba(0,0,0,0.4)" stroke-width="0.3"/>
-            <!-- brake glows -->
-            <ellipse cx="-39" cy="11" rx="12" ry="5" fill="rgba(255,50,50,0.42)" filter="url(#ncRedGlow)"/>
-            <ellipse cx="39" cy="11" rx="12" ry="5" fill="rgba(255,50,50,0.42)" filter="url(#ncRedGlow)"/>
+          <!-- ── SINGLE 3D PARCEL — isometric cardboard box, sized to the "PRIORITY" type.
+               Replaces all four vehicles that were previously rendered on the road. ── -->
+          <g transform="translate(260 330)" id="ncParcel">
+            <!-- Ground shadow -->
+            <ellipse cx="0" cy="72" rx="92" ry="12" fill="rgba(0,0,0,0.55)"/>
+            <!-- Right (side) face -->
+            <path d="M 60 20 L 90 -8 L 90 -52 L 60 -24 Z" fill="#8b5e2a" stroke="#5a3a17" stroke-width="1.5"/>
+            <!-- Front face -->
+            <path d="M -60 20 L 60 20 L 60 -24 L -60 -24 Z" fill="#c2873a" stroke="#5a3a17" stroke-width="1.8"/>
+            <!-- Top face -->
+            <path d="M -60 -24 L -30 -52 L 90 -52 L 60 -24 Z" fill="#d89e54" stroke="#5a3a17" stroke-width="1.8"/>
+            <!-- Top face seam (down the middle of the top) -->
+            <line x1="0" y1="-24" x2="30" y2="-52" stroke="#8b5e2a" stroke-width="0.9" stroke-dasharray="1.5 2"/>
+            <!-- Tape strip across top (beige) -->
+            <path d="M -18 -24 L 12 -52 L 40 -52 L 10 -24 Z" fill="rgba(243,232,195,0.72)" stroke="rgba(160,130,80,0.7)" stroke-width="0.4"/>
+            <!-- Tape strip down the front -->
+            <rect x="-9" y="-24" width="18" height="44" fill="rgba(243,232,195,0.62)" stroke="rgba(160,130,80,0.55)" stroke-width="0.4"/>
+            <!-- Front label (white) -->
+            <rect x="-44" y="-16" width="58" height="26" rx="1.2" fill="#ffffff" stroke="#1a1a1a" stroke-width="0.55"/>
+            <rect x="-44" y="-16" width="58" height="7.5" fill="#e63946"/>
+            <text x="-15" y="-10" text-anchor="middle" font-size="5.2" font-weight="800" font-family="'Helvetica',sans-serif" fill="#fff" letter-spacing="0.5">PRIORITY</text>
+            <text x="-15" y="-2.2" text-anchor="middle" font-size="4.4" font-weight="700" font-family="'JetBrains Mono',monospace" fill="#111">14 × 10 × 6 in</text>
+            <text x="-15" y="3.4" text-anchor="middle" font-size="3.6" font-family="'JetBrains Mono',monospace" fill="#555">STD-MED · 2.4 lb</text>
+            <text x="-15" y="8.6" text-anchor="middle" font-size="3.4" font-family="'JetBrains Mono',monospace" fill="#2a6fb0">TRK 415-ELM-0047</text>
+            <!-- Barcode (simplified) -->
+            <g transform="translate(-41 6)">
+              <rect x="0" y="0" width="0.7" height="3.8" fill="#111"/>
+              <rect x="1.2" y="0" width="0.4" height="3.8" fill="#111"/>
+              <rect x="2.1" y="0" width="0.9" height="3.8" fill="#111"/>
+              <rect x="3.5" y="0" width="0.4" height="3.8" fill="#111"/>
+              <rect x="4.4" y="0" width="0.7" height="3.8" fill="#111"/>
+              <rect x="5.6" y="0" width="0.4" height="3.8" fill="#111"/>
+              <rect x="6.5" y="0" width="1.1" height="3.8" fill="#111"/>
+              <rect x="8.1" y="0" width="0.4" height="3.8" fill="#111"/>
+              <rect x="9.0" y="0" width="0.7" height="3.8" fill="#111"/>
+            </g>
+            <!-- Fragile sticker (top-right of front face) -->
+            <g transform="translate(40 -17)">
+              <rect x="-7" y="-6" width="14" height="12" rx="1" fill="#fbbf24" stroke="#a87400" stroke-width="0.5"/>
+              <text x="0" y="-1.5" text-anchor="middle" font-size="3.6" font-weight="800" fill="#a83a00">FRAGILE</text>
+              <path d="M -4 1 L 4 1 M -3 3 L 3 3" stroke="#a83a00" stroke-width="0.5"/>
+            </g>
+            <!-- "This side up" arrows (top face) -->
+            <g transform="translate(30 -38)" opacity="0.7">
+              <path d="M -4 4 L 0 -2 L 4 4 M 0 -2 L 0 6" stroke="rgba(58,38,12,0.9)" stroke-width="0.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M 14 4 L 18 -2 L 22 4 M 18 -2 L 18 6" stroke="rgba(58,38,12,0.9)" stroke-width="0.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+            <!-- Subtle cyan presence ring below the box (pulses via existing route-line glow) -->
+            <ellipse cx="0" cy="74" rx="70" ry="4" fill="none" stroke="rgba(0,212,255,0.45)" stroke-width="1.2"/>
           </g>
           <!-- Fade to FSD strip at bottom -->
           <rect x="0" y="350" width="520" height="70" fill="url(#ncFadeBottom)"/>
@@ -2943,20 +3035,31 @@ function tickNavCockpit(){
       : String(mm).padStart(2,'0') + ':' + String(ss).padStart(2,'0');
   }
 
-  /* ── Animated route vehicle dot — advances every 4 ticks ── */
-  if(_navTickCount % 4 === 0){
+  /* ── Smooth route vehicle animation — driver interpolates ALONG the route line
+         between geolocation waypoints (0.18 of a segment per tick). The viewBox
+         re-centres on the driver each tick so it stays in frame at every zoom level. ── */
+  {
     const mpts = [{x:80,y:182},{x:54,y:158},{x:28,y:138},{x:28,y:106},{x:55,y:82},{x:86,y:56},{x:124,y:34}];
-    const nmp = mpts.length;
-    _navRouteStep = (_navRouteStep + 1) % nmp;
+    const segs = mpts.length - 1;
+    if(typeof _navRouteProg !== 'number') _navRouteProg = 0;
+    _navRouteProg = (_navRouteProg + 0.18) % segs;           /* wrap back to start after last seg */
+    const segIdx = Math.floor(_navRouteProg);
+    const segT   = _navRouteProg - segIdx;
+    const p0 = mpts[segIdx];
+    const p1 = mpts[Math.min(segIdx + 1, mpts.length - 1)];
+    const x = +((p0.x + (p1.x - p0.x) * segT).toFixed(2));
+    const y = +((p0.y + (p1.y - p0.y) * segT).toFixed(2));
+    window._ncMapDriver = {x, y};
     const veh  = document.getElementById('ncRouteVeh');
     const glow = document.getElementById('ncRouteVehGlow');
     if(veh && glow){
-      const pt = mpts[_navRouteStep];
-      veh.setAttribute('cx',  pt.x);
-      veh.setAttribute('cy',  pt.y);
-      glow.setAttribute('cx', pt.x);
-      glow.setAttribute('cy', pt.y);
+      veh.setAttribute('cx',  x);
+      veh.setAttribute('cy',  y);
+      glow.setAttribute('cx', x);
+      glow.setAttribute('cy', y);
     }
+    /* Keep the viewBox centred on the moving driver at current zoom step */
+    if(typeof ncMapApplyZoom === 'function' && _ncMapZoomStep > 2){ ncMapApplyZoom(); }
   }
 
   /* ── Rotate route alert every 5 ticks ── */
@@ -3040,32 +3143,41 @@ function selectDriver(id){
 }
 
 /* Mini-map zoom (Route · Progress strip inside the driver cockpit).
-   factor < 1 zooms in (shrinks viewBox around the centre of the current view),
-   factor > 1 zooms out. Zoom level is clamped and the level indicator updates. */
-const _NC_MAP_BASE = {x:0, y:0, w:160, h:200};
-let _ncMapZoom = 1.0;
-function ncMapZoom(factor){
+   Five discrete zoom levels. The + button advances one step, − retreats one.
+   The viewBox centres on the driver's CURRENT position (window._ncMapDriver) so
+   the driver marker stays in view at every zoom level; it is clamped so the
+   viewBox never falls off the 160×200 map bounds. */
+const _NC_MAP_BASE  = {x:0, y:0, w:160, h:200};
+const _NC_ZOOM_STEPS = [0.5, 0.75, 1.0, 1.5, 2.5];  /* 5 discrete levels */
+let _ncMapZoomStep  = 2;                             /* index — 1.0× by default */
+function ncMapZoom(delta){
   const svg = document.getElementById('ncRouteSvg');
   if(!svg) return;
-  const next = Math.max(0.4, Math.min(3.0, _ncMapZoom * factor));
-  if(Math.abs(next - _ncMapZoom) < 0.01) return;  /* at clamp */
-  _ncMapZoom = next;
-  const w = _NC_MAP_BASE.w / _ncMapZoom;
-  const h = _NC_MAP_BASE.h / _ncMapZoom;
-  const x = _NC_MAP_BASE.x + (_NC_MAP_BASE.w - w) / 2;
-  const y = _NC_MAP_BASE.y + (_NC_MAP_BASE.h - h) / 2;
+  const next = Math.max(0, Math.min(_NC_ZOOM_STEPS.length - 1, _ncMapZoomStep + delta));
+  _ncMapZoomStep = next;
+  ncMapApplyZoom();
+}
+function ncMapApplyZoom(){
+  const svg = document.getElementById('ncRouteSvg');
+  if(!svg) return;
+  const zoom = _NC_ZOOM_STEPS[_ncMapZoomStep];
+  const w = _NC_MAP_BASE.w / zoom;
+  const h = _NC_MAP_BASE.h / zoom;
+  const driver = window._ncMapDriver || {x: _NC_MAP_BASE.w/2, y: _NC_MAP_BASE.h/2};
+  /* Centre on driver, then clamp so the viewBox stays within the 160×200 map */
+  let x = driver.x - w / 2;
+  let y = driver.y - h / 2;
+  if(w >= _NC_MAP_BASE.w){ x = _NC_MAP_BASE.x + (_NC_MAP_BASE.w - w) / 2; }
+  else { x = Math.max(_NC_MAP_BASE.x, Math.min(_NC_MAP_BASE.x + _NC_MAP_BASE.w - w, x)); }
+  if(h >= _NC_MAP_BASE.h){ y = _NC_MAP_BASE.y + (_NC_MAP_BASE.h - h) / 2; }
+  else { y = Math.max(_NC_MAP_BASE.y, Math.min(_NC_MAP_BASE.y + _NC_MAP_BASE.h - h, y)); }
   svg.setAttribute('viewBox', x.toFixed(2)+' '+y.toFixed(2)+' '+w.toFixed(2)+' '+h.toFixed(2));
-  svg.style.transition = 'none';
-  /* tween via short CSS transform for a smooth feel without thrashing SVG */
   const lvl = document.getElementById('ncMapZLvl');
-  if(lvl) lvl.textContent = _ncMapZoom.toFixed(2)+'×';
-  const zoomIn = document.getElementById('ncMapZoomIn');
+  if(lvl) lvl.textContent = zoom.toFixed(2)+'×';
+  const zoomIn  = document.getElementById('ncMapZoomIn');
   const zoomOut = document.getElementById('ncMapZoomOut');
-  /* with the + button scaling up (factor 1.25) and − button scaling down (factor 0.8),
-     _ncMapZoom > 1 means zoomed in (smaller viewBox = closer view),
-     _ncMapZoom < 1 means zoomed out (larger viewBox = wider area). */
-  if(zoomIn)  zoomIn.disabled  = _ncMapZoom >= 2.99;
-  if(zoomOut) zoomOut.disabled = _ncMapZoom <= 0.41;
+  if(zoomIn)  zoomIn.disabled  = _ncMapZoomStep >= _NC_ZOOM_STEPS.length - 1;
+  if(zoomOut) zoomOut.disabled = _ncMapZoomStep <= 0;
 }
 
 /* Single-click on a driver name in the left list: select + gradually zoom the map

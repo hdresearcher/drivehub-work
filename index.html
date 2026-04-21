@@ -999,7 +999,7 @@ a,button,select,.nav-item,.tab-item,.demo-btn,.demo-dropdown summary,.btn,.notif
   .topbar{padding:6px 12px}
 }
 
-/* ── Small Phones (≤480px) ── */
+/* ── Small Phones — iPhone portrait (≤480px) ── */
 @media(max-width:480px){
   .page{padding:12px}
   .kpi-val{font-size:20px}
@@ -1017,6 +1017,61 @@ a,button,select,.nav-item,.tab-item,.demo-btn,.demo-dropdown summary,.btn,.notif
   /* Edits toolbar compact */
   #dh-con{bottom:12px;right:12px}
   #dh-panel{right:12px;bottom:68px;width:calc(100vw - 24px)}
+
+  /* Topbar iPhone: tight, no long labels */
+  .topbar{padding:6px 10px;gap:8px}
+  .topbar-left{gap:6px;flex:1;min-width:0}
+  .sb-toggle{width:34px;height:34px;padding:6px}
+
+  /* Radio pod iPhone — compact chip + full-width dropdown */
+  .radio-pod{margin-left:4px}
+  .radio-toggle{padding:4px 8px;gap:4px}
+  .radio-label{max-width:70px;font-size:9.5px}
+  .radio-caret{width:9px;height:9px}
+  .radio-panel{position:fixed;left:8px;right:8px;top:52px;width:auto;max-width:none;max-height:calc(100dvh - 70px);overflow:auto}
+
+  /* Driver portal route / earnings cards */
+  .drv-hero-stats{gap:10px;flex-wrap:wrap}
+  .drv-hero-stats>div{flex:1;min-width:70px}
+  .drv-stat-v{font-size:16px}
+  .drv-stat-l{font-size:9.5px}
+
+  /* Tabs scroll horizontally on iPhone */
+  .tab-bar{overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none}
+  .tab-bar::-webkit-scrollbar{display:none}
+  .tab-item{flex:0 0 auto;min-width:90px}
+
+  /* Cards tighter padding */
+  .card{padding:12px}
+  .cb{padding:12px}
+
+  /* Pay breakdown / earnings table fits */
+  .pay-row{font-size:12px}
+
+  /* Feature page iframe overlay (AI Route Opt) */
+  .feature-iframe{height:100dvh}
+
+  /* Notification panel iPhone */
+  .notif-panel{width:calc(100vw - 16px);right:8px;top:50px;max-height:calc(100dvh - 66px)}
+
+  /* Toast repositioned */
+  #toast-container{bottom:12px;right:8px;left:8px}
+  #toast-container>div{max-width:100%!important}
+
+  /* Login logo compact */
+  .login-logo-title{font-size:18px}
+  .login-logo-icon{width:36px;height:36px}
+  .login-logo-sub{font-size:10px}
+  .login-slogan{font-size:11px}
+  .demo-btn{font-size:11px;padding:10px 12px}
+}
+
+/* Very small / iPhone SE (≤380px) */
+@media(max-width:380px){
+  .topbar-left>span{display:none}
+  .radio-label{max-width:48px}
+  .drv-hero-stats>div{min-width:60px}
+  .drv-stat-v{font-size:15px}
 }
 
 /* ── iPad Landscape (1024–1366px) ── */
