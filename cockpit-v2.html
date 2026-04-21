@@ -2513,13 +2513,22 @@ function renderNavCockpit(d){
       <div class="nc-fsd-map">
         <div class="nc-fsd-map-hd">Route · Progress</div>
         <svg class="nc-fsd-map-svg" id="ncRouteSvg" viewBox="0 0 160 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
-          <!-- street grid -->
-          <line x1="0" y1="50"  x2="160" y2="50"  stroke="rgba(255,255,255,.045)" stroke-width="1"/>
-          <line x1="0" y1="100" x2="160" y2="100" stroke="rgba(255,255,255,.045)" stroke-width="1"/>
-          <line x1="0" y1="150" x2="160" y2="150" stroke="rgba(255,255,255,.045)" stroke-width="1"/>
-          <line x1="40"  y1="0" x2="40"  y2="200" stroke="rgba(255,255,255,.045)" stroke-width="1"/>
-          <line x1="90"  y1="0" x2="90"  y2="200" stroke="rgba(255,255,255,.045)" stroke-width="1"/>
-          <line x1="135" y1="0" x2="135" y2="200" stroke="rgba(255,255,255,.045)" stroke-width="1"/>
+          <!-- subtle park block -->
+          <rect x="8" y="62" width="28" height="22" rx="3" fill="rgba(74,222,128,.05)" stroke="rgba(74,222,128,.12)" stroke-width=".6"/>
+          <!-- minor street grid -->
+          <line x1="0" y1="30"  x2="160" y2="30"  stroke="rgba(255,255,255,.035)" stroke-width=".6"/>
+          <line x1="0" y1="70"  x2="160" y2="70"  stroke="rgba(255,255,255,.035)" stroke-width=".6"/>
+          <line x1="0" y1="125" x2="160" y2="125" stroke="rgba(255,255,255,.035)" stroke-width=".6"/>
+          <line x1="0" y1="170" x2="160" y2="170" stroke="rgba(255,255,255,.035)" stroke-width=".6"/>
+          <line x1="22"  y1="0" x2="22"  y2="200" stroke="rgba(255,255,255,.035)" stroke-width=".6"/>
+          <line x1="68"  y1="0" x2="68"  y2="200" stroke="rgba(255,255,255,.035)" stroke-width=".6"/>
+          <line x1="112" y1="0" x2="112" y2="200" stroke="rgba(255,255,255,.035)" stroke-width=".6"/>
+          <line x1="150" y1="0" x2="150" y2="200" stroke="rgba(255,255,255,.035)" stroke-width=".6"/>
+          <!-- major arterials (thicker, brighter) -->
+          <line x1="0" y1="98" x2="160" y2="98"  stroke="rgba(255,255,255,.085)" stroke-width="1.6"/>
+          <line x1="46" y1="0" x2="46" y2="200"  stroke="rgba(255,255,255,.085)" stroke-width="1.6"/>
+          <!-- diagonal highway corridor -->
+          <path d="M-8,200 Q 60,120 160,40" fill="none" stroke="rgba(255,255,255,.065)" stroke-width="2.2" stroke-linecap="round"/>
           <!-- full route (dim dashed) -->
           <path fill="none" stroke="rgba(255,255,255,.14)" stroke-width="1.5" stroke-dasharray="5 4" d="${_mapFull}"/>
           <!-- completed portion (solid cyan) -->
