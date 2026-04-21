@@ -219,9 +219,9 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .mctrl.act{border-color:rgba(0,212,255,.4);color:var(--primary);background:rgba(0,212,255,.08)}
 .mctrl svg{width:12px;height:12px;stroke-width:2.2;fill:none}
 
-.map-legend{position:absolute;bottom:56px;left:12px;z-index:10;
+.map-legend{flex-shrink:0;margin:8px 8px 10px;
   background:rgba(10,10,15,.92);backdrop-filter:blur(12px);border:1px solid var(--border);
-  border-radius:10px;padding:10px 12px;min-width:180px}
+  border-radius:10px;padding:10px 12px;}
 .ml-title{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--muted);font-family:var(--mono);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
 .ml-row{display:flex;align-items:center;gap:7px;font-size:10px;color:var(--text);margin-bottom:4px;font-family:var(--mono)}
 .ml-row:last-child{margin-bottom:0}
@@ -783,7 +783,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 @keyframes shadowPulse{0%,100%{transform:translateX(-50%) scale(1);opacity:.7}50%{transform:translateX(-50%) scale(.92);opacity:.5}}
 
 /* ── Tesla FSD-style window (replaces 3D vehicle) ─────────────── */
-.nc-fsd-win{position:relative;z-index:3;width:91%;margin:0;display:flex;border-radius:14px;overflow:hidden;border:1px solid rgba(0,212,255,.22);background:rgba(6,8,16,.78);backdrop-filter:blur(12px);box-shadow:0 0 48px rgba(0,212,255,.08),inset 0 1px 0 rgba(255,255,255,.06);flex-shrink:0;height:228px}
+.nc-fsd-win{position:relative;z-index:3;width:calc(100% - 56px);margin:0 28px 8px;display:flex;border-radius:14px;overflow:hidden;border:1px solid rgba(0,212,255,.22);background:rgba(6,8,16,.78);backdrop-filter:blur(12px);box-shadow:0 0 48px rgba(0,212,255,.08),inset 0 1px 0 rgba(255,255,255,.06);flex-shrink:0;height:228px}
 /* map column */
 .nc-fsd-map{width:27%;border-right:1px solid rgba(0,212,255,.1);padding:11px 10px;display:flex;flex-direction:column;gap:5px;background:rgba(0,4,14,.5)}
 .nc-fsd-map-hd{font-size:8px;font-family:var(--mono);letter-spacing:2px;color:rgba(0,212,255,.7);text-transform:uppercase}
@@ -1182,6 +1182,13 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       </div>
     </div>
   </div>
+      <div class="map-legend" data-cc-id="cc-50">
+        <div class="ml-title">Fleet Status <span style="color:var(--primary);font-weight:700;font-size:9px">LIVE</span></div>
+        <div class="ml-row"><span class="ml-d" style="background:#4ade80;color:#4ade80"></span>En Route<span class="ml-row-v" id="lgEn">19</span></div>
+        <div class="ml-row" data-cc-id="cc-52"><span class="ml-d" style="background:#fbbf24;color:#fbbf24"></span>Loading<span class="ml-row-v" id="lgLd">6</span></div>
+        <div class="ml-row"><span class="ml-d" style="background:#00d4ff;color:#00d4ff"></span>At Stop<span class="ml-row-v" id="lgSt">3</span></div>
+        <div class="ml-row" data-cc-id="cc-51"><span class="ml-d" style="background:#f87171;color:#f87171"></span>Late / Exception<span class="ml-row-v" id="lgLt">0</span></div>
+      </div>
     </aside>
 
     <!-- MAP -->
@@ -1261,13 +1268,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
             Fit
           </button>
         </div>
-      </div>
-      <div class="map-legend" data-cc-id="cc-50">
-        <div class="ml-title">Fleet Status <span style="color:var(--primary);font-weight:700;font-size:9px">LIVE</span></div>
-        <div class="ml-row"><span class="ml-d" style="background:#4ade80;color:#4ade80"></span>En Route<span class="ml-row-v" id="lgEn">19</span></div>
-        <div class="ml-row" data-cc-id="cc-52"><span class="ml-d" style="background:#fbbf24;color:#fbbf24"></span>Loading<span class="ml-row-v" id="lgLd">6</span></div>
-        <div class="ml-row"><span class="ml-d" style="background:#00d4ff;color:#00d4ff"></span>At Stop<span class="ml-row-v" id="lgSt">3</span></div>
-        <div class="ml-row" data-cc-id="cc-51"><span class="ml-d" style="background:#f87171;color:#f87171"></span>Late / Exception<span class="ml-row-v" id="lgLt">0</span></div>
       </div>
       <div class="hint-chip">
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><path d="M12 7v5l3 3"></path></svg>
@@ -2048,7 +2048,7 @@ function renderSwarm(){
     }).addTo(map)
       .bindPopup(popupHtml(d));
     m.on('click', ()=>{ selectDriver(d.id); });
-    m.on('dblclick', (e)=>{ L.DomEvent.stopPropagation(e); magicZoom(d.id); });
+    m.on('dblclick', (e)=>{ L.DomEvent.stopPropagation(e); if(NAV.on){ window.open('index.html','_blank'); } else { magicZoom(d.id); } });
     drvMarkers[d.id]=m;
   });
   updateLegend();
@@ -2422,6 +2422,107 @@ function renderNavCockpit(d){
       </div>
     </div>
 
+    <!-- ── Tesla FSD strip ── -->
+    <div class="nc-fsd-win" id="ncFsdWin">
+
+      <!-- LEFT: Animated route journey tracker -->
+      <div class="nc-fsd-map">
+        <div class="nc-fsd-map-hd">Route · Progress</div>
+        <svg class="nc-fsd-map-svg" id="ncRouteSvg" viewBox="0 0 160 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+          <!-- street grid -->
+          <line x1="0" y1="50"  x2="160" y2="50"  stroke="rgba(255,255,255,.045)" stroke-width="1"/>
+          <line x1="0" y1="100" x2="160" y2="100" stroke="rgba(255,255,255,.045)" stroke-width="1"/>
+          <line x1="0" y1="150" x2="160" y2="150" stroke="rgba(255,255,255,.045)" stroke-width="1"/>
+          <line x1="40"  y1="0" x2="40"  y2="200" stroke="rgba(255,255,255,.045)" stroke-width="1"/>
+          <line x1="90"  y1="0" x2="90"  y2="200" stroke="rgba(255,255,255,.045)" stroke-width="1"/>
+          <line x1="135" y1="0" x2="135" y2="200" stroke="rgba(255,255,255,.045)" stroke-width="1"/>
+          <!-- full route (dim dashed) -->
+          <path fill="none" stroke="rgba(255,255,255,.14)" stroke-width="1.5" stroke-dasharray="5 4" d="${_mapFull}"/>
+          <!-- completed portion (solid cyan) -->
+          ${_mapDoneHtml}
+          <!-- stop dots -->
+          ${_mapDots}
+          <!-- depot start -->
+          <rect x="${_mpts[0].x-5}" y="${_mpts[0].y-5}" width="10" height="10" rx="2" fill="rgba(74,222,128,.45)" stroke="#4ade80" stroke-width="1.2"/>
+          <!-- destination -->
+          <path d="M${_mpts[_nmp-1].x},${_mpts[_nmp-1].y-8} L${_mpts[_nmp-1].x+5},${_mpts[_nmp-1].y+3} L${_mpts[_nmp-1].x-5},${_mpts[_nmp-1].y+3}Z" fill="rgba(251,191,36,.6)" stroke="#fbbf24" stroke-width="1.2"/>
+          <!-- Animated vehicle position (will be updated by tickNavCockpit) -->
+          <circle id="ncRouteVeh" class="nc-fsd-veh-dot" cx="${_mpts[_dIdx].x}" cy="${_mpts[_dIdx].y}" r="6" fill="#00d4ff" stroke="rgba(0,212,255,.35)" stroke-width="5" opacity=".95"/>
+          <circle id="ncRouteVehGlow" cx="${_mpts[_dIdx].x}" cy="${_mpts[_dIdx].y}" r="10" fill="none" stroke="rgba(0,212,255,.2)" stroke-width="1.5"/>
+        </svg>
+        <div class="nc-fsd-map-ft" id="ncMapFt">${d.done} of ${d.stops} delivered</div>
+      </div>
+
+      <!-- CENTER: FSD speedometer view with real-time route info -->
+      <div class="nc-fsd-road">
+        <div class="nc-fsd-speedo-wrap">
+          <svg class="nc-fsd-speedo-svg" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+            <!-- background ring -->
+            <circle cx="60" cy="60" r="50" fill="rgba(0,0,0,.45)" stroke="rgba(255,255,255,.07)" stroke-width="1"/>
+            <!-- speed arc background -->
+            <circle cx="60" cy="60" r="44" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="8"/>
+            <!-- speed arc fill -->
+            <circle cx="60" cy="60" r="44" fill="none" stroke="${speed > speedLimit + 3 ? '#f87171' : '#4ade80'}"
+              stroke-width="8" stroke-linecap="round"
+              stroke-dasharray="${(2*Math.PI*44).toFixed(1)}"
+              stroke-dashoffset="${((2*Math.PI*44)*(1-Math.min(1,speed/70))).toFixed(1)}"
+              transform="rotate(-90 60 60)" id="ncFsdSpeedArc"
+              style="filter:drop-shadow(0 0 5px ${speed > speedLimit + 3 ? '#f87171' : '#4ade80'})"/>
+            <!-- speed value -->
+            <text x="60" y="55" text-anchor="middle" font-size="26" font-weight="200" font-family="'Outfit',sans-serif" fill="${speed > speedLimit + 3 ? '#f87171' : '#fff'}" id="ncFsdSpd">${speed}</text>
+            <text x="60" y="67" text-anchor="middle" font-size="9" font-family="'JetBrains Mono',monospace" fill="rgba(255,255,255,.38)" letter-spacing="2">MPH</text>
+            <!-- limit indicator -->
+            <text x="60" y="80" text-anchor="middle" font-size="8" font-family="'JetBrains Mono',monospace" fill="rgba(255,255,255,.28)">LIMIT <tspan fill="#fbbf24" font-weight="700">${speedLimit}</tspan></text>
+          </svg>
+        </div>
+        <!-- Rotating alert banner -->
+        <div class="nc-fsd-alert ${_NAV_ALERTS[0].cls}" id="ncFsdAlert">
+          <svg viewBox="0 0 24 24"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zM12 8v4M12 16h.01"/></svg>
+          <span id="ncFsdAlertTxt">${_NAV_ALERTS[0].msg.replace('#0','#'+(d.done+1))}</span>
+        </div>
+      </div>
+
+      <!-- RIGHT: Earnings dashboard -->
+      <div class="nc-fsd-info" style="width:31%;padding:10px 11px">
+        <div class="nc-earn-hd">Earnings · Route</div>
+        <div class="nc-earn-ring-wrap">
+          <svg class="nc-earn-ring-svg" viewBox="0 0 70 70" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="35" cy="35" r="28" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="7"/>
+            <circle cx="35" cy="35" r="28" fill="none" stroke="#4ade80" stroke-width="7"
+              stroke-linecap="round" stroke-dasharray="${(2*Math.PI*28).toFixed(1)}"
+              stroke-dashoffset="${((2*Math.PI*28)*(1-parcelPct/100)).toFixed(1)}"
+              transform="rotate(-90 35 35)" id="ncEarnRing"
+              style="filter:drop-shadow(0 0 5px rgba(74,222,128,.4))"/>
+            <text x="35" y="32" text-anchor="middle" font-size="13" font-weight="700" font-family="'JetBrains Mono',monospace" fill="#4ade80" id="ncEarnPct">${parcelPct}</text>
+            <text x="35" y="42" text-anchor="middle" font-size="7" font-family="'JetBrains Mono',monospace" fill="rgba(255,255,255,.35)" letter-spacing="1">DONE %</text>
+          </svg>
+          <div style="display:flex;flex-direction:column;gap:3px">
+            <div class="nc-earn-ring-pct" id="ncEarnVal">${fmtMoney(totalEarned)}</div>
+            <div class="nc-earn-ring-lbl">earned today</div>
+            <div style="font-size:10px;font-weight:600;font-family:var(--mono);color:#fbbf24;margin-top:2px" id="ncEarnLeft">${fmtMoney(totalLeft)}</div>
+            <div class="nc-earn-ring-lbl">left to earn</div>
+          </div>
+        </div>
+        <div class="nc-earn-bar-wrap">
+          <div style="display:flex;justify-content:space-between;font-size:7.5px;font-family:var(--mono);color:rgba(255,255,255,.35);margin-bottom:3px">
+            <span>${d.done} stops done</span><span id="ncEarnStops">${d.stops - d.done} left</span>
+          </div>
+          <div class="nc-earn-bar"><div class="nc-earn-bar-fill" id="ncEarnBar" style="width:${parcelPct}%"></div></div>
+        </div>
+        <div style="margin-top:5px;padding-top:5px;border-top:1px solid rgba(255,255,255,.05)">
+          <div style="display:flex;justify-content:space-between;font-size:8px;font-family:var(--mono)">
+            <span style="color:rgba(255,255,255,.38)">Rate/stop</span>
+            <span style="color:#00d4ff" id="ncEarnRate">${fmtMoney(earnedPer)}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:8px;font-family:var(--mono);margin-top:3px">
+            <span style="color:rgba(255,255,255,.38)">ETA Arrival</span>
+            <span style="color:#4ade80 " id="ncFsdEta">--:--</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
     <div class="nc-body">
       <!-- LEFT COL -->
       <div class="nc-col">
@@ -2534,107 +2635,6 @@ function renderNavCockpit(d){
             <div class="nc-compass-needle" id="ncNeedle" style="transform:rotate(${d.heading}deg)"></div>
             <div class="nc-compass-hdg" id="ncHdg">${d.heading}°</div>
           </div>
-        </div>
-
-        <!-- ── Tesla FSD strip ── -->
-        <div class="nc-fsd-win" id="ncFsdWin">
-
-          <!-- LEFT: Animated route journey tracker -->
-          <div class="nc-fsd-map">
-            <div class="nc-fsd-map-hd">Route · Progress</div>
-            <svg class="nc-fsd-map-svg" id="ncRouteSvg" viewBox="0 0 160 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
-              <!-- street grid -->
-              <line x1="0" y1="50"  x2="160" y2="50"  stroke="rgba(255,255,255,.045)" stroke-width="1"/>
-              <line x1="0" y1="100" x2="160" y2="100" stroke="rgba(255,255,255,.045)" stroke-width="1"/>
-              <line x1="0" y1="150" x2="160" y2="150" stroke="rgba(255,255,255,.045)" stroke-width="1"/>
-              <line x1="40"  y1="0" x2="40"  y2="200" stroke="rgba(255,255,255,.045)" stroke-width="1"/>
-              <line x1="90"  y1="0" x2="90"  y2="200" stroke="rgba(255,255,255,.045)" stroke-width="1"/>
-              <line x1="135" y1="0" x2="135" y2="200" stroke="rgba(255,255,255,.045)" stroke-width="1"/>
-              <!-- full route (dim dashed) -->
-              <path fill="none" stroke="rgba(255,255,255,.14)" stroke-width="1.5" stroke-dasharray="5 4" d="${_mapFull}"/>
-              <!-- completed portion (solid cyan) -->
-              ${_mapDoneHtml}
-              <!-- stop dots -->
-              ${_mapDots}
-              <!-- depot start -->
-              <rect x="${_mpts[0].x-5}" y="${_mpts[0].y-5}" width="10" height="10" rx="2" fill="rgba(74,222,128,.45)" stroke="#4ade80" stroke-width="1.2"/>
-              <!-- destination -->
-              <path d="M${_mpts[_nmp-1].x},${_mpts[_nmp-1].y-8} L${_mpts[_nmp-1].x+5},${_mpts[_nmp-1].y+3} L${_mpts[_nmp-1].x-5},${_mpts[_nmp-1].y+3}Z" fill="rgba(251,191,36,.6)" stroke="#fbbf24" stroke-width="1.2"/>
-              <!-- Animated vehicle position (will be updated by tickNavCockpit) -->
-              <circle id="ncRouteVeh" class="nc-fsd-veh-dot" cx="${_mpts[_dIdx].x}" cy="${_mpts[_dIdx].y}" r="6" fill="#00d4ff" stroke="rgba(0,212,255,.35)" stroke-width="5" opacity=".95"/>
-              <circle id="ncRouteVehGlow" cx="${_mpts[_dIdx].x}" cy="${_mpts[_dIdx].y}" r="10" fill="none" stroke="rgba(0,212,255,.2)" stroke-width="1.5"/>
-            </svg>
-            <div class="nc-fsd-map-ft" id="ncMapFt">${d.done} of ${d.stops} delivered</div>
-          </div>
-
-          <!-- CENTER: FSD speedometer view with real-time route info -->
-          <div class="nc-fsd-road">
-            <div class="nc-fsd-speedo-wrap">
-              <svg class="nc-fsd-speedo-svg" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-                <!-- background ring -->
-                <circle cx="60" cy="60" r="50" fill="rgba(0,0,0,.45)" stroke="rgba(255,255,255,.07)" stroke-width="1"/>
-                <!-- speed arc background -->
-                <circle cx="60" cy="60" r="44" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="8"/>
-                <!-- speed arc fill -->
-                <circle cx="60" cy="60" r="44" fill="none" stroke="${speed > speedLimit + 3 ? '#f87171' : '#4ade80'}"
-                  stroke-width="8" stroke-linecap="round"
-                  stroke-dasharray="${(2*Math.PI*44).toFixed(1)}"
-                  stroke-dashoffset="${((2*Math.PI*44)*(1-Math.min(1,speed/70))).toFixed(1)}"
-                  transform="rotate(-90 60 60)" id="ncFsdSpeedArc"
-                  style="filter:drop-shadow(0 0 5px ${speed > speedLimit + 3 ? '#f87171' : '#4ade80'})"/>
-                <!-- speed value -->
-                <text x="60" y="55" text-anchor="middle" font-size="26" font-weight="200" font-family="'Outfit',sans-serif" fill="${speed > speedLimit + 3 ? '#f87171' : '#fff'}" id="ncFsdSpd">${speed}</text>
-                <text x="60" y="67" text-anchor="middle" font-size="9" font-family="'JetBrains Mono',monospace" fill="rgba(255,255,255,.38)" letter-spacing="2">MPH</text>
-                <!-- limit indicator -->
-                <text x="60" y="80" text-anchor="middle" font-size="8" font-family="'JetBrains Mono',monospace" fill="rgba(255,255,255,.28)">LIMIT <tspan fill="#fbbf24" font-weight="700">${speedLimit}</tspan></text>
-              </svg>
-            </div>
-            <!-- Rotating alert banner -->
-            <div class="nc-fsd-alert ${_NAV_ALERTS[0].cls}" id="ncFsdAlert">
-              <svg viewBox="0 0 24 24"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zM12 8v4M12 16h.01"/></svg>
-              <span id="ncFsdAlertTxt">${_NAV_ALERTS[0].msg.replace('#0','#'+(d.done+1))}</span>
-            </div>
-          </div>
-
-          <!-- RIGHT: Earnings dashboard -->
-          <div class="nc-fsd-info" style="width:31%;padding:10px 11px">
-            <div class="nc-earn-hd">Earnings · Route</div>
-            <div class="nc-earn-ring-wrap">
-              <svg class="nc-earn-ring-svg" viewBox="0 0 70 70" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="35" cy="35" r="28" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="7"/>
-                <circle cx="35" cy="35" r="28" fill="none" stroke="#4ade80" stroke-width="7"
-                  stroke-linecap="round" stroke-dasharray="${(2*Math.PI*28).toFixed(1)}"
-                  stroke-dashoffset="${((2*Math.PI*28)*(1-parcelPct/100)).toFixed(1)}"
-                  transform="rotate(-90 35 35)" id="ncEarnRing"
-                  style="filter:drop-shadow(0 0 5px rgba(74,222,128,.4))"/>
-                <text x="35" y="32" text-anchor="middle" font-size="13" font-weight="700" font-family="'JetBrains Mono',monospace" fill="#4ade80" id="ncEarnPct">${parcelPct}</text>
-                <text x="35" y="42" text-anchor="middle" font-size="7" font-family="'JetBrains Mono',monospace" fill="rgba(255,255,255,.35)" letter-spacing="1">DONE %</text>
-              </svg>
-              <div style="display:flex;flex-direction:column;gap:3px">
-                <div class="nc-earn-ring-pct" id="ncEarnVal">${fmtMoney(totalEarned)}</div>
-                <div class="nc-earn-ring-lbl">earned today</div>
-                <div style="font-size:10px;font-weight:600;font-family:var(--mono);color:#fbbf24;margin-top:2px" id="ncEarnLeft">${fmtMoney(totalLeft)}</div>
-                <div class="nc-earn-ring-lbl">left to earn</div>
-              </div>
-            </div>
-            <div class="nc-earn-bar-wrap">
-              <div style="display:flex;justify-content:space-between;font-size:7.5px;font-family:var(--mono);color:rgba(255,255,255,.35);margin-bottom:3px">
-                <span>${d.done} stops done</span><span id="ncEarnStops">${d.stops - d.done} left</span>
-              </div>
-              <div class="nc-earn-bar"><div class="nc-earn-bar-fill" id="ncEarnBar" style="width:${parcelPct}%"></div></div>
-            </div>
-            <div style="margin-top:5px;padding-top:5px;border-top:1px solid rgba(255,255,255,.05)">
-              <div style="display:flex;justify-content:space-between;font-size:8px;font-family:var(--mono)">
-                <span style="color:rgba(255,255,255,.38)">Rate/stop</span>
-                <span style="color:#00d4ff" id="ncEarnRate">${fmtMoney(earnedPer)}</span>
-              </div>
-              <div style="display:flex;justify-content:space-between;font-size:8px;font-family:var(--mono);margin-top:3px">
-                <span style="color:rgba(255,255,255,.38)">ETA Arrival</span>
-                <span style="color:#4ade80 " id="ncFsdEta">--:--</span>
-              </div>
-            </div>
-          </div>
-
         </div>
 
         <div class="nc-statusbar">
