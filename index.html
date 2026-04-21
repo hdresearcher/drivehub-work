@@ -676,6 +676,44 @@ body.dh-ann-mode #page-content{cursor:crosshair!important}
 .sim-bar{width:3px;border-radius:2px;background:var(--primary);opacity:.4;transition:all .3s}
 .sim-bar.active{opacity:1;box-shadow:0 0 6px var(--primary-glow)}
 
+/* ── US UNDERGROUND RADIO MODULE (topbar) ──────────────────────── */
+.radio-pod{position:relative;margin-left:12px;display:inline-flex;align-items:center;z-index:60}
+.radio-toggle{display:flex;align-items:center;gap:6px;padding:4px 10px;background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);border-radius:999px;color:var(--muted);font-size:10px;font-family:var(--mono);letter-spacing:.5px;cursor:pointer;transition:background .2s ease,border-color .2s ease,color .2s ease}
+.radio-toggle:hover{background:rgba(0,212,255,.14);border-color:rgba(0,212,255,.35);color:var(--primary)}
+.radio-toggle.playing{color:#4ade80;border-color:rgba(74,222,128,.38);background:rgba(74,222,128,.08)}
+.radio-led{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.25);box-shadow:0 0 4px rgba(255,255,255,.15);flex-shrink:0}
+.radio-toggle.playing .radio-led{background:#4ade80;box-shadow:0 0 8px #4ade80;animation:radioPulse 1.2s ease-in-out infinite}
+.radio-icon{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0}
+.radio-caret{width:10px;height:10px;stroke:currentColor;fill:none;stroke-width:2;opacity:.6;flex-shrink:0}
+.radio-label{max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.radio-panel{position:absolute;top:calc(100% + 6px);left:0;width:340px;background:rgba(10,12,18,.97);border:1px solid rgba(0,212,255,.22);border-radius:12px;padding:10px;box-shadow:0 12px 36px rgba(0,0,0,.75),0 0 24px rgba(0,212,255,.08);backdrop-filter:blur(14px);display:none;animation:radioSlide .22s var(--ease,ease-out)}
+.radio-panel.open{display:block}
+.radio-head{display:flex;justify-content:space-between;align-items:center;gap:8px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.06);margin-bottom:8px}
+.radio-title{font-size:10.5px;font-weight:700;color:var(--primary);font-family:var(--mono);letter-spacing:1.2px;text-transform:uppercase}
+.radio-state{background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.1);color:var(--text);font-size:10px;padding:3px 6px;border-radius:5px;outline:none;font-family:var(--mono);cursor:pointer}
+.radio-state:focus{border-color:rgba(0,212,255,.35)}
+.radio-list{max-height:280px;overflow-y:auto;display:flex;flex-direction:column;gap:2px}
+.radio-list::-webkit-scrollbar{width:5px}
+.radio-list::-webkit-scrollbar-thumb{background:rgba(0,212,255,.22);border-radius:2px}
+.radio-item{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;cursor:pointer;border-left:2px solid transparent;transition:background .15s ease,border-color .15s ease}
+.radio-item:hover{background:rgba(0,212,255,.08)}
+.radio-item.active{background:rgba(74,222,128,.1);border-left-color:#4ade80}
+.radio-item-st{width:24px;font-size:9px;font-weight:700;color:var(--muted);font-family:var(--mono);flex-shrink:0;text-align:center}
+.radio-item.active .radio-item-st{color:#4ade80}
+.radio-item-body{flex:1;min-width:0}
+.radio-item-nm{font-size:11px;color:var(--text);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.radio-item-g{font-size:9px;color:var(--muted);font-family:var(--mono);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.radio-foot{display:flex;align-items:center;gap:8px;padding-top:8px;margin-top:8px;border-top:1px solid rgba(255,255,255,.06)}
+.radio-play{width:28px;height:28px;border-radius:50%;background:rgba(0,212,255,.14);border:1px solid rgba(0,212,255,.32);color:var(--primary);font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s ease}
+.radio-play:hover{background:rgba(0,212,255,.24)}
+.radio-vol{flex:1;appearance:none;-webkit-appearance:none;height:4px;background:rgba(255,255,255,.1);border-radius:2px;outline:none;cursor:pointer}
+.radio-vol::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;border-radius:50%;background:var(--primary);cursor:pointer;border:none}
+.radio-vol::-moz-range-thumb{width:10px;height:10px;border-radius:50%;background:var(--primary);cursor:pointer;border:none}
+.radio-now{font-size:9px;color:var(--muted);font-family:var(--mono);max-width:100px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@keyframes radioPulse{0%,100%{transform:scale(1);box-shadow:0 0 8px #4ade80}50%{transform:scale(1.25);box-shadow:0 0 14px #4ade80}}
+@keyframes radioSlide{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+@media (max-width:900px){.radio-label{max-width:80px}.radio-panel{width:300px;left:auto;right:0}}
+
 /* Map */
 .map-container{width:100%;height:320px;border-radius:var(--r);overflow:hidden;border:1px solid var(--border);margin-bottom:12px}
 .tracking-map{width:100%;height:420px;border-radius:var(--r);overflow:hidden;border:1px solid var(--border)}
@@ -4374,7 +4412,7 @@ function render(){
     return;
   }
   const unread=notifications.filter(n=>!n.read).length;
-  root.innerHTML=`<div id="star-canvas"></div><div class="app"><div class="sb-overlay" id="sb-overlay" onclick="closeSidebar()"></div>${renderSidebar()}<div class="main"><div class="topbar"><div class="topbar-left"><button class="sb-toggle" id="sb-toggle" onclick="toggleSidebar()" aria-label="Menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button><div class="sim-timeline" title="Activity timeline">${Array.from({length:24},(_,i)=>`<div class="sim-bar${i<=11?' active':''}" style="height:${4+Math.random()*16}px"></div>`).join('')}</div><span style="font-size:10px;color:var(--dim);font-family:var(--mono);letter-spacing:1px">LIVE SIM</span></div><div class="topbar-right">${renderNotifPanel()}</div></div><div id="page-content">${renderPage()}</div></div></div><div id="toast-container" style="position:fixed;bottom:20px;right:20px;z-index:999;display:flex;flex-direction:column;gap:8px"></div>`;
+  root.innerHTML=`<div id="star-canvas"></div><div class="app"><div class="sb-overlay" id="sb-overlay" onclick="closeSidebar()"></div>${renderSidebar()}<div class="main"><div class="topbar"><div class="topbar-left"><button class="sb-toggle" id="sb-toggle" onclick="toggleSidebar()" aria-label="Menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button><div class="sim-timeline" title="Activity timeline">${Array.from({length:24},(_,i)=>`<div class="sim-bar${i<=11?' active':''}" style="height:${4+Math.random()*16}px"></div>`).join('')}</div><span style="font-size:10px;color:var(--dim);font-family:var(--mono);letter-spacing:1px">LIVE SIM</span><div class="radio-pod" id="radioPod"><button class="radio-toggle" id="radioToggleBtn" onclick="radioToggleMenu(event)" title="US underground radio · free stations"><span class="radio-led" id="radioLed"></span><svg class="radio-icon" viewBox="0 0 24 24"><path d="M4 10v8a2 2 0 002 2h12a2 2 0 002-2v-8M4 10l10-6 10 6M4 10h16M9 15h6"/></svg><span class="radio-label" id="radioLabel">Pick a station</span><svg class="radio-caret" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button><div class="radio-panel" id="radioPanel"><div class="radio-head"><span class="radio-title">US · Underground Radio</span><select class="radio-state" id="radioState" onchange="radioFilter()" title="Filter by state"><option value="">All states</option></select></div><div class="radio-list" id="radioList"></div><div class="radio-foot"><button class="radio-play" id="radioPlayBtn" onclick="radioTogglePlay()" title="Play / pause">▶</button><input type="range" class="radio-vol" id="radioVol" min="0" max="100" value="65" oninput="radioVolume(this.value)" title="Volume"/><span class="radio-now" id="radioNow">Ready</span></div></div><audio id="radioAudio" preload="none" crossorigin="anonymous"></audio></div></div><div class="topbar-right">${renderNotifPanel()}</div></div><div id="page-content">${renderPage()}</div></div></div><div id="toast-container" style="position:fixed;bottom:20px;right:20px;z-index:999;display:flex;flex-direction:column;gap:8px"></div>`;
   toastEl=document.getElementById('toast-container');
   bindPage();
   setTimeout(initMaps,50);
@@ -4493,6 +4531,144 @@ window.doLogout=()=>{state.user=null;state.page='dashboard';render();};
 window.rerenderPage=rerenderPage;
 window.openEditCo=id=>{_editCoId=id;openCoModal(companies.find(c=>c.id===id));};
 window.setDrvTab=tab=>{state.drvTab=tab;state.page='driver';rerenderPage();};
+
+/* ═══════════════════════════════════════════════════════════════
+   US UNDERGROUND RADIO — free stations, grouped by state
+   SomaFM (San Francisco) anchors the underground/alternative tier;
+   the rest are public/college stations with free HTTPS streams.
+   ═══════════════════════════════════════════════════════════════ */
+const RADIO_STATIONS = [
+  {st:'CA', name:'SomaFM · Underground 80s',  g:'Post-Punk · New Wave',     u:'https://ice1.somafm.com/u80s-128-mp3'},
+  {st:'CA', name:'SomaFM · DEF CON Radio',    g:'Hacker Electronica',       u:'https://ice1.somafm.com/defcon-128-mp3'},
+  {st:'CA', name:'SomaFM · Groove Salad',     g:'Ambient · Downtempo',      u:'https://ice1.somafm.com/groovesalad-128-mp3'},
+  {st:'CA', name:'SomaFM · Drone Zone',       g:'Ambient Space',            u:'https://ice1.somafm.com/dronezone-128-mp3'},
+  {st:'CA', name:'SomaFM · Metal Detector',   g:'Metal',                    u:'https://ice1.somafm.com/metal-128-mp3'},
+  {st:'CA', name:'SomaFM · Secret Agent',     g:'Spy Jazz · Crime Noir',    u:'https://ice1.somafm.com/secretagent-128-mp3'},
+  {st:'CA', name:'SomaFM · Mission Control',  g:'Ambient · NASA Audio',     u:'https://ice1.somafm.com/missioncontrol-128-mp3'},
+  {st:'CA', name:'SomaFM · cliqhop idm',      g:'IDM · Glitch',             u:'https://ice1.somafm.com/cliqhop-128-mp3'},
+  {st:'CA', name:'SomaFM · Deep Space One',   g:'Deep Space Ambient',       u:'https://ice1.somafm.com/deepspaceone-128-mp3'},
+  {st:'CA', name:'SomaFM · Beat Blender',     g:'Deep House · Downtempo',   u:'https://ice1.somafm.com/beatblender-128-mp3'},
+  {st:'CA', name:'SomaFM · Space Station',    g:'Ambient Electronic',       u:'https://ice1.somafm.com/spacestation-128-mp3'},
+  {st:'CA', name:'SomaFM · Sonic Universe',   g:'Modern Jazz',              u:'https://ice1.somafm.com/sonicuniverse-128-mp3'},
+  {st:'CA', name:'KCRW Eclectic 24',          g:'Santa Monica · Indie',     u:'https://kcrw.streamguys1.com/kcrw_192k_mp3_e24'},
+  {st:'WA', name:'KEXP 90.3',                 g:'Seattle · Alternative',    u:'https://kexp-mp3-128.streamguys1.com/kexp128.mp3'},
+  {st:'NJ', name:'WFMU 91.1',                 g:'Freeform · Experimental',  u:'https://stream0.wfmu.org/freeform-128k.aac'},
+  {st:'LA', name:'WWOZ 90.7',                 g:'New Orleans Jazz',         u:'https://wwoz-sc.streamguys1.com/wwoz-128.mp3'},
+  {st:'TX', name:'KUTX 98.9',                 g:'Austin · Eclectic',        u:'https://kut.streamguys1.com/kutx.aac'},
+  {st:'OR', name:'XRAY.fm',                   g:'Portland · Underground',   u:'https://stream.xray.fm/xray-live'},
+  {st:'CO', name:'Indie 102.3 Denver',        g:'Denver · Indie',           u:'https://kvoqfm.streamguys1.com/indie1023'},
+  {st:'NY', name:'WFUV 90.7',                 g:'NYC · Alternative',        u:'https://onair.wfuv.org/onair-aac'},
+  {st:'IL', name:'WBEZ 91.5',                 g:'Chicago · NPR',            u:'https://stream.wbez.org/wbez128.mp3'},
+  {st:'MA', name:'WMBR MIT',                  g:'Boston · College Radio',   u:'https://wmbr.org:8002/hi'},
+  {st:'GA', name:'WRAS 88.5',                 g:'Atlanta · Album 88',       u:'https://streaming.wgpr.radio/wrasfm/live.mp3'},
+  {st:'DC', name:'WAMU 88.5',                 g:'Washington · NPR',         u:'https://wamu-live.streamguys1.com/1A-mp3'}
+];
+let _radioIdx = -1;
+let _radioFilter = '';
+
+function _radioEl(id){ return document.getElementById(id); }
+
+function radioPopulateStates(){
+  const sel = _radioEl('radioState');
+  if(!sel || sel.options.length > 1) return;  // already populated
+  const states = [...new Set(RADIO_STATIONS.map(s=>s.st))].sort();
+  states.forEach(st=>{
+    const o = document.createElement('option');
+    o.value = st; o.textContent = st;
+    sel.appendChild(o);
+  });
+}
+
+function radioRenderList(){
+  const list = _radioEl('radioList');
+  if(!list) return;
+  const filtered = RADIO_STATIONS.filter(s => !_radioFilter || s.st === _radioFilter);
+  if(!filtered.length){ list.innerHTML = '<div style="padding:14px;text-align:center;font-size:11px;color:var(--muted)">No stations for this state yet.</div>'; return; }
+  list.innerHTML = filtered.map(s=>{
+    const origIdx = RADIO_STATIONS.indexOf(s);
+    const active  = origIdx === _radioIdx ? ' active' : '';
+    return `<div class="radio-item${active}" onclick="radioPlay(${origIdx})" title="${s.name}"><div class="radio-item-st">${s.st}</div><div class="radio-item-body"><div class="radio-item-nm">${s.name}</div><div class="radio-item-g">${s.g}</div></div></div>`;
+  }).join('');
+}
+
+function radioToggleMenu(e){
+  if(e){ e.stopPropagation(); }
+  const panel = _radioEl('radioPanel');
+  if(!panel) return;
+  const opening = !panel.classList.contains('open');
+  panel.classList.toggle('open');
+  if(opening){
+    radioPopulateStates();
+    radioRenderList();
+  }
+}
+
+function radioFilter(){
+  _radioFilter = _radioEl('radioState').value;
+  radioRenderList();
+}
+
+function radioPlay(i){
+  const s = RADIO_STATIONS[i];
+  if(!s) return;
+  _radioIdx = i;
+  const a = _radioEl('radioAudio');
+  if(!a) return;
+  try{
+    a.src = s.u;
+    const vol = _radioEl('radioVol');
+    if(vol) a.volume = (parseInt(vol.value,10)||65) / 100;
+    const playP = a.play();
+    _radioEl('radioLabel').textContent = s.name.replace('SomaFM · ','');
+    _radioEl('radioNow').textContent   = 'Buffering…';
+    _radioEl('radioToggleBtn').classList.add('playing');
+    _radioEl('radioPlayBtn').textContent = '❙❙';
+    if(playP && playP.catch){
+      playP.then(()=>{ _radioEl('radioNow').textContent = 'Playing'; })
+           .catch(err=>{
+              _radioEl('radioNow').textContent = 'Stream unreachable';
+              _radioEl('radioToggleBtn').classList.remove('playing');
+              _radioEl('radioPlayBtn').textContent = '▶';
+              console.warn('[radio] play failed:', err && err.message);
+           });
+    }
+  } catch(err){
+    _radioEl('radioNow').textContent = 'Error';
+    console.warn('[radio] error:', err);
+  }
+  radioRenderList();
+}
+
+function radioTogglePlay(){
+  const a = _radioEl('radioAudio');
+  if(!a) return;
+  if(!a.src){ if(_radioIdx < 0) _radioIdx = 0; return radioPlay(_radioIdx); }
+  if(a.paused){
+    a.play().then(()=>{
+      _radioEl('radioToggleBtn').classList.add('playing');
+      _radioEl('radioPlayBtn').textContent = '❙❙';
+      _radioEl('radioNow').textContent = 'Playing';
+    }).catch(()=>{});
+  } else {
+    a.pause();
+    _radioEl('radioToggleBtn').classList.remove('playing');
+    _radioEl('radioPlayBtn').textContent = '▶';
+    _radioEl('radioNow').textContent = 'Paused';
+  }
+}
+
+function radioVolume(v){
+  const a = _radioEl('radioAudio');
+  if(a) a.volume = (parseInt(v,10)||0) / 100;
+}
+
+/* close-on-outside-click — scoped to the radio pod only */
+document.addEventListener('click', e=>{
+  const pod = _radioEl('radioPod');
+  if(pod && !pod.contains(e.target)){
+    _radioEl('radioPanel')?.classList.remove('open');
+  }
+});
 window.updateReqStatus=(id,status)=>{const r=requests.find(r=>r.id===id);if(r)r.status=status;rerenderPage();};
 window.deleteReq=id=>{requests=requests.filter(r=>r.id!==id);toast('Deleted');rerenderPage();};
 window.updateSubPlan=(id,plan)=>{const s=subs.find(s=>s.id===id);if(s){s.plan=plan;s.price=PLAN_P[plan];}toast('Plan updated');rerenderPage();};
