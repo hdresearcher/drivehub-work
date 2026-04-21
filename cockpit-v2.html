@@ -291,17 +291,18 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 
 /* Progress rail */
 /* Upcoming stops sequence — delivery address strip */
-.nav-seq{position:absolute;bottom:168px;left:14px;right:14px;display:flex;gap:8px;padding:8px 10px;background:rgba(8,9,20,.82);border:1px solid rgba(0,212,255,.14);border-radius:12px;backdrop-filter:blur(14px);overflow-x:auto;scrollbar-width:none;animation:navSlideUp .6s var(--spring) .15s both;pointer-events:auto;z-index:4}
+.nav-seq{position:absolute;bottom:168px;left:14px;right:14px;display:flex;gap:8px;padding:8px 10px;background:rgba(8,9,20,.82);border:1px solid rgba(0,212,255,.14);border-radius:12px;backdrop-filter:blur(14px);overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;animation:navSlideUp .6s var(--spring) .15s both;pointer-events:auto;z-index:4;mask-image:linear-gradient(90deg,transparent 0,#000 18px,#000 calc(100% - 18px),transparent 100%);-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 18px,#000 calc(100% - 18px),transparent 100%)}
 .nav-seq::-webkit-scrollbar{display:none}
 .nav-seq-hd{flex-shrink:0;display:flex;align-items:center;gap:6px;font-size:9px;font-weight:700;font-family:var(--mono);color:rgba(0,212,255,.7);letter-spacing:2px;text-transform:uppercase;padding:0 6px 0 2px;border-right:1px solid rgba(255,255,255,.06);margin-right:2px}
 .nav-seq-hd svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.2}
-.nav-seq-item{flex-shrink:0;display:flex;flex-direction:column;min-width:148px;max-width:200px;padding:6px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.06);background:rgba(10,12,18,.6);transition:all .3s var(--ease)}
-.nav-seq-item.curr{border-color:rgba(0,212,255,.45);background:rgba(0,212,255,.08);box-shadow:0 0 14px rgba(0,212,255,.18)}
+.nav-seq-item{flex-shrink:0;display:flex;flex-direction:column;min-width:148px;max-width:200px;padding:6px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.06);background:rgba(10,12,18,.6);transition:border-color .3s var(--ease),background-color .3s var(--ease),box-shadow .3s var(--ease),opacity .3s var(--ease)}
+.nav-seq-item.curr{border-color:rgba(0,212,255,.45);background:rgba(0,212,255,.08);box-shadow:0 0 14px rgba(0,212,255,.18);animation:navSeqCurrPulse 2.2s ease-in-out infinite}
 .nav-seq-item.done{opacity:.45}
 .nav-seq-item.done .nav-seq-n{color:#4ade80}
 .nav-seq-n{font-size:9px;font-weight:700;font-family:var(--mono);color:var(--muted);letter-spacing:1.5px;margin-bottom:2px;display:flex;align-items:center;gap:4px}
 .nav-seq-item.curr .nav-seq-n{color:#00d4ff}
 .nav-seq-a{font-size:11px;color:var(--text);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@keyframes navSeqCurrPulse{0%,100%{box-shadow:0 0 14px rgba(0,212,255,.18)}50%{box-shadow:0 0 22px rgba(0,212,255,.32)}}
 
 .nav-rail{height:4px;margin:10px 6px 0;background:rgba(255,255,255,.06);border-radius:2px;position:relative;overflow:visible}
 .nav-rail-fill{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,#00d4ff,#4ade80);border-radius:2px;transition:width 1s var(--ease);box-shadow:0 0 10px rgba(74,222,128,.4)}
@@ -1878,11 +1879,11 @@ const NAV = {
   on:false, tickTimer:null, stepTimer:null, progress:54, speed:38, eta:14,
   routeLine:null, doneLine:null, carMarker:null,
   maneuvers:[
-    {dist:'0.4 mi',step:'Continue on Market St',sub:'then turn right onto Boardman-Canfield Rd',icon:'straight',limit:45,traffic:'+4 min · I-680 slowdown',trafficColor:'var(--warn-t)',stop:'23/42',addr:'415 Elm St · Boardman',seqIdx:1},
-    {dist:'0.2 mi',step:'Turn right onto Boardman-Canfield Rd',sub:'then continue for 1.2 mi',icon:'right',limit:35,traffic:'Clear',trafficColor:'var(--ok-t)',stop:'23/42',addr:'415 Elm St · Boardman',seqIdx:1},
-    {dist:'1.2 mi',step:'Continue straight',sub:'through 3 signals',icon:'straight',limit:35,traffic:'+2 min',trafficColor:'var(--warn-t)',stop:'23/42',addr:'415 Elm St · Boardman',seqIdx:1},
-    {dist:'0.1 mi',step:'Arrive at destination',sub:'415 Elm St on the right',icon:'arrive',limit:25,traffic:'Clear',trafficColor:'var(--ok-t)',stop:'23/42',addr:'415 Elm St · Boardman',seqIdx:1},
-    {dist:'0.6 mi',step:'Turn left onto Southern Blvd',sub:'next stop · 822 Midland Ave',icon:'left',limit:35,traffic:'Clear',trafficColor:'var(--ok-t)',stop:'24/42',addr:'822 Midland Ave · Boardman',seqIdx:2}
+    {dist:'0.4 mi',step:'Continue on Market St',sub:'then turn right onto Boardman-Canfield Rd',icon:'straight',limit:45,traffic:'+4 min · I-680 slowdown',trafficColor:'var(--warn-t)'},
+    {dist:'0.2 mi',step:'Turn right onto Boardman-Canfield Rd',sub:'then continue for 1.2 mi',icon:'right',limit:35,traffic:'Clear',trafficColor:'var(--ok-t)'},
+    {dist:'1.2 mi',step:'Continue straight',sub:'through 3 signals',icon:'straight',limit:35,traffic:'+2 min',trafficColor:'var(--warn-t)'},
+    {dist:'0.1 mi',step:'Arrive at destination',sub:'on the right',icon:'arrive',limit:25,traffic:'Clear',trafficColor:'var(--ok-t)'},
+    {dist:'0.6 mi',step:'Turn left onto Southern Blvd',sub:'heading to next stop',icon:'left',limit:35,traffic:'Clear',trafficColor:'var(--ok-t)'}
   ],
   /* Sequence of delivery addresses — shown as the driver travels from one geolocation to another */
   stops:[
@@ -1893,7 +1894,8 @@ const NAV = {
     {n:'26/42',addr:'7018 Market St · Boardman',eta:'3:41 PM'},
     {n:'27/42',addr:'2114 Shields Rd · Canfield',eta:'4:04 PM'}
   ],
-  stepIdx:0
+  stepIdx:0,
+  curStopIdx:1
 };
 const NAV_ICONS = {
   straight:'<path d="M24 40V10M24 10l-8 8M24 10l8 8" stroke="#4ade80" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
@@ -1947,6 +1949,7 @@ function enterNavigator(){
   map.flyTo(carPos, 14, {duration:1.2, easeLinearity:.3});
 
   NAV.stepIdx = 0;
+  NAV.curStopIdx = 1;
   applyManeuver(0);
 
   /* Live tick — pulse speed, shrink distance, step through maneuvers */
@@ -1957,13 +1960,19 @@ function enterNavigator(){
   }, 700);
 
   NAV.stepTimer = setInterval(()=>{
-    NAV.stepIdx = (NAV.stepIdx+1) % NAV.maneuvers.length;
+    const next = (NAV.stepIdx+1) % NAV.maneuvers.length;
+    if(next === 0){
+      /* Completed all maneuvers for this stop → advance to next delivery address */
+      NAV.curStopIdx = Math.min(NAV.curStopIdx+1, NAV.stops.length-1);
+      NAV.progress = 10;
+    } else {
+      NAV.progress = Math.min(98, NAV.progress + 9 + Math.random()*4);
+    }
+    NAV.stepIdx = next;
     applyManeuver(NAV.stepIdx);
-    /* advance rail progress */
-    NAV.progress = Math.min(98, NAV.progress + 9 + Math.random()*4);
     const rf = document.getElementById('navRailFill');
     if(rf) rf.style.width = NAV.progress+'%';
-    document.querySelectorAll('.nav-rail-dot').forEach((d,i)=>{
+    document.querySelectorAll('.nav-rail-dot').forEach((d)=>{
       const left = parseFloat(d.style.left);
       d.classList.toggle('act', Math.abs(left - NAV.progress) < 9);
     });
@@ -1990,36 +1999,44 @@ function exitNavigator(){
 function renderNavSeq(){
   const el = document.getElementById('navSeq');
   if(!el) return;
-  const cur = (NAV.maneuvers[NAV.stepIdx]||{}).seqIdx ?? 1;
+  const cur = Math.max(0, Math.min(NAV.curStopIdx|0, NAV.stops.length-1));
+  el.setAttribute('role','list');
+  el.setAttribute('aria-label','Upcoming delivery stops');
   el.innerHTML =
-    '<div class="nav-seq-hd">'
+    '<div class="nav-seq-hd" aria-hidden="true">'
     + '<svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1118 0z"/><circle cx="12" cy="10" r="3"/></svg>'
     + 'Route'
     + '</div>'
     + NAV.stops.map((s,i)=>{
         const cls = i<cur?'done':i===cur?'curr':'';
         const mark = i<cur?'✓':i===cur?'●':'○';
-        return '<div class="nav-seq-item '+cls+'">'
-          + '<div class="nav-seq-n"><span>'+mark+'</span> STOP '+s.n+' · '+s.eta+'</div>'
+        const aria = i===cur?' aria-current="location"':'';
+        const label = (i<cur?'Completed. ':i===cur?'Current stop. ':'Upcoming. ')+'Stop '+s.n+', '+s.addr+', ETA '+s.eta;
+        return '<div class="nav-seq-item '+cls+'" role="listitem"'+aria+' aria-label="'+label+'">'
+          + '<div class="nav-seq-n"><span aria-hidden="true">'+mark+'</span> STOP '+s.n+' · '+s.eta+'</div>'
           + '<div class="nav-seq-a">'+s.addr+'</div>'
           + '</div>';
       }).join('');
-  /* Auto-scroll to keep current stop in view */
+  /* Horizontal-scroll the current chip into the center of the strip without triggering ancestor scroll */
   const currEl = el.querySelector('.nav-seq-item.curr');
-  if(currEl) currEl.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+  if(currEl){
+    const target = currEl.offsetLeft - (el.clientWidth/2) + (currEl.clientWidth/2);
+    el.scrollTo({left:Math.max(0,target), behavior:'smooth'});
+  }
 }
 
 function applyManeuver(i){
   const m = NAV.maneuvers[i];
   if(!m) return;
+  const stop = NAV.stops[Math.max(0, Math.min(NAV.curStopIdx|0, NAV.stops.length-1))] || {};
   document.getElementById('navDist').textContent = m.dist;
   document.getElementById('navStep').textContent = m.step;
   document.getElementById('navSub').textContent = m.sub;
   document.getElementById('navLimit').querySelector('.nav-limit-n').textContent = m.limit;
   document.getElementById('navTraffic').textContent = m.traffic;
   document.getElementById('navTraffic').style.color = m.trafficColor;
-  document.getElementById('navStopN').textContent = m.stop;
-  document.getElementById('navStopAddr').textContent = m.addr;
+  document.getElementById('navStopN').textContent = stop.n || '';
+  document.getElementById('navStopAddr').textContent = stop.addr || '';
   renderNavSeq();
   const icon = document.getElementById('navManeuverIcon');
   if(icon) icon.innerHTML = NAV_ICONS[m.icon] || NAV_ICONS.straight;
