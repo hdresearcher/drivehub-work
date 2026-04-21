@@ -853,6 +853,13 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 
 /* HUD compass + speedo overlays on stage */
 .nc-hud{position:absolute;inset:0;pointer-events:none;padding:22px}
+/* Camera zoom buttons — overlaid on the road stage */
+.nc-cam-zoom{position:absolute;top:12px;right:12px;z-index:5;display:flex;flex-direction:column;gap:3px;align-items:stretch;pointer-events:auto}
+.nc-cam-zoom button{width:32px;height:32px;border-radius:8px;border:1px solid rgba(0,212,255,.32);background:rgba(8,10,18,.92);color:var(--primary);font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);transition:background .15s ease,border-color .15s ease;padding:0;line-height:1}
+.nc-cam-zoom button:hover{background:rgba(0,212,255,.18);border-color:rgba(0,212,255,.6)}
+.nc-cam-zoom button:active{transform:scale(.94)}
+.nc-cam-zoom button:disabled{opacity:.3;cursor:not-allowed}
+.nc-cam-lvl{font-size:8.5px;font-family:var(--mono);color:rgba(0,212,255,.8);text-align:center;letter-spacing:1px;padding:4px 0;background:rgba(8,10,18,.7);border:1px solid rgba(0,212,255,.18);border-radius:6px;min-width:32px}
 .nc-speedo{position:absolute;left:50%;top:22px;transform:translateX(-50%);text-align:center;pointer-events:auto}
 .nc-speedo-v{font-size:76px;font-weight:200;letter-spacing:-.04em;font-family:'Outfit',sans-serif;line-height:.95;color:#fff;text-shadow:0 0 24px rgba(0,212,255,.35)}
 .nc-speedo-u{font-size:12px;color:rgba(255,255,255,.45);font-family:var(--mono);letter-spacing:3px;margin-top:-2px}
@@ -1019,12 +1026,9 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .nc-earn-bar{height:3px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden}
 .nc-earn-bar-fill{height:100%;background:linear-gradient(90deg,#4ade80,#00d4ff);border-radius:2px;transition:width 1s var(--spring)}
 
-/* 3D car — subtle driving animations */
-.nc-car-anim{animation:ncCarBob 3.2s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
-@keyframes ncCarBob{
-  0%,100%{transform:translate(260px,375px) scale(0.85)}
-  50%    {transform:translate(260px,373.6px) scale(0.85)}
-}
+/* 3D car — firmly fixed along the road axis (no sway, no bob).
+   Only the brake-light pulse and exhaust puffs remain to suggest a live vehicle;
+   the bob animation was removed per user feedback — the road dashes handle motion. */
 .nc-car-brake{animation:ncCarBrake 2.6s ease-in-out infinite;transform-origin:center}
 @keyframes ncCarBrake{
   0%,100%{opacity:.55}
@@ -2835,6 +2839,12 @@ function renderNavCockpit(d){
 
       <!-- CENTER STAGE -->
       <div class="nc-stage">
+        <!-- Camera-zoom controls (5 levels, centred on the car + destination) -->
+        <div class="nc-cam-zoom">
+          <button type="button" id="ncCamZoomIn" onclick="ncCamZoom(1)" title="Zoom camera in" aria-label="Zoom in">+</button>
+          <div class="nc-cam-lvl" id="ncCamLvl">1.00×</div>
+          <button type="button" id="ncCamZoomOut" onclick="ncCamZoom(-1)" title="Zoom camera out" aria-label="Zoom out">−</button>
+        </div>
         <!-- Perspective nav-road SVG: continues visually from the FSD strip bottom -->
         <svg class="nc-nav-road-svg" viewBox="0 0 520 420" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -2905,6 +2915,55 @@ function renderNavCockpit(d){
           <line x1="275" y1="294" x2="430" y2="420" stroke="rgba(255,255,255,0.22)" stroke-width="2"/>
           <!-- Animated dashed centerline — this is what reads as the "moving" road -->
           <line x1="260" y1="294" x2="260" y2="420" stroke="rgba(255,255,255,0.32)" stroke-width="1.4" stroke-dasharray="12 10" class="nc-nav-laneline"/>
+          <!-- ── DELIVERY DESTINATION — 3D house at the end of the road.
+               Positioned so its base sits right at the horizon (y=294). The
+               address number on the plaque matches the current stop. ── -->
+          <g transform="translate(260 282)" id="ncDestination">
+            <!-- Destination glow under the building -->
+            <ellipse cx="0" cy="13" rx="30" ry="2.4" fill="rgba(74,222,128,0.28)"/>
+            <ellipse cx="0" cy="12" rx="24" ry="1.8" fill="rgba(0,0,0,0.55)"/>
+            <!-- House right-side wall (3/4 perspective) -->
+            <path d="M 16 12 L 24 8 L 24 -18 L 16 -14 Z" fill="#2f2319" stroke="#110c08" stroke-width="0.3"/>
+            <!-- Roof right slope -->
+            <path d="M 18 -14 L -2 -32 L 6 -34 L 26 -18 Z" fill="#5a1815" stroke="#3a0f0a" stroke-width="0.4"/>
+            <!-- Front wall -->
+            <rect x="-20" y="-14" width="36" height="26" fill="#5a4530" stroke="#1a110b" stroke-width="0.5"/>
+            <!-- Roof front gable -->
+            <path d="M -22 -14 L -2 -32 L 18 -14 Z" fill="#7a2520" stroke="#3a0f0a" stroke-width="0.5"/>
+            <!-- Roof shingle lines -->
+            <path d="M -18 -16 L 16 -16 M -14 -20 L 12 -20 M -10 -24 L 8 -24" stroke="rgba(0,0,0,0.35)" stroke-width="0.3" fill="none"/>
+            <!-- Door -->
+            <rect x="-5" y="0" width="8" height="12" fill="#2a1b10" stroke="#1a0a04" stroke-width="0.4"/>
+            <rect x="-5" y="4" width="8" height="0.4" fill="rgba(0,0,0,0.5)"/>
+            <circle cx="2" cy="6" r="0.6" fill="#c09060"/>
+            <!-- Left window with warm interior light -->
+            <rect x="-17" y="-8" width="8" height="6" fill="#3a2f28"/>
+            <rect x="-16.5" y="-7.5" width="7" height="5" fill="rgba(255,215,140,0.55)"/>
+            <line x1="-13" y1="-8" x2="-13" y2="-2" stroke="#2a1f14" stroke-width="0.4"/>
+            <line x1="-17" y1="-5" x2="-9" y2="-5" stroke="#2a1f14" stroke-width="0.3"/>
+            <!-- Right window with warm interior light -->
+            <rect x="7" y="-8" width="8" height="6" fill="#3a2f28"/>
+            <rect x="7.5" y="-7.5" width="7" height="5" fill="rgba(255,215,140,0.55)"/>
+            <line x1="11" y1="-8" x2="11" y2="-2" stroke="#2a1f14" stroke-width="0.4"/>
+            <line x1="7" y1="-5" x2="15" y2="-5" stroke="#2a1f14" stroke-width="0.3"/>
+            <!-- Porch light above door (bright dot) -->
+            <circle cx="-1" cy="-2.5" r="0.6" fill="rgba(255,240,180,0.9)"/>
+            <circle cx="-1" cy="-2.5" r="1.6" fill="rgba(255,240,180,0.25)"/>
+            <!-- Chimney with smoke puff -->
+            <rect x="8" y="-32" width="4" height="7" fill="#4a3020" stroke="#1a1008" stroke-width="0.3"/>
+            <ellipse class="nc-car-puff" cx="10" cy="-35" rx="2.2" ry="1.4" fill="rgba(200,200,210,0.3)" style="animation-duration:3.6s"/>
+            <!-- Address plaque -->
+            <rect x="-5" y="-12.5" width="10" height="3.2" fill="#f0e0c0" stroke="#2a1f14" stroke-width="0.3"/>
+            <text x="0" y="-10.2" text-anchor="middle" font-family="'Helvetica',sans-serif" font-size="2.6" font-weight="700" fill="#2a1f14">415</text>
+            <!-- Mailbox on the lawn -->
+            <rect x="-26" y="7" width="3" height="3.5" rx="0.4" fill="#1a3a7a" stroke="#0a1a3a" stroke-width="0.3"/>
+            <path d="M -26 10.5 L -26 13" stroke="#1a1008" stroke-width="0.5"/>
+            <!-- Walkway path to the door -->
+            <path d="M -2 13 L -4 18 M 2 13 L 4 18" stroke="rgba(160,140,110,0.7)" stroke-width="0.8" stroke-linecap="round"/>
+            <!-- "DELIVERY" flag label (subtle) -->
+            <rect x="-18" y="-38" width="36" height="4" rx="0.8" fill="rgba(10,40,20,0.88)" stroke="rgba(74,222,128,0.55)" stroke-width="0.4"/>
+            <text x="0" y="-35" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="2.4" font-weight="700" fill="#4ade80" letter-spacing="0.3">DROP-OFF</text>
+          </g>
           <!-- ── REALISTIC 3D CAR — rear 3/4 view, driving away from the camera
                down the road. Paint gradient + glass gradient + LED taillight
                gradient + radial wheel gradient provide the depth cues that
@@ -3286,6 +3345,38 @@ function ncMapApplyZoom(){
   const zoomOut = document.getElementById('ncMapZoomOut');
   if(zoomIn)  zoomIn.disabled  = _ncMapZoomStep >= _NC_ZOOM_STEPS.length - 1;
   if(zoomOut) zoomOut.disabled = _ncMapZoomStep <= 0;
+}
+
+/* Camera zoom for the driver-cockpit road stage — 5 discrete levels,
+   centred on the car (viewBox x=260, y≈360). The + button advances one step,
+   − retreats. Zoom is applied via SVG viewBox so the car, road, and
+   destination house all scale together coherently. */
+const _NC_CAM_STEPS = [1.0, 1.35, 1.75, 2.2, 2.8];  /* 5 levels */
+let _ncCamZoomStep  = 0;                             /* 0 = widest/default */
+function ncCamZoom(delta){
+  const next = Math.max(0, Math.min(_NC_CAM_STEPS.length - 1, _ncCamZoomStep + delta));
+  _ncCamZoomStep = next;
+  ncCamApplyZoom();
+}
+function ncCamApplyZoom(){
+  const svg = document.querySelector('.nc-nav-road-svg');
+  if(!svg) return;
+  const W = 520, H = 420;
+  const zoom = _NC_CAM_STEPS[_ncCamZoomStep];
+  const w = W / zoom;
+  const h = H / zoom;
+  /* Centre on the car ((260, 360)) so zoom-in closes in on the vehicle */
+  let x = 260 - w / 2;
+  let y = 360 - h / 2;
+  if(w >= W){ x = 0; } else { x = Math.max(0, Math.min(W - w, x)); }
+  if(h >= H){ y = 0; } else { y = Math.max(0, Math.min(H - h, y)); }
+  svg.setAttribute('viewBox', x.toFixed(1)+' '+y.toFixed(1)+' '+w.toFixed(1)+' '+h.toFixed(1));
+  const lvlEl = document.getElementById('ncCamLvl');
+  if(lvlEl) lvlEl.textContent = zoom.toFixed(2)+'×';
+  const zIn  = document.getElementById('ncCamZoomIn');
+  const zOut = document.getElementById('ncCamZoomOut');
+  if(zIn)  zIn.disabled  = _ncCamZoomStep >= _NC_CAM_STEPS.length - 1;
+  if(zOut) zOut.disabled = _ncCamZoomStep <= 0;
 }
 
 /* Single-click on a driver name in the left list: select + gradually zoom the map
