@@ -259,7 +259,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .nav-close:hover{background:rgba(239,68,68,.12);color:var(--err-t);border-color:rgba(239,68,68,.3)}
 
 /* Lanes */
-.nav-lanes{position:absolute;top:110px;left:50%;transform:translateX(-50%);display:flex;gap:6px;padding:7px 10px;border-radius:10px;background:rgba(10,10,15,.85);border:1px solid var(--border);backdrop-filter:blur(12px);animation:navSlideDown .7s var(--spring) .15s both}
+.nav-lanes{position:absolute;top:146px;left:50%;transform:translateX(-50%);display:flex;gap:6px;padding:7px 10px;border-radius:10px;background:rgba(10,10,15,.85);border:1px solid var(--border);backdrop-filter:blur(12px);animation:navSlideDown .7s var(--spring) .15s both}
 .nav-lane{width:34px;height:34px;border-radius:7px;background:rgba(255,255,255,.04);color:rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;border:1px solid transparent;transition:all .3s}
 .nav-lane svg{width:20px;height:20px}
 .nav-lane.act{background:rgba(74,222,128,.14);color:#4ade80;border-color:rgba(74,222,128,.4);box-shadow:0 0 14px rgba(74,222,128,.2);animation:navLanePulse 1.8s ease-in-out infinite}
@@ -305,6 +305,12 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 @keyframes navSeqCurrPulse{0%,100%{box-shadow:0 0 14px rgba(0,212,255,.18)}50%{box-shadow:0 0 22px rgba(0,212,255,.32)}}
 
 .nav-rail{height:4px;margin:10px 6px 0;background:rgba(255,255,255,.06);border-radius:2px;position:relative;overflow:visible}
+/* Hide the progress-rail line beneath the bottom HUD — per user feedback
+   it reads as a stray line under the panel in Navigator mode. */
+.nav-overlay .nav-rail{display:none}
+/* Hide the driver focus-card while Navigator mode is active so it doesn't
+   overlap the bottom HUD. Restored when Navigator exits. */
+.focus-card.nav-hidden{display:none!important}
 .nav-rail-fill{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,#00d4ff,#4ade80);border-radius:2px;transition:width 1s var(--ease);box-shadow:0 0 10px rgba(74,222,128,.4)}
 .nav-rail-dot{position:absolute;top:50%;transform:translate(-50%,-50%);width:10px;height:10px;border-radius:50%;background:#0a0a0f;border:2px solid rgba(255,255,255,.25)}
 .nav-rail-dot.act{background:#4ade80;border-color:#4ade80;box-shadow:0 0 0 3px rgba(74,222,128,.25),0 0 12px rgba(74,222,128,.6);animation:navDotPulse 1.5s ease-in-out infinite}
@@ -2068,6 +2074,9 @@ function enterNavigator(){
   NAV.curStopIdx = 1;
   applyManeuver(0);
 
+  /* Hide the driver focus-card — it would otherwise overlap the nav-bottom HUD */
+  document.getElementById('focusCard')?.classList.add('nav-hidden');
+
   /* Live tick — pulse speed, shrink distance, step through maneuvers */
   NAV.tickTimer = setInterval(()=>{
     /* Wobble the speed */
@@ -2109,6 +2118,8 @@ function exitNavigator(){
   if(NAV.routeLine) {map.removeLayer(NAV.routeLine); NAV.routeLine=null;}
   if(NAV.doneLine)  {map.removeLayer(NAV.doneLine);  NAV.doneLine=null;}
   if(NAV.carMarker) {map.removeLayer(NAV.carMarker); NAV.carMarker=null;}
+  /* Restore the focus-card */
+  document.getElementById('focusCard')?.classList.remove('nav-hidden');
   toast('Navigator closed','ok');
 }
 
